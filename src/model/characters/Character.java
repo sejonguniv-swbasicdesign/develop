@@ -2,8 +2,8 @@ package model.characters;
 
 public abstract class Character {
 
-    int hp;
-    int x, y;
+    public int hp;
+    public int x, y;
     boolean isFacingRight;
 
     public Character() {

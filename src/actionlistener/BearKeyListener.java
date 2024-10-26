@@ -25,16 +25,16 @@ public class BearKeyListener implements KeyListener {
         switch (key) {
             // 방향키로 곰 움직임 처리
             case KeyEvent.VK_UP:
-                bearPlayer.move(0, -1);  // 위로 이동
+                bearPlayer.move(0, -10);  // 위로 이동
                 break;
             case KeyEvent.VK_DOWN:
-                bearPlayer.move(0, 1);   // 아래로 이동
+                bearPlayer.move(0, 10);   // 아래로 이동
                 break;
             case KeyEvent.VK_LEFT:
-                bearPlayer.move(-1, 0);  // 왼쪽으로 이동
+                bearPlayer.move(-10, 0);  // 왼쪽으로 이동
                 break;
             case KeyEvent.VK_RIGHT:
-                bearPlayer.move(1, 0);   // 오른쪽으로 이동
+                bearPlayer.move(10, 0);   // 오른쪽으로 이동
                 break;
         }
     }

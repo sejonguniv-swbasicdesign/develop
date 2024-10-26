@@ -1,19 +1,26 @@
 package model.characters;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class BearPlayer extends Character {
 
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
+    private String leftFilePath = "./src/image/곰_완쪽.png";
+    private String rightFilePath = "./src/image/곰.png";
+
     public BearPlayer() {
     }
 
-    public BearPlayer(int x, int y) {
+    public BearPlayer(int x, int y) throws IOException {
         super(x, y);
-        this.leftIcon = new ImageIcon("../image/곰_왼쪽.png");
-        this.rightIcon = new ImageIcon("../image/곰.png");
+        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
     }
 
     public ImageIcon getCurrentIcon() {
