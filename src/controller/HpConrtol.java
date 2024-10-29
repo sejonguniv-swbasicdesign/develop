@@ -27,7 +27,7 @@ public class HpConrtol {
 	
 	
 	public boolean detectCollision( /*Tiger of Bear*/) {//곰따로 호랑이따로 해야됨....
-		if( /*tiger or bear get hurt*/ ) {
+		if( true/*tiger or bear get hurt*/ ) {//***************************************8
 			return true;
 		}
 		else return false;
@@ -57,4 +57,4 @@ public class HpConrtol {
 
     }
 	
-}
+
