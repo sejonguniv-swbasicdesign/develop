@@ -7,7 +7,7 @@ import javax.swing.Timer;
 
 public class HpConrtol {
 	private int  hpOfTigerPlayer;
-	private int  hpOfBearPlayer;
+	private int  hpOfBearPlayer;		//hp 상태 저장
 	private HpStatus hpStatus;
 	
 	
@@ -27,14 +27,14 @@ public class HpConrtol {
 	
 	
 	public boolean detectCollision( /*Tiger of Bear*/) {//곰따로 호랑이따로 해야됨....
-		if( true/*tiger or bear get hurt*/ ) {//***************************************8
+		if( true/*tiger or bear get hurt*/ ) {//***************************************again
 			return true;
 		}
 		else return false;
 	}
 	
-    private void hitObstacle() {
-    	if(detectCollision()) {
+    private void hitObstacle() {		//hp 깍이면...
+    	if(detectCollision(/*Tiger*/)) {
     		
     		if (hpOfTigerPlayer > 0) {
             hpOfTigerPlayer--;  
@@ -42,7 +42,7 @@ public class HpConrtol {
     		}
     	}
         
-    	if(detectCollision()) {
+    	if(detectCollision(/*Bear*/)) {
     		
     		if (hpOfBearPlayer > 0) {
             hpOfBearPlayer--;  

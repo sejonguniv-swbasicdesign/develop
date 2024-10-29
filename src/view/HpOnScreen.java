@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class HpOnScreen extends JFrame{
 	public HpOnScreen() {
-        setTitle("Image Panel Example");
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());
@@ -41,8 +41,6 @@ public class HpOnScreen extends JFrame{
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new HpOnScreen();
-    }
+
 
 }
