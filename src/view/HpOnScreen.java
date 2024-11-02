@@ -24,7 +24,7 @@ public class HpOnScreen extends JFrame{
         for (int i = 1; i <= 3; i++) {
             JPanel panel = new JPanel();
             JLabel label = new JLabel();
-            label.setIcon(new ImageIcon("./image/heart" + i + ".jpg")); // 이미지 경로 설정
+            label.setIcon(new ImageIcon("src/assets/image/heart.jpg")); // 이미지 경로 설정
             panel.add(label);
             leftPanel.add(panel);
         }
@@ -33,7 +33,7 @@ public class HpOnScreen extends JFrame{
         for (int i = 1; i <= 3; i++) {
             JPanel panel = new JPanel();
             JLabel label = new JLabel();
-            label.setIcon(new ImageIcon("./image/heart" + (i + 3) + ".jpg")); // 이미지 경로 설정
+            label.setIcon(new ImageIcon("src/assets/image/heart.jpg")); // 이미지 경로 설정
             panel.add(label);
             rightPanel.add(panel);
         }
