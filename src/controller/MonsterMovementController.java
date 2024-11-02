@@ -1,11 +1,13 @@
 package controller;
 
+import model.Monster;
+
 import javax.swing.*;
 import java.awt.Image;
 import java.util.Random;
 
 //몬스터 자동으로 움직이게 하는 컨트롤러
-public class MonsterMovementController {
+public class MonsterMovementController extends Monster {
 
     private JLabel monsterLabel;
     private Timer movementTimer;
@@ -19,6 +21,7 @@ public class MonsterMovementController {
     private ImageIcon rightIcon;
 
     public MonsterMovementController() {
+        super(3);
 
     }
 
@@ -39,7 +42,7 @@ public class MonsterMovementController {
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
         addMonsterToCenter();
-        startMonsterMovement();
+        move();
     }
 
     //몬스터 위치 임시로 가운데로
@@ -56,7 +59,8 @@ public class MonsterMovementController {
     }
 
     //몬스터 움직임
-    private void startMonsterMovement() {
+    @Override
+    public void move() {
         //2초마다 랜덤으로 좌우로 방향 변화
         Random random = new Random();
 
