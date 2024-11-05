@@ -13,6 +13,7 @@ public class MonsterMovementController extends Monster {
     private Timer movementTimer;
     private Timer directionTimer;
     private int monsterX;
+    private int monsterY;
     private int direction = 1;
     private JPanel panel;
     private int panelWidth;
@@ -51,7 +52,7 @@ public class MonsterMovementController extends Monster {
         int monsterHeight = monsterLabel.getIcon().getIconHeight();
 
         monsterX = (panelWidth - monsterWidth) / 2;
-        int monsterY = (panelHeight - monsterHeight) / 2;
+        monsterY = (panelHeight - monsterHeight) / 2;
 
         monsterLabel.setBounds(monsterX, monsterY, monsterWidth, monsterHeight);
         panel.setLayout(null);
@@ -90,5 +91,9 @@ public class MonsterMovementController extends Monster {
         } else {
             monsterLabel.setIcon(leftIcon);
         }
+    }
+    public JLabel getMonster() {
+    	return monsterLabel;
+    	
     }
 }
