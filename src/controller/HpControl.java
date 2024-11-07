@@ -4,6 +4,7 @@ import controller.MonsterMovementController;
 import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
+import view.HpOnScreen;
 
 import java.io.IOException;
 import java.awt.Rectangle;
@@ -19,6 +20,19 @@ public class HpControl {
 	private MonsterMovementController monsterMovementControl; // 몬스터 정보 받아오기
 	private JLabel monsterLabel;
 	private Rectangle monsterRect;
+	private HpOnScreen hpOnScreen;
+
+	public HpControl() { // 생성자
+		getChatacterInfo();
+		hpOnScreen = new HpOnScreen(bearPlayer.hp, tigerPlayer.hp);
+
+		timer = new Timer(100, e -> { // 충돌감지지속검사
+			getChatacterInfo();
+			detectTigerCollision(); // 충돌 확인 메소드 호출
+			detectBearCollision();
+		});
+		timer.start();
+	}
 
 	public void getChatacterInfo() { // 캐릭터 정보 받아오는 매소드
 		try {
@@ -41,7 +55,7 @@ public class HpControl {
 		if (tigerPlayerRect.intersects(monsterRect)) { // 충돌 확인
 			if (tigerPlayer.hp > 0) {
 				tigerPlayer.hp--;
-
+				hpOnScreen.updateHpStatus(bearPlayer.hp, tigerPlayer.hp);
 			}
 		}
 
@@ -54,23 +68,10 @@ public class HpControl {
 		if (bearPlayerRect.intersects(monsterRect)) { // 충돌 확인
 			if (bearPlayer.hp > 0) {
 				bearPlayer.hp--;
-
+				hpOnScreen.updateHpStatus(bearPlayer.hp, tigerPlayer.hp);
 			}
 		}
 
 	}
 
-	public HpControl() { // 생성자
-
-		timer = new Timer(100, e -> { // 충돌감지지속검사
-			getChatacterInfo();
-
-			detectTigerCollision();
-			detectBearCollision();
-			if (tigerPlayer.hp == 0 && bearPlayer.hp == 0) {
-				// game over 시
-			}
-		});
-		timer.start();
-	}
 }
