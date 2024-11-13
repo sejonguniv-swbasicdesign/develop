@@ -1,9 +1,10 @@
-package model;
+package model.monsters;
 
 public abstract class Monster {
 
     public int hp;
-    public int x,y;
+    public int x;
+    public int y;
 
     public Monster(int hp, int x, int y) {
         this.hp = hp;
@@ -11,9 +12,12 @@ public abstract class Monster {
         this.y = y;
     }
 
+
+
     public void move(){}
 
     protected void resetHp(int hp)  {
         this.hp = hp;
     }
+
 }

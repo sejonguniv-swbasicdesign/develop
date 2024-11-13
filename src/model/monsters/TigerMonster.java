@@ -1,4 +1,4 @@
-package controller;
+package model.monsters;
 
 import model.Monster;
 
@@ -6,13 +6,13 @@ import javax.swing.*;
 import java.awt.Image;
 import java.util.Random;
 
-//몬스터 자동으로 움직이게 하는 컨트롤러
-public class MonsterMovementController extends Monster {
+
+public class TigerMonster extends Monster {
 
     private JLabel monsterLabel;
     private Timer movementTimer;
     private Timer directionTimer;
-    private int monsterX;
+
     private int direction = 1;
     private JPanel panel;
     private int panelWidth;
@@ -20,21 +20,22 @@ public class MonsterMovementController extends Monster {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
-    public MonsterMovementController() {
-        super(3);
+    public TigerMonster(int x, int y) {
+        super(3,x,y);
 
     }
 
-    //몬스터 이미지 설정 ( 몬스터 이미지 아직 없어서 일단 호랑이 이미지 사용함 )
+
+    //몬스터 이미지 설정
     public void setMonster(int panelWidth, int panelHeight, JPanel panel) {
         //왼쪽 방향
-        ImageIcon originalLeftIcon = new ImageIcon("src/assets/image/icon/tiger_left.png");
-        Image leftImage = originalLeftIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon originalLeftIcon = new ImageIcon("src/assets/image/stage2/tiger_monster_left.png");
+        Image leftImage = originalLeftIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         leftIcon = new ImageIcon(leftImage);
 
         //오른쪽 방향
-        ImageIcon originalRightIcon = new ImageIcon("src/assets/image/icon/tiger_right.png");
-        Image rightImage = originalRightIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon originalRightIcon = new ImageIcon("src/assets/image/stage2/tiger_monster_right.png");
+        Image rightImage = originalRightIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         rightIcon = new ImageIcon(rightImage);
 
         monsterLabel = new JLabel(rightIcon);
@@ -45,26 +46,24 @@ public class MonsterMovementController extends Monster {
         move();
     }
 
-    //몬스터 위치 임시로 가운데로
+
     private void addMonsterToCenter() {
         int monsterWidth = monsterLabel.getIcon().getIconWidth();
         int monsterHeight = monsterLabel.getIcon().getIconHeight();
 
-        monsterX = (panelWidth - monsterWidth) / 2;
-        int monsterY = (panelHeight - monsterHeight) / 2;
-
-        monsterLabel.setBounds(monsterX, monsterY, monsterWidth, monsterHeight);
-        panel.setLayout(null);
+        monsterLabel.setBounds(super.x, super.y, monsterWidth, monsterHeight);
         panel.add(monsterLabel);
+        panel.setComponentZOrder(monsterLabel, 0);
     }
 
     //몬스터 움직임
     @Override
     public void move() {
-        //2초마다 랜덤으로 좌우로 방향 변화
+
+        //3초마다 랜덤으로 좌우로 방향 변화
         Random random = new Random();
 
-        directionTimer = new Timer(2000, e -> {
+        directionTimer = new Timer(3000, e -> {
             direction = random.nextInt(2) == 0 ? -1 : 1;
             updateMonsterIcon();
         });
@@ -72,12 +71,12 @@ public class MonsterMovementController extends Monster {
 
         //자동으로 움직임
         movementTimer = new Timer(30, e -> {
-            monsterX += direction * 5;
-            if (monsterX < 0 || monsterX > panelWidth - monsterLabel.getWidth()) {
+            super.x += direction * 5;
+            if (super.x < 0 || super.x > panelWidth - monsterLabel.getWidth()) {
                 direction *= -1;
                 updateMonsterIcon();
             }
-            monsterLabel.setLocation(monsterX, monsterLabel.getY());
+            monsterLabel.setLocation(super.x, monsterLabel.getY());
             panel.repaint();
         });
         movementTimer.start();
@@ -89,6 +88,6 @@ public class MonsterMovementController extends Monster {
             monsterLabel.setIcon(rightIcon);
         } else {
             monsterLabel.setIcon(leftIcon);
-        }
+    }
     }
 }

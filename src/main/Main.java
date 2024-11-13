@@ -1,9 +1,11 @@
 package main;
 
-import view.container.frame.MainFrame;
+
+import view.container.frame.GameFrame;
 
 public class Main {
     public static void main(String[] args) {
-        new MainFrame();
+        GameFrame gameFrame = new GameFrame();
+        gameFrame.setVisible(true);
     }
 }
