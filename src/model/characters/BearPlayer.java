@@ -11,8 +11,8 @@ public class BearPlayer extends Character {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
-    private String leftFilePath = "./src/assets/image/곰_완쪽.png";
-    private String rightFilePath = "src/assets/image/곰.png";
+    private String leftFilePath = "src/assets/image/characters/곰_완쪽.png";
+    private String rightFilePath = "src/assets/image/characters/곰.png";
 
     public BearPlayer() {
     }
