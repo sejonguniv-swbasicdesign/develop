@@ -3,6 +3,7 @@ package model;
 public abstract class Monster {
 
     public int hp;
+    
     public Monster(int hp) {
         this.hp = hp;
     }
