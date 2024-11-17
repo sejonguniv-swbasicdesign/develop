@@ -1,7 +1,9 @@
 package model;
 
+//몬스터 객체
 public abstract class Monster {
 
+    //체력, x,y좌표
     public int hp;
     public int x,y;
 
