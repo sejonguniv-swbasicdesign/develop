@@ -90,4 +90,8 @@ public class TigerMonster extends Monster {
             monsterLabel.setIcon(leftIcon);
     }
     }
+
+    public JLabel getLabel() {
+        return monsterLabel;
+    }
 }

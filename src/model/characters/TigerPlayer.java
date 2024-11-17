@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.Timer;
 
 public class TigerPlayer extends Character {
     private ImageIcon leftIcon;
@@ -42,11 +43,11 @@ public class TigerPlayer extends Character {
         }
 
         if (this.x < 0) {
-            this.x -= x;
+            this.x = 0; // 화면 밖으로 나가지 않도록 보정
         }
 
         if (this.y < 0) {
-            this.y -= y;
+            this.y = 0; // 화면 밖으로 나가지 않도록 보정
         }
     }
 
