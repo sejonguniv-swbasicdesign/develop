@@ -3,7 +3,6 @@ package model;
 public abstract class Monster {
 
     public int hp;
-
     public int x,y;
 
     public Monster(int hp, int x, int y) {
