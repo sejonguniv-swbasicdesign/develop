@@ -11,16 +11,16 @@ public class BearPlayer extends Character {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
-    private String leftFilePath = "./src/assets/image/곰_완쪽.png";
-    private String rightFilePath = "src/assets/image/곰.png";
+    private String leftFilePath = "src/assets/image/characters/곰_완쪽.png";
+    private String rightFilePath = "src/assets/image/characters/곰.png";
 
     public BearPlayer() {
     }
 
-    public BearPlayer(int x, int y) throws IOException {
+    public BearPlayer(int x, int y) {
         super(x, y);
-        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.leftIcon = new ImageIcon(leftFilePath);
+        this.rightIcon = new ImageIcon(rightFilePath);
     }
 
     public ImageIcon getCurrentIcon() {

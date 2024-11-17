@@ -11,12 +11,12 @@ public class Storage {
     private TigerPlayer tigerPlayer;
 
     // private 생성자를 통해 외부에서 객체 생성 방지
-    private Storage() throws IOException {
+    private Storage() {
         this.bearPlayer = new BearPlayer(0, 6);
         this.tigerPlayer = new TigerPlayer(0, 0);
     }
 
-    public static Storage getInstance() throws IOException {
+    public static Storage getInstance() {
         if (instance == null) {
             instance = new Storage();
         }

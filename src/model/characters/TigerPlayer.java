@@ -10,16 +10,16 @@ public class TigerPlayer extends Character {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
-    private String leftFilePath = "src/assets/image/호랑이.png";
-    private String rightFilePath = "src/assets/image/호랑이_오른쪽.png";
+    private String leftFilePath = "src/assets/image/characters/호랑이.png";
+    private String rightFilePath = "src/assets/image/characters/호랑이_오른쪽.png";
 
     public TigerPlayer() {
     }
 
-    public TigerPlayer(int x, int y) throws IOException {
+    public TigerPlayer(int x, int y) {
         super(x, y);
-        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.leftIcon = new ImageIcon(leftFilePath);
+        this.rightIcon = new ImageIcon(rightFilePath);
     }
 
     public ImageIcon getCurrentIcon() {
