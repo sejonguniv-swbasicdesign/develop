@@ -1,11 +1,17 @@
 package view.container.frame.third;
 
 import view.component.third.BossInitializerPanel;
-import view.container.panel.ImagePanel;
 import view.component.third.PlayerInitializerPanel;
+import controller.BossAttackController;
+import model.Storage;
+import model.characters.BearPlayer;
+import model.characters.TigerPlayer;
+import model.monsters.Boss;
+import view.container.panel.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class InitBossStage extends JFrame {
 
@@ -15,11 +21,23 @@ public class InitBossStage extends JFrame {
     private ImageIcon cloudImage;
     private JLabel cloudLabel;
     private PlayerInitializerPanel playerInitializerPanel;
+    private BossAttackController bossAttackController;
+    private Boss boss;
 
     public InitBossStage() {
         frameSize = new Dimension(1300, 800);
+        initializeGameObjects();
         playerInitializerPanel = new PlayerInitializerPanel();
         setFrame();
+    }
+
+    private void initializeGameObjects() {
+        try {
+            // 보스 객체만 생성 (플레이어는 Storage에서 가져옴)
+            boss = new Boss(500, 550, -10);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setFrame() {
@@ -48,6 +66,10 @@ public class InitBossStage extends JFrame {
         repaint();
 
         SwingUtilities.invokeLater(() -> playerInitializerPanel.requestFocusInWindow());
+
+        // 보스 공격 컨트롤러 초기화
+        Storage storage = Storage.getInstance();
+        bossAttackController = new BossAttackController(boss, storage.getBear(), storage.getTiger(), layeredPane);
     }
 
     private void setBackgroundImage() {
@@ -55,11 +77,6 @@ public class InitBossStage extends JFrame {
         backgroundImage.setImage("src/assets/image/background/boss_background.jpeg");
 
         backgroundImage.setBounds(0, 0, this.getWidth(), this.getHeight());
-        /*
-        backgroundImage.setSize(frameSize);
-        backgroundImage.setPreferredSize(frameSize);
-        backgroundImage.setMinimumSize(frameSize);
-*/
         layeredPane.add(backgroundImage, JLayeredPane.DEFAULT_LAYER);
     }
 
@@ -93,5 +110,4 @@ public class InitBossStage extends JFrame {
 
         layeredPane.add(bossInitializerPanel, JLayeredPane.MODAL_LAYER);
     }
-
 }

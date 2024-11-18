@@ -34,6 +34,13 @@ public class TigerPlayer extends Character {
         }
     }
 
+    public void decreaseHp(int damage) {
+        this.hp -= damage;
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
+    }
+
     public void resetTigerHp() {
         super.resetHp();
     }
@@ -58,5 +65,8 @@ public class TigerPlayer extends Character {
         }
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
+    }
 
 }

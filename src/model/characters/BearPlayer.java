@@ -21,6 +21,14 @@ public class BearPlayer extends Character {
         this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
     }
 
+    public void decreaseHp(int damage) {
+        this.hp -= damage;
+
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
+    }
+
     public ImageIcon getCurrentIcon() {
         return isFacingRight ? rightIcon : leftIcon;
     }
@@ -47,5 +55,9 @@ public class BearPlayer extends Character {
         if (this.y < 0) {
             this.y -= y;
         }
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
     }
 }
