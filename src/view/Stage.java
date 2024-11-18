@@ -27,13 +27,10 @@ public class Stage extends JFrame {
         bearLabel = new JLabel();
         tigerLabel = new JLabel();
 
-        try {
-            storage = Storage.getInstance();
-            bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
-            tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
-        } catch (IOException e){
-            System.out.println("파일을 읽어들이는 데에 실패했습니다. 프로그램을 다시 실행해 주세요.");
-        }
+        storage = Storage.getInstance();
+        bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
+        tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
+
 
         // 초기 위치 설정
         bearLabel.setBounds(storage.getBear().x, storage.getBear().y, 64, 64);
