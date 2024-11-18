@@ -2,6 +2,8 @@ package view;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import controller.MoveInteraction;
 import model.Storage;
 import actionlistener.BearKeyListener;
 import actionlistener.TigerKeyListener;
@@ -17,8 +19,12 @@ public class Stage extends JFrame {
     private JLabel bearLabel;
     private JLabel tigerLabel;
     private Storage storage;
+    private MoveInteraction moveInteraction;
 
     public Stage() {
+        moveInteraction = new MoveInteraction();
+        storage = Storage.getInstance();
+
         setTitle("Temporary Stage");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,10 +33,8 @@ public class Stage extends JFrame {
         bearLabel = new JLabel();
         tigerLabel = new JLabel();
 
-        storage = Storage.getInstance();
         bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
         tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
-
 
         // 초기 위치 설정
         bearLabel.setBounds(storage.getBear().x, storage.getBear().y, 64, 64);
@@ -48,20 +52,10 @@ public class Stage extends JFrame {
         setVisible(true);
 
         // 주기적으로 캐릭터 위치 업데이트
-        Timer timer = new Timer(16, e -> updateCharacterPositions());
+        Timer timer = new Timer(16, e -> {
+                moveInteraction.updateCharacterPositions(bearLabel, tigerLabel);
+                repaint();
+        });
         timer.start();
-    }
-
-    // 캐릭터 위치 업데이트 메서드
-    public void updateCharacterPositions() {
-        // 현재 방향에 맞는 아이콘을 가져와서 설정
-        bearLabel.setIcon(storage.getBear().getCurrentIcon());
-        tigerLabel.setIcon(storage.getTiger().getCurrentIcon());
-
-        // 캐릭터 위치 업데이트
-        bearLabel.setLocation(storage.getBear().x, storage.getBear().y);
-        tigerLabel.setLocation(storage.getTiger().x, storage.getTiger().y);
-
-        repaint();
     }
 }
