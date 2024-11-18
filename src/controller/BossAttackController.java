@@ -19,6 +19,7 @@ public class BossAttackController {
         this.boss = boss;
         this.panel = panel;
 
+        // Storage에서 플레이어 객체 가져오기
         Storage storage = Storage.getInstance();
         this.bearPlayer = storage.getBear();
         this.tigerPlayer = storage.getTiger();
@@ -29,13 +30,13 @@ public class BossAttackController {
     }
 
     private void startAttackCycle() {
-        timer = new Timer(5000, e -> {
+        timer = new Timer(3000, e -> { // 공격 주기를 3초로 단축
             switch (state) {
                 case 0:
                     performLightningAttack();
                     break;
                 case 1:
-                    performTornadoesAttack();
+                    performFaintedAttack();
                     break;
                 case 2:
                     performFaint();
@@ -54,8 +55,7 @@ public class BossAttackController {
         new LightningAttackController(bossX, bossY, bearPlayer, tigerPlayer, panel);
     }
 
-    private void performTornadoesAttack() {
-
+    private void performFaintedAttack() {
     }
 
     private void performFaint() {

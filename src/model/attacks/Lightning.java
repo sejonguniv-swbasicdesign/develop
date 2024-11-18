@@ -4,30 +4,25 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Lightning extends JLabel {
-    private int x, y; // 번개의 현재 위치
-    private int dx, dy; // 번개의 이동 방향
-    private String imagePath;
+    private int dx, dy;
 
-    public Lightning(int startX, int startY, int dx, int dy) {
-        this.x = startX;
-        this.y = startY;
+    public Lightning(int x, int y, int dx, int dy, int width, int height) {
         this.dx = dx;
         this.dy = dy;
 
-        imagePath = "src/assets/image/icon/lightning.png";
+        // 번개 이미지 크기 설정
+        ImageIcon originalIcon = new ImageIcon("src/assets/image/icon/lightning.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        setIcon(new ImageIcon(scaledImage));
 
-        // 번개 이미지 설정
-        setIcon(new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
-        setBounds(x, y, 50, 50);
+        setBounds(x, y, width, height);
     }
 
     public void move() {
-        x += dx;
-        y += dy;
-        setLocation(x, y);
+        setLocation(getX() + dx, getY() + dy);
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 50, 50);
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
 }
