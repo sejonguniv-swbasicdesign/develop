@@ -29,7 +29,22 @@ public class Stage extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
+        setFocusable(true);
+        requestFocusInWindow();
+        setVisible(true);
 
+        setLabel();
+
+        // 주기적으로 캐릭터 위치 업데이트
+        Timer timer = new Timer(16, e -> {
+                moveInteraction.updateCharacterPositions(bearLabel, tigerLabel);
+                repaint();
+        });
+
+        timer.start();
+    }
+
+    private void setLabel() {
         bearLabel = new JLabel();
         tigerLabel = new JLabel();
 
@@ -45,17 +60,5 @@ public class Stage extends JFrame {
         // 키 리스너 추가 및 포커스 설정
         addKeyListener(new BearKeyListener(storage.getBear()));
         addKeyListener(new TigerKeyListener(storage.getTiger()));
-        setFocusable(true);
-        requestFocusInWindow();  // 창이 포커스를 받을 수 있도록 설정
-
-        // 윈도우 창 보이기
-        setVisible(true);
-
-        // 주기적으로 캐릭터 위치 업데이트
-        Timer timer = new Timer(16, e -> {
-                moveInteraction.updateCharacterPositions(bearLabel, tigerLabel);
-                repaint();
-        });
-        timer.start();
     }
 }
