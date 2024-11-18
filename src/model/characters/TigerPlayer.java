@@ -18,12 +18,20 @@ public class TigerPlayer extends Character {
 
     public TigerPlayer(int x, int y) throws IOException {
         super(x, y);
-        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
     }
 
     public ImageIcon getCurrentIcon() {
         return isFacingRight ? rightIcon : leftIcon;
+    }
+
+    public void setOppositeDirection() {
+        if(isFacingRight) {
+            isFacingRight = false;
+        } else {
+            isFacingRight = true;
+        }
     }
 
     public void resetTigerHp() {

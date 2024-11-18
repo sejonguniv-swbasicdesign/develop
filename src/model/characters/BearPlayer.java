@@ -17,8 +17,8 @@ public class BearPlayer extends Character {
 
     public BearPlayer(int x, int y) throws IOException {
         super(x, y);
-        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
     }
 
     public ImageIcon getCurrentIcon() {

@@ -1,44 +1,33 @@
-package view;
+package view.component.third;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import controller.MoveInteraction;
 import model.Storage;
 import actionlistener.BearKeyListener;
 import actionlistener.TigerKeyListener;
 
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-
-public class Stage extends JFrame {
+public class PlayerInitializerPanel extends JPanel {
 
     private JLabel bearLabel;
     private JLabel tigerLabel;
     private Storage storage;
     private MoveInteraction moveInteraction;
 
-    public Stage() {
+    public PlayerInitializerPanel() {
         moveInteraction = new MoveInteraction();
         storage = Storage.getInstance();
-
-        setTitle("Temporary Stage");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-        setFocusable(true);
-        requestFocusInWindow();
-        setVisible(true);
+        setOpaque(false);
 
         setLabel();
 
+        setFocusable(true);
+        requestFocusInWindow();
+
         // 주기적으로 캐릭터 위치 업데이트
         Timer timer = new Timer(16, e -> {
-                moveInteraction.updateCharacterPositions(bearLabel, tigerLabel);
-                repaint();
+            moveInteraction.updateCharacterPositions(bearLabel, tigerLabel);
+            repaint();
         });
 
         timer.start();
@@ -48,16 +37,22 @@ public class Stage extends JFrame {
         bearLabel = new JLabel();
         tigerLabel = new JLabel();
 
+        storage.getTiger().setOppositeDirection();
+
         bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
         tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
 
         // 초기 위치 설정
-        bearLabel.setBounds(storage.getBear().x, storage.getBear().y, 64, 64);
-        tigerLabel.setBounds(storage.getTiger().x, storage.getTiger().y, 64, 64);
+        storage.getBear().x = 300;
+        storage.getBear().y = 400;
+        storage.getTiger().x = 800;
+        storage.getTiger().y = 400;
+        bearLabel.setBounds(storage.getBear().x, storage.getBear().y, 100, 100);
+        tigerLabel.setBounds(storage.getTiger().x, storage.getTiger().y, 100, 100);
         add(bearLabel);
         add(tigerLabel);
 
-        // 키 리스너 추가 및 포커스 설정
+        // 키 리스너 추가
         addKeyListener(new BearKeyListener(storage.getBear()));
         addKeyListener(new TigerKeyListener(storage.getTiger()));
     }
