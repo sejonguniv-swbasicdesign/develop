@@ -81,4 +81,8 @@ public class Stage2BearKeyListener implements KeyListener {
             isRightPressed = false;
         }
     }
+
+    public boolean getBearPlayerJump(){
+        return hasJumped;
+    }
 }

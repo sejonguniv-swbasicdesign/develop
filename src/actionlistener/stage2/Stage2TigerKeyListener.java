@@ -93,6 +93,10 @@ public class Stage2TigerKeyListener implements KeyListener {
         this.isLadder = isOverlapping;
     }
 
+    public boolean getTigerPlayerJump(){
+        return hasJumped;
+    }
+
     private void smoothMove(TigerPlayer tigerPlayer, int targetX, int targetY) {
         Timer timer = new Timer(10, null); // 10ms 간격으로 실행
         timer.addActionListener(e -> {

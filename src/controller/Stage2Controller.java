@@ -223,6 +223,24 @@ public class Stage2Controller {
         timer.start();
     }
 
+    public void fallTigerPlayer(TigerPlayer player, int targetY){
+        Timer timer = new Timer(10, new ActionListener() {
+            int currentY = player.y;
+            int direction = targetY > currentY ? 1 : -1;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
+                    currentY += direction * 5; // 속도 조절을 위해 한번에 이동하는 거리 설정
+                    player.setPosition(player.x, currentY);
+                } else {
+                    ((Timer)e.getSource()).stop(); // 목표 위치에 도달하면 타이머 중지
+                }
+            }
+        });
+        timer.start();
+    }
+
     public void animateTigerPlayer(TigerPlayer player, int targetY){
         Timer timer = new Timer(10, new ActionListener() {
             @Override

@@ -40,7 +40,8 @@ public class Stage2Panel {
     private boolean isRockFalled = false;
     private boolean isFalling = false;
     private boolean isTigerPlayer=false;
-    private boolean isLadder=false;
+    private boolean isBearPlayerFalling = false;
+    private boolean isTigerPlayerFalling = false;
 
     private JLabel[] roads;
     private JLabel step1,step2;
@@ -188,7 +189,23 @@ public class Stage2Panel {
 
         }
 
+        if(!stage2BearKeyListener.getBearPlayerJump() && !isBearPlayerFalling &&!isLabelOverlappingRoads(bearPlayer, roads) && !isLabelOverlapping(bearPlayer, step2)){
+            isBearPlayerFalling = true;
+            stage2Controller.animateBearPlayer(storage.getBear(), storage.getBear().y + 200);
 
+            timer = new Timer(1000, e -> checkIfBearPlayerLanded());
+            timer.setRepeats(false);
+            timer.start();
+        }
+
+        if(!stage2TigerKeyListener.getTigerPlayerJump()  &&!isTigerPlayerFalling &&!isLabelOverlappingRoads(tigerPlayer, roads) && !isLabelOverlapping(tigerPlayer, step2) && !isLabelOverlapping(tigerPlayer,ladder) && !isLabelOverlapping(tigerPlayer,wall1) && !isLabelOverlapping(tigerPlayer,wall2)&& !isLabelOverlapping(tigerPlayer,wall3)){
+            isTigerPlayerFalling = true;
+            stage2Controller.fallTigerPlayer(storage.getTiger(), storage.getTiger().y + 200);
+
+            timer = new Timer(1000, e -> checkIfTigerPlayerLanded());
+            timer.setRepeats(false);
+            timer.start();
+        }
 
         //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
         stage2Controller.setTigerMonsterMovement(tigerMonster,rock1, rock2);
@@ -199,6 +216,17 @@ public class Stage2Panel {
     private void checkIfLanded() {
         if (isLabelOverlappingRoads(tigerMonster.getLabel(), roads)) {
             isFalling = false;
+        }
+    }
+
+    private void checkIfTigerPlayerLanded(){
+        if (isLabelOverlappingRoads(tigerPlayer, roads)) {
+            isTigerPlayerFalling = false;
+        }
+    }
+    private void checkIfBearPlayerLanded(){
+        if (isLabelOverlappingRoads(bearPlayer, roads)) {
+            isBearPlayerFalling = false;
         }
     }
     //몬스터 설정
