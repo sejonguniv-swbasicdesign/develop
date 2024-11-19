@@ -12,6 +12,8 @@ public class Stage2TigerKeyListener implements KeyListener {
     private boolean isDPressed = false;
     private boolean hasJumped = false;
 
+
+
     public Stage2TigerKeyListener(TigerPlayer tigerPlayer) {
         this.tigerPlayer = tigerPlayer;
     }

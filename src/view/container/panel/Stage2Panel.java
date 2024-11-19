@@ -2,6 +2,9 @@ package view.container.panel;
 
 import actionlistener.stage2.Stage2BearKeyListener;
 import actionlistener.stage2.Stage2TigerKeyListener;
+import model.dto.stage2.BlueButtonDto;
+import model.dto.stage2.RedButtonDto;
+import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
 import controller.Stage2Controller;
 import model.Storage;
@@ -34,6 +37,7 @@ public class Stage2Panel {
     private boolean isLeverPressed = false;
     private boolean isRockFalled = false;
     private boolean isFalling = false;
+    private boolean isChangeDirection = false;
 
     private JLabel[] roads;
     private JLabel step1,step2;
@@ -46,7 +50,7 @@ public class Stage2Panel {
 
     public Stage2Panel() {
 
-        stage2Controller = new Stage2Controller();
+        stage2Controller = new Stage2Controller(this);
     }
 
     public void setStage2Panel(Container container){
@@ -140,84 +144,28 @@ public class Stage2Panel {
     }
 
     private void setElementsInteraction(){
-        //redButton 발판 설정
-        if (!isRedButtonPressed && (isLabelOverlapping(floorButton1, tigerPlayer) || isLabelOverlapping(floorButton1, bearPlayer)|| isLabelOverlapping(floorButton1, rock1) || isLabelOverlapping(floorButton1, rock2))) {
-            isRedButtonPressed = true; // 위치 변경 후 상태 유지
-            if(isLabelOverlapping(rock1,step2)){
-                stage2Controller.animateElement(rock1, rock1.getY() + 200);
-            }
-            stage2Controller.animateElement(step2, step2.getY() + 200);
-        }
-        else if (isRedButtonPressed && !isLabelOverlapping(floorButton1, tigerPlayer) && !isLabelOverlapping(floorButton1, bearPlayer) && !isLabelOverlapping(floorButton1, rock1)&& !isLabelOverlapping(floorButton1, rock2)) {
 
-            if(isLabelOverlapping(bearPlayer,step2)){
-                stage2Controller.animateElement(bearPlayer, bearPlayer.getY() - 200);
-            }
-            if(isLabelOverlapping(rock1,step2)){
-                stage2Controller.animateElement(rock1, rock1.getY() - 200);
-            }
-
-            stage2Controller.animateElement(step2, step2.getY() -200);
-            isRedButtonPressed = false; // 상태 초기화
-        }
+        //redButton 발판 움직임 설정
+        isRedButtonPressed = stage2Controller.seRedButtonInteraction(new RedButtonDto(storage,floorButton1,tigerPlayer,bearPlayer,rock1,rock2,step2,isRedButtonPressed));
 
         //blueButton 벽 움직임 설정
-        if (!isBlueButtonPressed && (isLabelOverlapping(floorButton2, tigerPlayer) || isLabelOverlapping(floorButton2, bearPlayer))) {
-            isBlueButtonPressed = true; // 위치 변경 후 상태 유지
-            stage2Controller.animateElement(wall4, wall4.getY() - 120);
-
-        }
-        else if (isBlueButtonPressed && !isLabelOverlapping(floorButton2, tigerPlayer) && !isLabelOverlapping(floorButton2, bearPlayer)) {
-            isBlueButtonPressed = false; // 상태 초기화
-            stage2Controller.animateElement(wall4, wall4.getY() + 120);
-        }
+        isBlueButtonPressed = stage2Controller.setBlueButtonInteraction(new BlueButtonDto(isBlueButtonPressed,floorButton2,wall4,tigerPlayer,bearPlayer));
 
         //yellowButton 포탈 활성화 설정
-        if (!isYellowButtonPressed && (isLabelOverlapping(floorButton3, tigerPlayer) || isLabelOverlapping(floorButton3, bearPlayer))) {
-            isYellowButtonPressed = true;
-            ImageIcon originalIcon = new ImageIcon("src/assets/image/stage2/active_portal.png");
-            portal1.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(120,120, Image.SCALE_SMOOTH)));
-            portal2.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(120,120, Image.SCALE_SMOOTH)));
-        }
-        else if (isYellowButtonPressed && !isLabelOverlapping(floorButton3, tigerPlayer) && !isLabelOverlapping(floorButton3, bearPlayer)) {
-            isYellowButtonPressed = false;
-            ImageIcon originalIcon = new ImageIcon("src/assets/image/stage2/nonactive_portal.png");
-            portal1.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(120,120, Image.SCALE_SMOOTH)));
-            portal2.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(120,120, Image.SCALE_SMOOTH)));
-        }
+        isYellowButtonPressed = stage2Controller.setYellowButtonInteraction(new YellowButtonDto(isYellowButtonPressed, floorButton3,tigerPlayer,bearPlayer,portal1,portal2));
 
         //레버로 발판 움직임 설정
-        if(!isLeverPressed && (isLabelOverlapping(lever, tigerPlayer) || isLabelOverlapping(lever, bearPlayer))){
-            isLeverPressed = true;
-            ImageIcon originalIcon = new ImageIcon("src/assets/image/stage2/lever_down.png");
-            lever.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(40,40, Image.SCALE_SMOOTH)));
-            stage2Controller.animateElement(step1, step1.getY() - 200);
-        }
+        isLeverPressed = stage2Controller.setLeverInteraction(isLeverPressed, lever,tigerPlayer,bearPlayer,step1);
 
         //돌 떨어짐 구현
-        if(!isLabelOverlapping(rock2,roads[8]) && !isRockFalled){
-            isRockFalled = true;
-            stage2Controller.animateElement(rock2, rock2.getY() + 200);
-        }
+        isRockFalled = stage2Controller.setRockFallingInteraction(rock2, roads,isRockFalled);
 
         //돌, 곰 플레이어 상호작용 설정
-        if (isLabelOverlapping(rock1, bearPlayer)) {
-            if (storage.getBear().isFacingRight) {
-                // 곰이 오른쪽을 바라보면 상자도 오른쪽으로 밀기
-                rock1.setLocation(rock1.getX() + 10, rock1.getY());  // 10만큼 오른쪽으로 이동
-            } else {
-                // 곰이 왼쪽을 바라보면 상자도 왼쪽으로 밀기
-                rock1.setLocation(rock1.getX() - 10, rock1.getY());  // 10만큼 왼쪽으로 이동
-            }
-        }
-        if (isLabelOverlapping(rock2, bearPlayer)) {
-            if (storage.getBear().isFacingRight) {
-                // 곰이 오른쪽을 바라보면 상자도 오른쪽으로 밀기
-                rock2.setLocation(rock2.getX() + 10, rock2.getY());  // 10만큼 오른쪽으로 이동
-            } else {
-                // 곰이 왼쪽을 바라보면 상자도 왼쪽으로 밀기
-                rock2.setLocation(rock2.getX() - 10, rock2.getY());  // 10만큼 왼쪽으로 이동
-            }
+        stage2Controller.setRockInteraction(storage,rock1,bearPlayer);
+        stage2Controller.setRockInteraction(storage,rock2,bearPlayer);
+
+        if(isLabelOverlapping(ladder,tigerPlayer)){
+            //stage2Controller.animateElement(tigerPlayer, tigerPlayer.getY() - 200);
         }
 
         if (!isFalling &&!isLabelOverlappingRoads(tigerMonster.getLabel(), roads) && !isLabelOverlapping(tigerMonster.getLabel(), step2)) {
@@ -229,6 +177,12 @@ public class Stage2Panel {
             timer.start();
 
         }
+
+        //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
+        stage2Controller.setTigerMonsterMovement(tigerMonster,rock1, rock2);
+
+        //호랑이 몬스터가 출구에 도착했을때 삭제
+        stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
     }
 
     private void checkIfLanded() {
@@ -258,7 +212,7 @@ public class Stage2Panel {
         portal1 = createScaledLabel("src/assets/image/stage2/nonactive_portal.png", 120, 120, 500, 420);
         portal2 = createScaledLabel("src/assets/image/stage2/nonactive_portal.png", 120, 120, 950, 620);
 
-        rock1 = createScaledLabel("src/assets/image/stage2/rock.png",60,60,650,680);
+        rock1 = createScaledLabel("src/assets/image/stage2/rock.png",60,60,580,680);
         rock2 = createScaledLabel("src/assets/image/stage2/rock.png",60,60,200,480);
         bigRock = createScaledLabel("src/assets/image/stage2/gray_stone.png",100,100,1300,240);
 
@@ -303,5 +257,6 @@ public class Stage2Panel {
         panel.setComponentZOrder(label, 0);
         return label;
     }
+
 
 }

@@ -28,16 +28,12 @@ public abstract class Character {
 
     public abstract void move(int x, int y);
 
-    public int getX(){
-        return x;
-    }
+
     public void setPosition(int x, int y){
         this.x = x;
         this.y = y;
     }
-    public int getY(){
-        return y;
-    }
+
 
     public void jumpLeft(int deltaX, int deltaY) {
         int targetX = this.x + deltaX;

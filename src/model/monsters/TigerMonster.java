@@ -91,6 +91,39 @@ public class TigerMonster extends Monster {
     }
     }
 
+    // 방향 수동 변경 메서드
+    public void changeDirection(int newDirection) {
+        if (newDirection == 1 || newDirection == -1) {
+            direction = newDirection;
+            updateMonsterIcon();
+            Timer smoothMoveTimer = new Timer(30, null); // 30ms 간격으로 실행
+            int targetDistance = 20 * direction; // 이동할 목표 거리
+            int steps = 10; // 이동 단계를 설정
+            int distancePerStep = targetDistance / steps; // 단계별 이동 거리
+            int[] currentStep = {0}; // 현재 단계
+
+            smoothMoveTimer.addActionListener(e -> {
+                // 단계별로 이동
+                if (currentStep[0] < steps) {
+                    super.x += distancePerStep; // x 좌표를 단계별로 증가/감소
+                    monsterLabel.setLocation(super.x, monsterLabel.getY());
+                    panel.repaint();
+                    currentStep[0]++;
+                } else {
+                    // 모든 단계가 완료되면 타이머 중지
+                    ((Timer) e.getSource()).stop();
+                }
+            });
+
+            smoothMoveTimer.start();
+        } else {
+            throw new IllegalArgumentException("Direction must be 1 (right) or -1 (left).");
+        }
+    }
+
+    public int getDirection(){
+        return direction;
+    }
     public JLabel getLabel() {
         return monsterLabel;
     }
