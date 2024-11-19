@@ -26,6 +26,8 @@ public class Stage2Panel {
     private int panelHeight = 1000;
     private TigerMonster tigerMonster;
     private Stage2Controller stage2Controller;
+    private Stage2BearKeyListener stage2BearKeyListener;
+    private Stage2TigerKeyListener stage2TigerKeyListener;
 
     private JLabel bearPlayer;
     private JLabel tigerPlayer;
@@ -37,7 +39,8 @@ public class Stage2Panel {
     private boolean isLeverPressed = false;
     private boolean isRockFalled = false;
     private boolean isFalling = false;
-    private boolean isChangeDirection = false;
+    private boolean isTigerPlayer=false;
+    private boolean isLadder=false;
 
     private JLabel[] roads;
     private JLabel step1,step2;
@@ -121,8 +124,11 @@ public class Stage2Panel {
         panel.setComponentZOrder(bearPlayer, 0);
         panel.setComponentZOrder(tigerPlayer, 0);
 
-        container.addKeyListener(new Stage2BearKeyListener(storage.getBear()));
-        container.addKeyListener(new Stage2TigerKeyListener(storage.getTiger()));
+        stage2BearKeyListener = new Stage2BearKeyListener(storage.getBear());
+        stage2TigerKeyListener = new Stage2TigerKeyListener(storage.getTiger());
+
+        container.addKeyListener(stage2BearKeyListener);
+        container.addKeyListener(stage2TigerKeyListener);
         container.setFocusable(true);
         container.requestFocusInWindow();
 
@@ -164,9 +170,13 @@ public class Stage2Panel {
         stage2Controller.setRockInteraction(storage,rock1,bearPlayer);
         stage2Controller.setRockInteraction(storage,rock2,bearPlayer);
 
-        if(isLabelOverlapping(ladder,tigerPlayer)){
-            //stage2Controller.animateElement(tigerPlayer, tigerPlayer.getY() - 200);
+        if (isLabelOverlapping(ladder, tigerPlayer)) {
+            stage2TigerKeyListener.updateLadderState(true);
+        } else {
+            stage2TigerKeyListener.updateLadderState(false);
         }
+
+        isTigerPlayer = stage2Controller.setTigerPlayerWallInteraction(wall1,wall2,wall3, tigerPlayer,storage,isTigerPlayer);
 
         if (!isFalling &&!isLabelOverlappingRoads(tigerMonster.getLabel(), roads) && !isLabelOverlapping(tigerMonster.getLabel(), step2)) {
             isFalling = true;
@@ -178,9 +188,10 @@ public class Stage2Panel {
 
         }
 
+
+
         //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
         stage2Controller.setTigerMonsterMovement(tigerMonster,rock1, rock2);
-
         //호랑이 몬스터가 출구에 도착했을때 삭제
         stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
     }
@@ -197,9 +208,9 @@ public class Stage2Panel {
     }
 
     private void setElements(){
-        wall1 = createScaledLabel("src/assets/image/stage2/wall.png",50,120,1230,530);
-        wall2 = createScaledLabel("src/assets/image/stage2/wall.png",50,120,1000,330);
-        wall3 = createScaledLabel("src/assets/image/stage2/wall.png",50,120,595,130);
+        wall1 = createScaledLabel("src/assets/image/stage2/wall.png",50,100,1190,550);
+        wall2 = createScaledLabel("src/assets/image/stage2/wall.png",50,100,1000,350);
+        wall3 = createScaledLabel("src/assets/image/stage2/wall.png",50,100,595,150);
         wall4 = createScaledLabel("src/assets/image/stage2/wall.png",50,120,800,0);
 
         floorButton1 = createScaledLabel("src/assets/image/stage2/red_floor_button.png", 30, 30, 80, 710);

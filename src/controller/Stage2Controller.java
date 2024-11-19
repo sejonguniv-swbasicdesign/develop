@@ -2,6 +2,7 @@ package controller;
 
 import model.Storage;
 import model.characters.BearPlayer;
+import model.characters.TigerPlayer;
 import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
@@ -148,19 +149,37 @@ public class Stage2Controller {
         }
     }
 
-
-
-    private boolean isLabelOverlappingRoads(JLabel label, JLabel[] roads){
-        boolean isOverlapped = false;
-        for (JLabel road : roads) {
-            if (isLabelOverlapping(road, label)) {
-                isOverlapped = true;
-                break;
-            }
+    public boolean setTigerPlayerWallInteraction(JLabel wall1,JLabel wall2,JLabel wall3, JLabel tigerPlayer, Storage storage, boolean isTigerPlayer){
+        if(!isTigerPlayer && isLabelOverlapping(wall1,tigerPlayer)){
+            isTigerPlayer = true;
+            storage.getTiger().stopCurrentAction();
+            animateTigerPlayer(storage.getTiger(), 480);
         }
-        return isOverlapped;
+        else if(isTigerPlayer && !isLabelOverlapping(wall1,tigerPlayer)){
+            isTigerPlayer = false;
+        }
 
+        if(!isTigerPlayer && isLabelOverlapping(wall2,tigerPlayer)){
+            isTigerPlayer = true;
+            storage.getTiger().stopCurrentAction();
+            animateTigerPlayer(storage.getTiger(), 280);
+        }
+        else if(isTigerPlayer && !isLabelOverlapping(wall2,tigerPlayer)){
+            isTigerPlayer = false;
+        }
+
+        if(!isTigerPlayer && isLabelOverlapping(wall3,tigerPlayer)){
+            isTigerPlayer = true;
+            storage.getTiger().stopCurrentAction();
+            animateTigerPlayer(storage.getTiger(), 80);
+        }
+        else if(isTigerPlayer && !isLabelOverlapping(wall3,tigerPlayer)){
+            isTigerPlayer = false;
+        }
+
+        return isTigerPlayer;
     }
+
 
     private boolean isLabelOverlapping(JLabel label1, JLabel label2) {
         Rectangle bounds1 = label1.getBounds();
@@ -198,6 +217,25 @@ public class Stage2Controller {
                     player.setPosition(player.x, currentY);
                 } else {
                     ((Timer)e.getSource()).stop(); // 목표 위치에 도달하면 타이머 중지
+                }
+            }
+        });
+        timer.start();
+    }
+
+    public void animateTigerPlayer(TigerPlayer player, int targetY){
+        Timer timer = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentY = player.y; // 현재 y 좌표 가져오기
+                int step = 5; // 이동 속도 (한번에 이동할 거리)
+
+                if (currentY > targetY) {
+                    // 목표보다 현재 위치가 아래에 있으면 위로 이동
+                    player.setPosition(player.x, Math.max(currentY - step, targetY));
+                } else {
+                    // 목표 위치에 도달하면 타이머 중지
+                    ((Timer) e.getSource()).stop();
                 }
             }
         });
