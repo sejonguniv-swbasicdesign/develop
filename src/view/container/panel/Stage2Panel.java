@@ -177,8 +177,31 @@ public class Stage2Panel {
             stage2TigerKeyListener.updateLadderState(false);
         }
 
+        if(isYellowButtonPressed  && isLabelOverlapping(portal1,bearPlayer)){
+            stage2BearKeyListener.updatePortal1State(true);
+        } else {
+            stage2BearKeyListener.updatePortal1State(false);
+        }
+
+        if(isYellowButtonPressed  && isLabelOverlapping(portal2,bearPlayer)){
+            stage2BearKeyListener.updatePortal2State(true);
+        } else {
+            stage2BearKeyListener.updatePortal2State(false);
+        }
+
         isTigerPlayer = stage2Controller.setTigerPlayerWallInteraction(wall1,wall2,wall3, tigerPlayer,storage,isTigerPlayer);
 
+        //호랑이몬스터, 플레이어들 떨어짐 설정
+        setFalling();
+
+        //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
+        stage2Controller.setTigerMonsterMovement(tigerMonster,rock1, rock2);
+        //호랑이 몬스터가 출구에 도착했을때 삭제
+        stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
+    }
+
+    //호랑이몬스터, 플레이어들 떨어짐 설정(Controller로 분리 실패)
+    private void setFalling(){
         if (!isFalling &&!isLabelOverlappingRoads(tigerMonster.getLabel(), roads) && !isLabelOverlapping(tigerMonster.getLabel(), step2)) {
             isFalling = true;
             stage2Controller.animateElement(tigerMonster.getLabel(), tigerMonster.getLabel().getY() + 200);
@@ -206,11 +229,6 @@ public class Stage2Panel {
             timer.setRepeats(false);
             timer.start();
         }
-
-        //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
-        stage2Controller.setTigerMonsterMovement(tigerMonster,rock1, rock2);
-        //호랑이 몬스터가 출구에 도착했을때 삭제
-        stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
     }
 
     private void checkIfLanded() {

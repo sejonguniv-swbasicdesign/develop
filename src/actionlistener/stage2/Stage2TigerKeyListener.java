@@ -52,11 +52,13 @@ public class Stage2TigerKeyListener implements KeyListener {
         if (isWPressed && isAPressed && !hasJumped) {
             tigerPlayer.jumpLeft(-130, 60);
             hasJumped = true; // 점프가 발생했음을 표시
+            startJumpCooldown();
         }
         // W와 D가 동시에 눌렸고 점프가 발생하지 않은 경우 오른쪽으로 점프
         else if (isWPressed && isDPressed && !hasJumped) {
             tigerPlayer.jumpRight(130, 60);
             hasJumped = true; // 점프가 발생했음을 표시
+            startJumpCooldown();
         }
         // 다른 키 입력 처리
         else {
@@ -78,7 +80,6 @@ public class Stage2TigerKeyListener implements KeyListener {
         // 키가 해제되면 상태를 업데이트
         if (key == KeyEvent.VK_W) {
             isWPressed = false;
-            hasJumped = false; // W 키가 해제되면 점프 가능하도록 리셋
         }
         if (key == KeyEvent.VK_A) {
             isAPressed = false;
@@ -116,5 +117,10 @@ public class Stage2TigerKeyListener implements KeyListener {
             }
         });
         timer.start();
+    }
+    private void startJumpCooldown() {
+        Timer jumpCooldownTimer = new Timer(830, e -> hasJumped = false); // 500ms 후에 hasJumped를 false로 설정
+        jumpCooldownTimer.setRepeats(false); // 한 번만 실행되도록 설정
+        jumpCooldownTimer.start();
     }
 }
