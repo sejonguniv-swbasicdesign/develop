@@ -51,7 +51,7 @@ public class StageController {
             hpPanel.add(hpLabels[i]);
         }
 
-        layeredPane.add(hpPanel, JLayeredPane.DRAG_LAYER); // 더 높은 레이어에 추가
+        layeredPane.add(hpPanel, JLayeredPane.POPUP_LAYER); // 더 높은 레이어에 추가
     }
 
     // HP가 감소할 때 하트 이미지를 업데이트
@@ -72,26 +72,31 @@ public class StageController {
 
     // 스테이지 종료 처리
     private void endStage() {
-        if (overlayPanel != null) return; // 이미 종료 상태라면 중복 처리 방지
+        if (overlayPanel != null) return;
 
         overlayPanel = new JPanel();
-        overlayPanel.setBounds(0, 0, stageFrame.getWidth(), stageFrame.getHeight());
-        overlayPanel.setBackground(new Color(0, 0, 0, 150)); // 어두운 투명 배경
-        overlayPanel.setLayout(new GridBagLayout());
+        overlayPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+        overlayPanel.setBackground(new Color(0, 0, 0, 150));
+        overlayPanel.setLayout(new GridBagLayout()); // 중앙 정렬
+        overlayPanel.setOpaque(true);
 
         JButton restartButton = new JButton("다시 시작하시겠습니까?");
         restartButton.setFont(new Font("Arial", Font.BOLD, 16));
+        restartButton.setForeground(Color.BLACK);
+        restartButton.setBackground(new Color(50, 50, 50));
+        restartButton.setFocusPainted(false);
+
         restartButton.addActionListener(e -> restartStage());
         overlayPanel.add(restartButton);
 
-        layeredPane.add(overlayPanel, JLayeredPane.MODAL_LAYER);
+        layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER);
         layeredPane.repaint();
     }
 
     // 스테이지를 재시작
     private void restartStage() {
-        storage.resetSharedHp();
-        layeredPane.remove(overlayPanel);
+        storage.resetSharedHp(); // 공유 HP 초기화
+        layeredPane.remove(overlayPanel); // 오버레이 제거
         overlayPanel = null;
         initializeHpDisplay();
         layeredPane.repaint();
