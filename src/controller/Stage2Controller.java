@@ -1,5 +1,7 @@
 package controller;
 
+import actionlistener.stage2.Stage2BearKeyListener;
+import actionlistener.stage2.Stage2TigerKeyListener;
 import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
@@ -7,21 +9,28 @@ import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
-import view.container.panel.Stage2Panel;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TimerTask;
+
+
 
 public class Stage2Controller {
 
-    private Stage2Panel stage2Panel;
-    private boolean isFalling;
-    private Timer timer;
+    private boolean isLeverPressed;
+    private JLabel lever; // 레버
+    private JLabel tigerPlayer; // 호랑이 플레이어
+    private JLabel bearPlayer; // 곰 플레이어
+    private JLabel step1; // 발판
+    private Storage storage;
 
-    public Stage2Controller(Stage2Panel stage2Panel){
-        this.stage2Panel = stage2Panel;
+
+    public Stage2Controller(){
+
     }
 
     public boolean seRedButtonInteraction(RedButtonDto redButtonDto){
@@ -105,17 +114,6 @@ public class Stage2Controller {
         return isYellowButtonPressed;
     }
 
-    public boolean setLeverInteraction(boolean isLeverPressed,JLabel lever,JLabel tigerPlayer,JLabel bearPlayer,JLabel step1){
-        if(!isLeverPressed && (isLabelOverlapping(lever, tigerPlayer) || isLabelOverlapping(lever, bearPlayer))){
-            isLeverPressed = true;
-            ImageIcon originalIcon = new ImageIcon("src/assets/image/stage2/lever_down.png");
-            lever.setIcon(new ImageIcon(originalIcon.getImage().getScaledInstance(40,40, Image.SCALE_SMOOTH)));
-            animateElement(step1, step1.getY() - 200);
-        }
-        return isLeverPressed;
-    }
-
-
 
     public boolean setRockFallingInteraction(JLabel rock2, JLabel[] roads, boolean isRockFalled){
         if(!isLabelOverlapping(rock2,roads[8]) && !isRockFalled){
@@ -178,6 +176,16 @@ public class Stage2Controller {
         }
 
         return isTigerPlayer;
+    }
+
+    public void setPortalInteraction(boolean isYellowButtonPressed, JLabel portal1, JLabel portal2, JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener){
+        stage2BearKeyListener.updatePortal1State(isYellowButtonPressed && isLabelOverlapping(portal1, bearPlayer));
+
+        stage2BearKeyListener.updatePortal2State(isYellowButtonPressed && isLabelOverlapping(portal2, bearPlayer));
+    }
+
+    public void setLadderInteraction(JLabel ladder, JLabel tigerPlayer, Stage2TigerKeyListener stage2TigerKeyListener){
+        stage2TigerKeyListener.updateLadderState(isLabelOverlapping(ladder, tigerPlayer));
     }
 
 
