@@ -3,6 +3,7 @@ package controller;
 import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
+import view.container.panel.third.TransparentPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class StageController {
     private BearPlayer bearPlayer;
     private TigerPlayer tigerPlayer;
     private Storage storage;
+    private TransparentPanel transparentPanel;
 
     public StageController(JFrame stageFrame, JLayeredPane layeredPane) {
         storage = Storage.getInstance();
@@ -72,13 +74,11 @@ public class StageController {
 
     // 스테이지 종료 처리
     private void endStage() {
-        if (overlayPanel != null) return;
+        if (overlayPanel != null) return; // 이미 종료 상태라면 중복 처리 방지
 
-        overlayPanel = new JPanel();
+        overlayPanel = new TransparentPanel(new Color(0, 0, 0)); // 반투명 검정 배경
         overlayPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
-        overlayPanel.setBackground(new Color(0, 0, 0, 150));
         overlayPanel.setLayout(new GridBagLayout()); // 중앙 정렬
-        overlayPanel.setOpaque(true);
 
         JButton restartButton = new JButton("다시 시작하시겠습니까?");
         restartButton.setFont(new Font("Arial", Font.BOLD, 16));
@@ -89,7 +89,8 @@ public class StageController {
         restartButton.addActionListener(e -> restartStage());
         overlayPanel.add(restartButton);
 
-        layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER);
+        layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER); // 최상위 레이어에 추가
+        layeredPane.repaint();
         layeredPane.repaint();
     }
 
