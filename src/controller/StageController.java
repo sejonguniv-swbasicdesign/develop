@@ -10,7 +10,7 @@ import java.awt.*;
 public class StageController {
     private JFrame stageFrame;
     private JPanel overlayPanel;
-    private JLabel[] hpLabels;
+    private JLabel[] hpLabels; // 하트를 표시할 라벨 배열
     private ImageIcon fullHeartIcon;
     private ImageIcon emptyHeartIcon;
     private BearPlayer bearPlayer;
@@ -27,9 +27,9 @@ public class StageController {
 
     // 하트 이미지를 초기화
     private void initializeHpDisplay() {
-        fullHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/component/하트.png")
+        fullHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/heart_full.png")
                 .getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-        emptyHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/component/heart.jpg")
+        emptyHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/heart_empty.png")
                 .getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         JPanel hpPanel = new JPanel();
@@ -46,8 +46,9 @@ public class StageController {
         stageFrame.add(hpPanel, JLayeredPane.PALETTE_LAYER);
     }
 
+    // HP가 감소할 때 하트 이미지를 업데이트
     public void updateHpDisplay() {
-        int remainingHp = Math.min(3, Math.max(0, bearPlayer.hp + tigerPlayer.hp));
+        int remainingHp = Math.min(3, Math.max(0, bearPlayer.hp + tigerPlayer.hp)); // 두 플레이어의 HP 합산
         for (int i = 0; i < 3; i++) {
             if (i < remainingHp) {
                 hpLabels[i].setIcon(fullHeartIcon);
@@ -61,6 +62,7 @@ public class StageController {
         }
     }
 
+    // 스테이지 종료 처리
     private void endStage() {
         overlayPanel = new JPanel();
         overlayPanel.setBounds(0, 0, stageFrame.getWidth(), stageFrame.getHeight());
@@ -76,14 +78,15 @@ public class StageController {
         stageFrame.repaint();
     }
 
+    // 스테이지를 재시작
     private void restartStage() {
         Storage storage = Storage.getInstance();
-        bearPlayer.hp = 3;
+        bearPlayer.hp = 3; // 플레이어 HP 초기화
         tigerPlayer.hp = 3;
 
-        stageFrame.remove(overlayPanel);
+        stageFrame.remove(overlayPanel); // 오버레이 제거
         stageFrame.repaint();
 
-        initializeHpDisplay();
+        initializeHpDisplay(); // HP 표시 초기화
     }
 }

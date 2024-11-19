@@ -1,5 +1,6 @@
 package view.container.frame.third;
 
+import controller.StageController;
 import view.component.third.BossInitializerPanel;
 import view.component.third.PlayerInitializerPanel;
 import controller.BossAttackController;
@@ -22,18 +23,19 @@ public class InitBossStage extends JFrame {
     private JLabel cloudLabel;
     private PlayerInitializerPanel playerInitializerPanel;
     private BossAttackController bossAttackController;
+    private StageController stageController;
     private Boss boss;
 
     public InitBossStage() {
         frameSize = new Dimension(1300, 800);
         initializeGameObjects();
         playerInitializerPanel = new PlayerInitializerPanel();
+        stageController = new StageController(this);
         setFrame();
     }
 
     private void initializeGameObjects() {
         try {
-            // 보스 객체만 생성 (플레이어는 Storage에서 가져옴)
             boss = new Boss(500, 550, -10);
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,7 +71,13 @@ public class InitBossStage extends JFrame {
 
         // 보스 공격 컨트롤러 초기화
         Storage storage = Storage.getInstance();
-        bossAttackController = new BossAttackController(boss, storage.getBear(), storage.getTiger(), layeredPane);
+        bossAttackController = new BossAttackController(
+                boss,
+                storage.getBear(),
+                storage.getTiger(),
+                layeredPane,
+                stageController
+        );
     }
 
     private void setBackgroundImage() {

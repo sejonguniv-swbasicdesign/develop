@@ -14,10 +14,12 @@ public class BossAttackController {
     private TigerPlayer tigerPlayer;
     private Boss boss;
     private int state; // 0: 번개 공격, 1: 다른 공격, 2: 기절
+    private StageController stageController;
 
-    public BossAttackController(Boss boss, BearPlayer bearPlayer, TigerPlayer tigerPlayer, JLayeredPane panel) {
+    public BossAttackController(Boss boss, BearPlayer bearPlayer, TigerPlayer tigerPlayer, JLayeredPane panel, StageController stageController) {
         this.boss = boss;
         this.panel = panel;
+        this.stageController = stageController;
 
         // Storage에서 플레이어 객체 가져오기
         Storage storage = Storage.getInstance();
