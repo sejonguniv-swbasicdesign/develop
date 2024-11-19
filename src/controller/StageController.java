@@ -4,20 +4,27 @@ import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class StageController {
     private JFrame stageFrame;
-    private JPanel overlayPanel;
+    private JLayeredPane layeredPane;
     private JLabel[] hpLabels; // 하트를 표시할 라벨 배열
     private ImageIcon fullHeartIcon;
     private ImageIcon emptyHeartIcon;
+    private JPanel overlayPanel; // 재시작 패널
     private BearPlayer bearPlayer;
     private TigerPlayer tigerPlayer;
+    private Storage storage;
 
-    public StageController(JFrame stageFrame) {
+    public StageController(JFrame stageFrame, JLayeredPane layeredPane) {
+        storage = Storage.getInstance();
         this.stageFrame = stageFrame;
+        this.layeredPane = layeredPane;
         Storage storage = Storage.getInstance();
         this.bearPlayer = storage.getBear();
         this.tigerPlayer = storage.getTiger();
@@ -25,45 +32,48 @@ public class StageController {
         initializeHpDisplay();
     }
 
-    // 하트 이미지를 초기화
+    // HP 이미지를 초기화하고 화면에 표시
     private void initializeHpDisplay() {
-        fullHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/heart_full.png")
+        fullHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/component/하트.png")
                 .getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-        emptyHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/heart_empty.png")
+        emptyHeartIcon = new ImageIcon(new ImageIcon("src/assets/image/component/heart.jpg")
                 .getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         JPanel hpPanel = new JPanel();
-        hpPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        hpPanel.setLayout(null);
         hpPanel.setBounds(10, 10, 150, 40); // 화면 상단 왼쪽
-        hpPanel.setOpaque(false);
+        hpPanel.setOpaque(false); // 배경 투명
 
         hpLabels = new JLabel[3];
         for (int i = 0; i < 3; i++) {
             hpLabels[i] = new JLabel(fullHeartIcon);
+            hpLabels[i].setBounds(i * 40, 0, 30, 30); // 하트 위치 설정
             hpPanel.add(hpLabels[i]);
         }
 
-        stageFrame.add(hpPanel, JLayeredPane.PALETTE_LAYER);
+        layeredPane.add(hpPanel, JLayeredPane.DRAG_LAYER); // 더 높은 레이어에 추가
     }
 
     // HP가 감소할 때 하트 이미지를 업데이트
     public void updateHpDisplay() {
-        int remainingHp = Math.min(3, Math.max(0, bearPlayer.hp + tigerPlayer.hp)); // 두 플레이어의 HP 합산
+        int sharedHp = storage.getSharedHp(); // 공유 HP 가져오기
         for (int i = 0; i < 3; i++) {
-            if (i < remainingHp) {
+            if (i < sharedHp) {
                 hpLabels[i].setIcon(fullHeartIcon);
             } else {
                 hpLabels[i].setIcon(emptyHeartIcon);
             }
         }
 
-        if (remainingHp <= 0) {
-            endStage(); // HP가 0이면 스테이지 종료
+        if (sharedHp <= 0) {
+            endStage(); // 공유 HP가 0이면 스테이지 종료
         }
     }
 
     // 스테이지 종료 처리
     private void endStage() {
+        if (overlayPanel != null) return; // 이미 종료 상태라면 중복 처리 방지
+
         overlayPanel = new JPanel();
         overlayPanel.setBounds(0, 0, stageFrame.getWidth(), stageFrame.getHeight());
         overlayPanel.setBackground(new Color(0, 0, 0, 150)); // 어두운 투명 배경
@@ -74,19 +84,16 @@ public class StageController {
         restartButton.addActionListener(e -> restartStage());
         overlayPanel.add(restartButton);
 
-        stageFrame.add(overlayPanel, JLayeredPane.MODAL_LAYER);
-        stageFrame.repaint();
+        layeredPane.add(overlayPanel, JLayeredPane.MODAL_LAYER);
+        layeredPane.repaint();
     }
 
     // 스테이지를 재시작
     private void restartStage() {
-        Storage storage = Storage.getInstance();
-        bearPlayer.hp = 3; // 플레이어 HP 초기화
-        tigerPlayer.hp = 3;
-
-        stageFrame.remove(overlayPanel); // 오버레이 제거
-        stageFrame.repaint();
-
-        initializeHpDisplay(); // HP 표시 초기화
+        storage.resetSharedHp();
+        layeredPane.remove(overlayPanel);
+        overlayPanel = null;
+        initializeHpDisplay();
+        layeredPane.repaint();
     }
 }

@@ -28,9 +28,11 @@ public class InitBossStage extends JFrame {
 
     public InitBossStage() {
         frameSize = new Dimension(1300, 800);
+        setLayout(null);
         initializeGameObjects();
         playerInitializerPanel = new PlayerInitializerPanel();
-        stageController = new StageController(this);
+        layeredPane = new JLayeredPane(); // JLayeredPane 생성
+        stageController = new StageController(this, layeredPane);
         setFrame();
     }
 
@@ -54,7 +56,6 @@ public class InitBossStage extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
 
-        layeredPane = new JLayeredPane();
         layeredPane.setBounds(0, 0, frameSize.width, frameSize.height);
         layeredPane.setPreferredSize(frameSize);
 

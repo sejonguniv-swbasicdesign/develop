@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.Storage;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -35,9 +37,9 @@ public class TigerPlayer extends Character {
     }
 
     public void decreaseHp(int damage) {
-        this.hp -= damage;
-        if (this.hp < 0) {
-            this.hp = 0;
+        Storage storage = Storage.getInstance();
+        for (int i = 0; i < damage; i++) {
+            storage.decreaseSharedHp(); // 공유 HP 감소
         }
     }
 
