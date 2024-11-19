@@ -1,5 +1,6 @@
 package controller;
 
+import model.PlayerPosition;
 import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
@@ -74,9 +75,9 @@ public class StageController {
 
     // 스테이지 종료 처리
     private void endStage() {
-        if (overlayPanel != null) return; // 이미 종료 상태라면 중복 처리 방지
+        if (overlayPanel != null) return;
 
-        overlayPanel = new TransparentPanel(new Color(0, 0, 0)); // 반투명 검정 배경
+        overlayPanel = new TransparentPanel(new Color(0, 0, 0));
         overlayPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
         overlayPanel.setLayout(new GridBagLayout()); // 중앙 정렬
 
@@ -96,8 +97,14 @@ public class StageController {
 
     // 스테이지를 재시작
     private void restartStage() {
-        storage.resetSharedHp(); // 공유 HP 초기화
-        layeredPane.remove(overlayPanel); // 오버레이 제거
+        storage.resetSharedHp();
+
+        storage.getBear().x = PlayerPosition.BEAR_START.getX();
+        storage.getBear().y = PlayerPosition.BEAR_START.getY();
+        storage.getTiger().x = PlayerPosition.TIGER_START.getX();
+        storage.getTiger().y = PlayerPosition.TIGER_START.getY();
+
+        layeredPane.remove(overlayPanel);
         overlayPanel = null;
         initializeHpDisplay();
         layeredPane.repaint();

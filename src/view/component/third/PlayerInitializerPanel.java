@@ -2,6 +2,7 @@ package view.component.third;
 
 import javax.swing.*;
 import controller.MoveInteraction;
+import model.PlayerPosition;
 import model.Storage;
 import actionlistener.BearKeyListener;
 import actionlistener.TigerKeyListener;
@@ -42,11 +43,11 @@ public class PlayerInitializerPanel extends JPanel {
         bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
         tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
 
-        // 초기 위치 설정
-        storage.getBear().x = 300;
-        storage.getBear().y = 400;
-        storage.getTiger().x = 800;
-        storage.getTiger().y = 400;
+        storage.getBear().x = PlayerPosition.BEAR_START.getX();
+        storage.getBear().y = PlayerPosition.BEAR_START.getY();
+        storage.getTiger().x = PlayerPosition.TIGER_START.getX();
+        storage.getTiger().y = PlayerPosition.TIGER_START.getY();
+
         bearLabel.setBounds(storage.getBear().x, storage.getBear().y, 100, 100);
         tigerLabel.setBounds(storage.getTiger().x, storage.getTiger().y, 100, 100);
         add(bearLabel);
