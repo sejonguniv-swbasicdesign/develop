@@ -12,12 +12,14 @@ import javax.imageio.ImageIO;
 
 public class RockMonster {
 	private int x, y;
+	private int hp;
 	private Random random = new Random();
     private Image monsterImage;
-    private String monsterimagePath = "./src/assets/image/신산.png"; 
+    private String monsterimagePath = "./src/assets/image/산신.png"; 
 	public RockMonster(int x, int y) {
 		this.x = x;
 		this.y = y;
+		hp=2;
         try {
             monsterImage = ImageIO.read(new File(monsterimagePath));
             monsterImage = monsterImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
@@ -27,9 +29,23 @@ public class RockMonster {
    
         }
 	}
-
+	public int getX() {
+		return x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setHp(int x) {
+		hp+=x;
+		
+	}
+	public int getHp() {
+		return hp;
+		
+	}
+	
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
-		if (random.nextInt(50) == 0) { // Throw a rock occasionally
+		if (random.nextInt(50) == 0) { 
 			rocks.add(new RocksOfMonsters(x, y, random.nextInt(360)));
 		}
 		

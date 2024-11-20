@@ -29,7 +29,12 @@ public class Player {
 		this.y = y;
 		hp=3;
 		this.name = name;
+		if(name==0) {
 		checkDirection = 1;
+		}
+		else {
+			checkDirection=0;
+		}
 		try {
 			RightBearImage = ImageIO.read(new File(bearRightimagePath));
 			RightBearImage = RightBearImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
