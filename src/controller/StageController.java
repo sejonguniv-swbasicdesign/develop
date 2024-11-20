@@ -2,15 +2,10 @@ package controller;
 
 import model.PlayerPosition;
 import model.Storage;
-import model.characters.BearPlayer;
-import model.characters.TigerPlayer;
 import view.container.panel.third.TransparentPanel;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class StageController {
     private JFrame stageFrame;
@@ -19,18 +14,13 @@ public class StageController {
     private ImageIcon fullHeartIcon;
     private ImageIcon emptyHeartIcon;
     private JPanel overlayPanel; // 재시작 패널
-    private BearPlayer bearPlayer;
-    private TigerPlayer tigerPlayer;
     private Storage storage;
-    private TransparentPanel transparentPanel;
+    private LightningAttackController lightningAttackController;
 
     public StageController(JFrame stageFrame, JLayeredPane layeredPane) {
-        storage = Storage.getInstance();
         this.stageFrame = stageFrame;
         this.layeredPane = layeredPane;
-        Storage storage = Storage.getInstance();
-        this.bearPlayer = storage.getBear();
-        this.tigerPlayer = storage.getTiger();
+        this.storage = Storage.getInstance();
 
         initializeHpDisplay();
     }
@@ -77,6 +67,11 @@ public class StageController {
     private void endStage() {
         if (overlayPanel != null) return;
 
+        // 번개 공격 중단
+        if (lightningAttackController != null) {
+            lightningAttackController.clearAllLightnings();
+        }
+
         overlayPanel = new TransparentPanel(new Color(0, 0, 0));
         overlayPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
         overlayPanel.setLayout(new GridBagLayout()); // 중앙 정렬
@@ -92,21 +87,31 @@ public class StageController {
 
         layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER); // 최상위 레이어에 추가
         layeredPane.repaint();
-        layeredPane.repaint();
     }
 
     // 스테이지를 재시작
     private void restartStage() {
         storage.resetSharedHp();
 
+        // 플레이어 좌표 초기화
         storage.getBear().x = PlayerPosition.BEAR_START.getX();
         storage.getBear().y = PlayerPosition.BEAR_START.getY();
         storage.getTiger().x = PlayerPosition.TIGER_START.getX();
         storage.getTiger().y = PlayerPosition.TIGER_START.getY();
 
+        // HP 이미지 초기화
+        for (JLabel hpLabel : hpLabels) {
+            hpLabel.setIcon(fullHeartIcon);
+        }
+
+        // 오버레이 제거
         layeredPane.remove(overlayPanel);
         overlayPanel = null;
-        initializeHpDisplay();
         layeredPane.repaint();
+    }
+
+    // 번개 컨트롤러 설정
+    public void setLightningAttackController(LightningAttackController controller) {
+        this.lightningAttackController = controller;
     }
 }

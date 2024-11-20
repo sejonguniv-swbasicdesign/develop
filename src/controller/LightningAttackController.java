@@ -12,12 +12,10 @@ public class LightningAttackController {
     private List<Lightning> lightnings; // 번개 리스트
     private Timer timer;
     private JLayeredPane panel;
-    private StageController stageController; // StageController 참조
     private int attackPhase = 0; // 공격 단계 (0 또는 1)
 
     public LightningAttackController(int bossX, int bossY, BearPlayer bearPlayer, TigerPlayer tigerPlayer, JLayeredPane panel, StageController stageController) {
         this.panel = panel;
-        this.stageController = stageController; // StageController 의존성 주입
         lightnings = new ArrayList<>();
 
         // 번개 공격 실행
@@ -81,6 +79,17 @@ public class LightningAttackController {
     private boolean isOutOfBounds(Lightning lightning) {
         return lightning.getX() < 0 || lightning.getY() < 0 || lightning.getX() > panel.getWidth()
                 || lightning.getY() > panel.getHeight();
+    }
+
+    public void clearAllLightnings() {
+        for (Lightning lightning : new ArrayList<>(lightnings)) {
+            panel.remove(lightning);
+        }
+        lightnings.clear();
+        panel.repaint();
+        if (timer != null) {
+            timer.stop();
+        }
     }
 
     public void stop() {

@@ -1,5 +1,6 @@
 package view.container.frame.third;
 
+import controller.LightningAttackController;
 import controller.StageController;
 import view.component.third.BossInitializerPanel;
 import view.component.third.PlayerInitializerPanel;

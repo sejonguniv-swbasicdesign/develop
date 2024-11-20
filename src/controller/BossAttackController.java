@@ -54,7 +54,7 @@ public class BossAttackController {
     private void performLightningAttack() {
         int bossX = boss.x + 75;
         int bossY = boss.y + 75;
-        new LightningAttackController(
+        LightningAttackController lightningController = new LightningAttackController(
                 bossX,
                 bossY,
                 bearPlayer,
@@ -62,6 +62,8 @@ public class BossAttackController {
                 panel,
                 stageController
         );
+
+        stageController.setLightningAttackController(lightningController);
     }
 
     private void performFaintedAttack() {
