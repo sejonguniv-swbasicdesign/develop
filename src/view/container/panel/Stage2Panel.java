@@ -16,16 +16,15 @@ import java.io.IOException;
 //게임 패널 설정
 public class Stage2Panel {
 
-    private Timer timer;
     private ImagePanel imagePanel;
     private Container container;
     private JPanel panel;
     private JLayeredPane layeredPane;
 
-    private int panelWidth = 1500;
-    private int panelHeight = 1000;
+    private final int panelWidth = 1500;
+    private final int panelHeight = 1000;
     private TigerMonster tigerMonster;
-    private Stage2Controller stage2Controller;
+    private final Stage2Controller stage2Controller;
     private Stage2BearKeyListener stage2BearKeyListener;
     private Stage2TigerKeyListener stage2TigerKeyListener;
 
@@ -79,7 +78,6 @@ public class Stage2Panel {
         imagePanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
         imagePanel.setMinimumSize(new Dimension(panelWidth, panelHeight));
         layeredPane.add(imagePanel, JLayeredPane.DEFAULT_LAYER);
-
     }
 
     private void setRoad(){
@@ -137,7 +135,7 @@ public class Stage2Panel {
         timer.start();
     }
 
-    public void updateCharacterPositions() {
+    private void updateCharacterPositions() {
         // 현재 방향에 맞는 아이콘을 가져와서 설정
         bearPlayer.setIcon(storage.getBear().getCurrentIcon());
         tigerPlayer.setIcon(storage.getTiger().getCurrentIcon());
@@ -188,11 +186,11 @@ public class Stage2Panel {
         //호랑이 몬스터가 출구에 도착했을때 삭제
         stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
         //곰이 큰 바위를 들었을때 상호작용
-        stage2Controller.setBigRockInteraction(bigRock,bearPlayer,stage2BearKeyListener);
+        stage2Controller.setBigRockInteraction(bigRock,bearPlayer,stage2BearKeyListener,wall4);
     }
 
-    public void setLeverInteraction() {
-
+    //레버 상호작용 설정
+    private void setLeverInteraction() {
         // 레버가 눌리지 않은 상태에서 플레이어가 레버와 겹치면
         if (!this.isLeverPressed && (stage2Controller.isLabelOverlapping(lever, tigerPlayer) || stage2Controller.isLabelOverlapping(lever, bearPlayer))) {
 
@@ -214,9 +212,9 @@ public class Stage2Panel {
 
     // 5초 뒤에 레버 상태를 초기화하고 발판을 원래 상태로 되돌림
     private void startLeverCooldown() {
-        Timer timer = new Timer(5000, e -> {initLever();}); // 3초 후 initLever() 메서드 실행
+        Timer timer = new Timer(5000, e -> initLever());
         timer.setRepeats(false); // 한 번만 실행되도록 설정
-        timer.start();// 3초 후 실행
+        timer.start();// 5초 후 실행
     }
 
     // 레버와 발판 초기화
@@ -238,46 +236,51 @@ public class Stage2Panel {
 
     //호랑이몬스터, 플레이어들 떨어짐 설정(Controller로 분리 실패)
     private void setFalling(){
+        //호랑이 몬스터
         if (!isFalling &&!stage2Controller.isLabelOverlappingRoads(tigerMonster.getLabel(), roads) && !stage2Controller.isLabelOverlapping(tigerMonster.getLabel(), step2)) {
             isFalling = true;
             stage2Controller.animateElement(tigerMonster.getLabel(), tigerMonster.getLabel().getY() + 200);
 
-            timer = new Timer(1000, e -> checkIfLanded());
+            Timer timer = new Timer(1000, e -> checkIfLanded());
             timer.setRepeats(false);
             timer.start();
 
         }
-
+        //곰 플레이어
         if(!stage2BearKeyListener.getBearPlayerJump() && !isBearPlayerFalling &&!stage2Controller.isLabelOverlappingRoads(bearPlayer, roads) && !stage2Controller.isLabelOverlapping(bearPlayer, step2)&& !stage2Controller.isLabelOverlapping(bearPlayer, step1)){
             isBearPlayerFalling = true;
             stage2Controller.animateBearPlayer(storage.getBear(), storage.getBear().y + 200);
 
-            timer = new Timer(1000, e -> checkIfBearPlayerLanded());
+            Timer timer = new Timer(1000, e -> checkIfBearPlayerLanded());
             timer.setRepeats(false);
             timer.start();
         }
-
+        //호랑이 플레이어
         if(!stage2TigerKeyListener.getTigerPlayerJump()  &&!isTigerPlayerFalling &&!stage2Controller.isLabelOverlappingRoads(tigerPlayer, roads) && !stage2Controller.isLabelOverlapping(tigerPlayer, step2)&& !stage2Controller.isLabelOverlapping(tigerPlayer, step1) && !stage2Controller.isLabelOverlapping(tigerPlayer,ladder) && !stage2Controller.isLabelOverlapping(tigerPlayer,wall1) && !stage2Controller.isLabelOverlapping(tigerPlayer,wall2)&& !stage2Controller.isLabelOverlapping(tigerPlayer,wall3)){
             isTigerPlayerFalling = true;
             stage2Controller.fallTigerPlayer(storage.getTiger(), storage.getTiger().y + 200);
 
-            timer = new Timer(1000, e -> checkIfTigerPlayerLanded());
+            Timer timer = new Timer(1000, e -> checkIfTigerPlayerLanded());
             timer.setRepeats(false);
             timer.start();
         }
     }
 
+    //호랑이 몬스터가 도로 위에 착지 했는지 확인
     private void checkIfLanded() {
         if (stage2Controller.isLabelOverlappingRoads(tigerMonster.getLabel(), roads)) {
             isFalling = false;
         }
     }
 
+    //호랑이 플레이어가 도로 위에 착지 했는지 확인
     private void checkIfTigerPlayerLanded(){
         if (stage2Controller.isLabelOverlappingRoads(tigerPlayer, roads)) {
             isTigerPlayerFalling = false;
         }
     }
+
+    //곰 플레이어가 도로 위에 착지 했는지 확인
     private void checkIfBearPlayerLanded(){
         if (stage2Controller.isLabelOverlappingRoads(bearPlayer, roads)) {
             isBearPlayerFalling = false;
@@ -289,6 +292,7 @@ public class Stage2Panel {
         tigerMonster.setMonster(panelWidth, panelHeight, panel);
     }
 
+    //스테이지 구성 요소들 라벨 생성하여 각 위치에 배치
     private void setElements(){
         wall1 = createScaledLabel("src/assets/image/stage2/wall.png",50,100,1190,550);
         wall2 = createScaledLabel("src/assets/image/stage2/wall.png",50,100,1000,350);
@@ -320,9 +324,7 @@ public class Stage2Panel {
 
     }
 
-
-
-
+    //요소마다 라벨 생성
     private JLabel createScaledLabel(String imagePath, int width, int height, int x, int y) {
         ImageIcon originalIcon = new ImageIcon(imagePath);
         Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);

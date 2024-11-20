@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Stage2Controller {
+    private boolean isRockFalling = false;
 
     public Stage2Controller(){
 
@@ -186,10 +187,17 @@ public class Stage2Controller {
     }
 
     //곰 플레이어가 큰 바위 들었을때 상호작용 구현
-    public void setBigRockInteraction(JLabel bigRock, JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener){
+    public void setBigRockInteraction(JLabel bigRock, JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener,JLabel wall4){
+
         if(isLabelOverlapping(bearPlayer,bigRock)){
             bigRock.setLocation(bearPlayer.getX(), bigRock.getY()-20);
             stage2BearKeyListener.updateBigRockState(true,bigRock);
+        }
+
+        if(!isRockFalling && isLabelOverlapping(bigRock,wall4)){
+            stage2BearKeyListener.stopRockMovement();
+            animateElement(bigRock,240);
+            isRockFalling = true;
         }
     }
 
