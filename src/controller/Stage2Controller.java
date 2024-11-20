@@ -10,29 +10,18 @@ import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.TimerTask;
-
-
 
 public class Stage2Controller {
-
-    private boolean isLeverPressed;
-    private JLabel lever; // 레버
-    private JLabel tigerPlayer; // 호랑이 플레이어
-    private JLabel bearPlayer; // 곰 플레이어
-    private JLabel step1; // 발판
-    private Storage storage;
-
 
     public Stage2Controller(){
 
     }
 
+    //red button 눌렀을때 발판 상호작용
     public boolean seRedButtonInteraction(RedButtonDto redButtonDto){
 
         boolean isButtonPressed = redButtonDto.isButtonPressed();
@@ -44,7 +33,7 @@ public class Stage2Controller {
         JLabel step = redButtonDto.getStep();
         Storage storage = redButtonDto.getStorage();
 
-
+        //버튼 눌렀을때 발판 아래로 내려가게(돌과 플레이어 위치)
         if (!isButtonPressed && (isLabelOverlapping(floorButton, tigerPlayer) || isLabelOverlapping(floorButton, bearPlayer)|| isLabelOverlapping(floorButton, rock1) || isLabelOverlapping(floorButton, rock2))) {
             isButtonPressed = true; // 위치 변경 후 상태 유지
             if(isLabelOverlapping(rock1,step)){
@@ -71,6 +60,7 @@ public class Stage2Controller {
         return isButtonPressed;
     }
 
+    //blue button과 돌벽 상호작용
     public boolean setBlueButtonInteraction(BlueButtonDto blueButtonDto){
         boolean isBlueButtonPressed = blueButtonDto.isBlueButtonPressed();
         JLabel floorButton = blueButtonDto.getFloorButton();
@@ -91,6 +81,7 @@ public class Stage2Controller {
         return isBlueButtonPressed;
     }
 
+    //yellow button과 포탈 상호작용
     public boolean setYellowButtonInteraction(YellowButtonDto yellowButtonDto){
         boolean isYellowButtonPressed = yellowButtonDto.isButtonPressed();
         JLabel floorButton = yellowButtonDto.getFloorButton();
@@ -114,7 +105,7 @@ public class Stage2Controller {
         return isYellowButtonPressed;
     }
 
-
+    //돌이 허공에 떠있을때 떨어짐
     public boolean setRockFallingInteraction(JLabel rock2, JLabel[] roads, boolean isRockFalled){
         if(!isLabelOverlapping(rock2,roads[8]) && !isRockFalled){
             isRockFalled = true;
@@ -123,30 +114,34 @@ public class Stage2Controller {
         return isRockFalled;
     }
 
-    public void setRockInteraction(Storage storage, JLabel rock,JLabel bearPlayer){
-        if (isLabelOverlapping(rock, bearPlayer)) {
+    //곰이 돌 미는 동작 구현
+    public void setRockInteraction(Storage storage, JLabel rock,JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener){
+        if (isLabelOverlapping(rock, bearPlayer) && !stage2BearKeyListener.getBearPlayerJump()) {
             if (storage.getBear().isFacingRight) {
-                // 곰이 오른쪽을 바라보면 상자도 오른쪽으로 밀기
+                // 곰이 오른쪽을 바라보면 돌도 오른쪽으로 밀기
                 rock.setLocation(rock.getX() + 10, rock.getY());  // 10만큼 오른쪽으로 이동
             } else {
-                // 곰이 왼쪽을 바라보면 상자도 왼쪽으로 밀기
+                // 곰이 왼쪽을 바라보면 돌도 왼쪽으로 밀기
                 rock.setLocation(rock.getX() - 10, rock.getY());  // 10만큼 왼쪽으로 이동
             }
         }
     }
 
+    //호랑이 몬스터가 출구에 닿을때 삭제
     public void removeTigerMonster(TigerMonster tigerMonster,JLabel monsterExit, JPanel panel){
         if(isLabelOverlapping(tigerMonster.getLabel(),monsterExit)){
             panel.remove(tigerMonster.getLabel());
         }
     }
 
+    //호랑이 몬스터가 돌과 만났을때 방향 전환
     public void setTigerMonsterMovement(TigerMonster tigerMonster, JLabel rock1, JLabel rock2){
         if(isLabelOverlapping(rock1,tigerMonster.getLabel()) || isLabelOverlapping(rock2,tigerMonster.getLabel())){
             tigerMonster.changeDirection(tigerMonster.getDirection()*-1);
         }
     }
 
+    //호랑이 플레이어가 벽 타고 올라가도록 구현
     public boolean setTigerPlayerWallInteraction(JLabel wall1,JLabel wall2,JLabel wall3, JLabel tigerPlayer, Storage storage, boolean isTigerPlayer){
         if(!isTigerPlayer && isLabelOverlapping(wall1,tigerPlayer)){
             isTigerPlayer = true;
@@ -178,21 +173,43 @@ public class Stage2Controller {
         return isTigerPlayer;
     }
 
+    //포탈이 작동할때 곰이 위쪽 화살표 눌렀을때 텔레포트
     public void setPortalInteraction(boolean isYellowButtonPressed, JLabel portal1, JLabel portal2, JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener){
         stage2BearKeyListener.updatePortal1State(isYellowButtonPressed && isLabelOverlapping(portal1, bearPlayer));
 
         stage2BearKeyListener.updatePortal2State(isYellowButtonPressed && isLabelOverlapping(portal2, bearPlayer));
     }
 
+    //호랑이 플레이어가 사다리 타고 올라갈 수 있도록
     public void setLadderInteraction(JLabel ladder, JLabel tigerPlayer, Stage2TigerKeyListener stage2TigerKeyListener){
         stage2TigerKeyListener.updateLadderState(isLabelOverlapping(ladder, tigerPlayer));
     }
 
+    //곰 플레이어가 큰 바위 들었을때 상호작용 구현
+    public void setBigRockInteraction(JLabel bigRock, JLabel bearPlayer, Stage2BearKeyListener stage2BearKeyListener){
+        if(isLabelOverlapping(bearPlayer,bigRock)){
+            bigRock.setLocation(bearPlayer.getX(), bigRock.getY()-20);
+            stage2BearKeyListener.updateBigRockState(true,bigRock);
+        }
+    }
 
-    private boolean isLabelOverlapping(JLabel label1, JLabel label2) {
+    //라벨들이 겹치는지 확인
+    public boolean isLabelOverlapping(JLabel label1, JLabel label2) {
         Rectangle bounds1 = label1.getBounds();
         Rectangle bounds2 = label2.getBounds();
         return bounds1.intersects(bounds2);
+    }
+
+    public boolean isLabelOverlappingRoads(JLabel label, JLabel[] roads){
+        boolean isOverlapped = false;
+        for (JLabel road : roads) {
+            if (isLabelOverlapping(road, label)) {
+                isOverlapped = true;
+                break;
+            }
+        }
+        return isOverlapped;
+
     }
 
     public void animateElement(JLabel element, int targetY){

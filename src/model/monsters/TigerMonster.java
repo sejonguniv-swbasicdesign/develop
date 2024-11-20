@@ -97,7 +97,7 @@ public class TigerMonster extends Monster {
             direction = newDirection;
             updateMonsterIcon();
             Timer smoothMoveTimer = new Timer(30, null); // 30ms 간격으로 실행
-            int targetDistance = 20 * direction; // 이동할 목표 거리
+            int targetDistance = 30 * direction; // 이동할 목표 거리
             int steps = 10; // 이동 단계를 설정
             int distancePerStep = targetDistance / steps; // 단계별 이동 거리
             int[] currentStep = {0}; // 현재 단계
