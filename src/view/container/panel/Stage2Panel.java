@@ -12,6 +12,8 @@ import model.Storage;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 //게임 패널 설정
 public class Stage2Panel {
@@ -20,6 +22,7 @@ public class Stage2Panel {
     private Container container;
     private JPanel panel;
     private JLayeredPane layeredPane;
+    private JPanel hpPanel;
 
     private final int panelWidth = 1500;
     private final int panelHeight = 1000;
@@ -41,7 +44,9 @@ public class Stage2Panel {
     private boolean isTigerPlayer=false;
     private boolean isBearPlayerFalling = false;
     private boolean isTigerPlayerFalling = false;
+    private boolean isCooldown = false;
 
+    private List<JLabel> hps;
     private JLabel[] roads;
     private JLabel step1,step2;
     private JLabel floorButton1,floorButton2,floorButton3;
@@ -67,8 +72,28 @@ public class Stage2Panel {
         setElements();
         setMonster();
         setPlayer();
+        setHP();
 
         container.add(layeredPane);
+    }
+
+    private void setHP(){
+        hps = new ArrayList<>();
+        hpPanel = new JPanel();
+        hpPanel.setLayout(new GridLayout(1, 3)); // 3개의 세로 레이아웃
+        hpPanel.setBounds(1300,0,200,50);
+        hpPanel.setOpaque(false);
+        panel.add(hpPanel);
+
+        for (int i = 1; i <= 3; i++) {
+            ImageIcon originalIcon = new ImageIcon("src/assets/image/하트.png");
+            Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            ImageIcon resizedIcon = new ImageIcon(scaledImage);
+            JLabel label = new JLabel(resizedIcon);
+            label.setSize(resizedIcon.getIconWidth(), resizedIcon.getIconHeight());
+            hps.add(label);
+            hpPanel.add(label);
+        }
     }
 
     private void setBackgroundPanel() {
@@ -187,13 +212,35 @@ public class Stage2Panel {
         stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
         //곰이 큰 바위를 들었을때 상호작용
         stage2Controller.setBigRockInteraction(bigRock,bearPlayer,stage2BearKeyListener,wall4);
+
+        if(stage2Controller.isLabelOverlapping(tigerMonster.getLabel(),bearPlayer)){
+            if (isCooldown) {
+                return; // 유예 중일 때는 아무 작업도 하지 않음
+            }
+
+            if (stage2Controller.isLabelOverlapping(tigerMonster.getLabel(), bearPlayer)) {
+                for (JLabel hp : hps) {
+                    if (hp.isVisible()) {
+                        hp.setVisible(false); // 해당 라벨을 invisible 처리
+                        startCooldown(); // 3초 유예 시작
+                        break; // 첫 번째 visible 라벨만 처리하고 종료
+                    }
+                }
+            }
+        }
+    }
+
+    private void startCooldown() {
+        isCooldown = true; // 유예 시작
+        Timer timer = new Timer(3000, e -> isCooldown = false); // 3초 후 유예 해제
+        timer.setRepeats(false); // 한 번만 실행되도록 설정
+        timer.start();
     }
 
     //레버 상호작용 설정
     private void setLeverInteraction() {
         // 레버가 눌리지 않은 상태에서 플레이어가 레버와 겹치면
         if (!this.isLeverPressed && (stage2Controller.isLabelOverlapping(lever, tigerPlayer) || stage2Controller.isLabelOverlapping(lever, bearPlayer))) {
-
             isLeverPressed = true;
             // 레버 이미지 변경
             ImageIcon originalIcon = new ImageIcon("src/assets/image/stage2/lever_down.png");

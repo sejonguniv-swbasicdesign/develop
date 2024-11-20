@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class HpOnScreen extends JFrame{
 	public HpOnScreen() {
-        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());

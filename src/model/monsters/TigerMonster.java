@@ -25,7 +25,6 @@ public class TigerMonster extends Monster {
 
     }
 
-
     //몬스터 이미지 설정
     public void setMonster(int panelWidth, int panelHeight, JPanel panel) {
         //왼쪽 방향
@@ -88,7 +87,7 @@ public class TigerMonster extends Monster {
             monsterLabel.setIcon(rightIcon);
         } else {
             monsterLabel.setIcon(leftIcon);
-    }
+        }
     }
 
     // 방향 수동 변경 메서드
