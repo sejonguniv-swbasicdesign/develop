@@ -110,7 +110,7 @@ public class Stage2BearKeyListener implements KeyListener {
     }
 
     private void startJumpCooldown() {
-        Timer jumpCooldownTimer = new Timer(830, e -> hasJumped = false);
+        Timer jumpCooldownTimer = new Timer(900, e -> hasJumped = false);
         jumpCooldownTimer.setRepeats(false);
         jumpCooldownTimer.start();
     }

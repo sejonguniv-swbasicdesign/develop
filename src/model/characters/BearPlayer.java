@@ -1,5 +1,7 @@
 package model.characters;
 
+import view.container.panel.Stage2Panel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -45,6 +47,7 @@ public class BearPlayer extends Character {
         if (this.x < 0) {
             this.x -= x;
         }
+
 
         if (this.y < 0) {
             this.y -= y;

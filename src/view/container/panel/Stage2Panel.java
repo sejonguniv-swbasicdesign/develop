@@ -45,6 +45,8 @@ public class Stage2Panel {
     private boolean isBearPlayerFalling = false;
     private boolean isTigerPlayerFalling = false;
     private boolean isCooldown = false;
+    private int itemCount = 0;
+    private int hpCount = 0;
 
     private List<JLabel> hps;
     private JLabel[] roads;
@@ -55,6 +57,7 @@ public class Stage2Panel {
     private JLabel exit, monsterEntrance, monsterExit;
     private JLabel wall1, wall2, wall3,wall4;
     private JLabel portal1,portal2;
+    private JLabel item1, item2 ,item3, item4;
 
     public Stage2Panel() {
 
@@ -212,7 +215,21 @@ public class Stage2Panel {
         stage2Controller.removeTigerMonster(tigerMonster,monsterExit,panel);
         //곰이 큰 바위를 들었을때 상호작용
         stage2Controller.setBigRockInteraction(bigRock,bearPlayer,stage2BearKeyListener,wall4);
+        //곰과 몬스터가 부딪혔을때 hp감소시키는 로직
+        setMonsterBearInteraction();
 
+        //아이템 먹은 개수 확인
+        itemCount = stage2Controller.setItemInteraction(tigerPlayer,bearPlayer,item1,item2,item3,item4,itemCount,panel);
+
+        //게임 클리어 조건 설정
+        stage2Controller.checkStageFinish(itemCount,bigRock,tigerPlayer,bearPlayer,exit,panel);
+
+        //게임 오버 조건 설정
+        stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigerMonster,hpCount);
+    }
+    
+    //곰과 호랑이 몬스터가 부딪혔을때 하트 하나 삭제
+    private void setMonsterBearInteraction(){
         if(stage2Controller.isLabelOverlapping(tigerMonster.getLabel(),bearPlayer)){
             if (isCooldown) {
                 return; // 유예 중일 때는 아무 작업도 하지 않음
@@ -226,6 +243,7 @@ public class Stage2Panel {
                         break; // 첫 번째 visible 라벨만 처리하고 종료
                     }
                 }
+                hpCount+=1;
             }
         }
     }
@@ -363,6 +381,11 @@ public class Stage2Panel {
         ladder = createScaledLabel("src/assets/image/stage2/ladder.png",150,250,1050,700);
 
         lever = createScaledLabel("src/assets/image/stage2/lever_up.png", 40, 40, 0, 265);
+
+        item1 = createScaledLabel("src/assets/image/item/garlic.png",40,40,370,460);
+        item2 = createScaledLabel("src/assets/image/item/garlic.png",40,40,300,60);
+        item3 = createScaledLabel("src/assets/image/item/mugwort.png",40,40,60,260);
+        item4 = createScaledLabel("src/assets/image/item/mugwort.png",40,40,1430,260);
 
         exit = createScaledLabel("src/assets/image/exit.png",150,150,1300,802);
 

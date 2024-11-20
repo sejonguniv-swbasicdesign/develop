@@ -201,6 +201,52 @@ public class Stage2Controller {
         }
     }
 
+    public int setItemInteraction(JLabel tigerPlayer, JLabel bearPlayer, JLabel item1, JLabel item2, JLabel item3, JLabel item4, int itemCount, JPanel panel){
+        if(isLabelOverlapping(tigerPlayer,item1)){
+            panel.remove(item1);
+            item1.setBounds(-100, -100, 0, 0);
+            itemCount+=1;
+        }
+        if(isLabelOverlapping(tigerPlayer,item2)){
+            panel.remove(item2);
+            item2.setBounds(-100, -100, 0, 0);
+            itemCount+=1;
+        }
+        if(isLabelOverlapping(bearPlayer,item3)){
+            panel.remove(item3);
+            item3.setBounds(-100, -100, 0, 0);
+            itemCount+=1;
+        }
+        if(isLabelOverlapping(bearPlayer,item4)){
+            panel.remove(item4);
+            item4.setBounds(-100, -100, 0, 0);
+            itemCount+=1;
+        }
+        panel.revalidate(); // 레이아웃 재계산
+        panel.repaint();
+        return itemCount;
+    }
+
+    //게임 클리어 조건 확인
+    public void checkStageFinish(int itemCount, JLabel bigRock, JLabel tigerPlayer, JLabel bearPlayer,JLabel exit,JPanel panel){
+
+        if(itemCount == 4 && bigRock.getY()<100){
+            if(isLabelOverlapping(tigerPlayer,exit)){
+                panel.remove(tigerPlayer);
+            }
+            if(isLabelOverlapping(bearPlayer,exit)){
+                panel.remove(bearPlayer);
+            }
+        }
+    }
+
+    //게임 오버 된지 확인(일단 게임 오버 된지 로그로 찍기만 가능)
+    public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, TigerMonster tigerMonster, int hpCount){
+        if(bearPlayer.getY()>1000 || tigerPlayer.getY()>1000 || tigerMonster.getLabel().getY()>1000 || hpCount==3){
+            System.out.println("Game Over");
+        }
+    }
+
     //라벨들이 겹치는지 확인
     public boolean isLabelOverlapping(JLabel label1, JLabel label2) {
         Rectangle bounds1 = label1.getBounds();

@@ -120,7 +120,7 @@ public class Stage2TigerKeyListener implements KeyListener {
         timer.start();
     }
     private void startJumpCooldown() {
-        Timer jumpCooldownTimer = new Timer(830, e -> hasJumped = false); // 500ms 후에 hasJumped를 false로 설정
+        Timer jumpCooldownTimer = new Timer(900, e -> hasJumped = false); // 500ms 후에 hasJumped를 false로 설정
         jumpCooldownTimer.setRepeats(false); // 한 번만 실행되도록 설정
         jumpCooldownTimer.start();
     }
