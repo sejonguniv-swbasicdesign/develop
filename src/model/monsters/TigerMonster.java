@@ -19,6 +19,7 @@ public class TigerMonster extends Monster {
     private int panelHeight;
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
+    private boolean isMoving = true;
 
     public TigerMonster(int x, int y) {
         super(3,x,y);
@@ -55,30 +56,36 @@ public class TigerMonster extends Monster {
         panel.setComponentZOrder(monsterLabel, 0);
     }
 
+    public void stopMoving(){
+        this.isMoving = false;
+    }
     //몬스터 움직임
     @Override
     public void move() {
 
-        //3초마다 랜덤으로 좌우로 방향 변화
-        Random random = new Random();
+        if(isMoving){
+            //3초마다 랜덤으로 좌우로 방향 변화
+            Random random = new Random();
 
-        directionTimer = new Timer(3000, e -> {
-            direction = random.nextInt(2) == 0 ? -1 : 1;
-            updateMonsterIcon();
-        });
-        directionTimer.start();
-
-        //자동으로 움직임
-        movementTimer = new Timer(30, e -> {
-            super.x += direction * 5;
-            if (super.x < 0 || super.x > panelWidth - monsterLabel.getWidth()) {
-                direction *= -1;
+            directionTimer = new Timer(3000, e -> {
+                direction = random.nextInt(2) == 0 ? -1 : 1;
                 updateMonsterIcon();
-            }
-            monsterLabel.setLocation(super.x, monsterLabel.getY());
-            panel.repaint();
-        });
-        movementTimer.start();
+            });
+            directionTimer.start();
+
+            //자동으로 움직임
+            movementTimer = new Timer(30, e -> {
+                super.x += direction * 5;
+                if (super.x < 0 || super.x > panelWidth - monsterLabel.getWidth()) {
+                    direction *= -1;
+                    updateMonsterIcon();
+                }
+                monsterLabel.setLocation(super.x, monsterLabel.getY());
+                panel.repaint();
+            });
+            movementTimer.start();
+        }
+
     }
 
     //방향에 따라 이미지 변경

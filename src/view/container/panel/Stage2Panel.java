@@ -18,6 +18,7 @@ import java.util.List;
 //게임 패널 설정
 public class Stage2Panel {
 
+    private StageClearPanel stageClearPanel;
     private ImagePanel imagePanel;
     private Container container;
     private JPanel panel;
@@ -29,6 +30,7 @@ public class Stage2Panel {
     private final Stage2Controller stage2Controller;
     private Stage2BearKeyListener stage2BearKeyListener;
     private Stage2TigerKeyListener stage2TigerKeyListener;
+    private Timer monsterSpawnTimer;
 
     private JLabel bearPlayer;
     private JLabel tigerPlayer;
@@ -39,7 +41,6 @@ public class Stage2Panel {
     private boolean isYellowButtonPressed = false;
     private boolean isLeverPressed = false;
     private boolean isRockFalled = false;
-    //private boolean isFalling = false;
     private ArrayList<Boolean> isTigerFalling;
     private boolean isTigerPlayer=false;
     private boolean isBearPlayerFalling = false;
@@ -48,7 +49,6 @@ public class Stage2Panel {
     private boolean isLeverCooldown = false;
     private int itemCount = 0;
     private int hpCount = 0;
-    private int tigerIndex= 0;
 
     private List<JLabel> hps;
     private JLabel[] roads;
@@ -62,6 +62,7 @@ public class Stage2Panel {
     private JLabel portal1,portal2;
     private JLabel item1, item2 ,item3, item4;
 
+
     public Stage2Panel() {
 
         stage2Controller = new Stage2Controller();
@@ -69,7 +70,9 @@ public class Stage2Panel {
 
     public void setStage2Panel(Container container){
         this.container = container;
-
+        stageClearPanel = new StageClearPanel();
+        stageClearPanel.setPanel();
+        stageClearPanel.setBounds(750,500,500,400);
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(container.getSize());
 
@@ -81,6 +84,7 @@ public class Stage2Panel {
         setHP();
 
         container.add(layeredPane);
+        layeredPane.add(stageClearPanel);
     }
 
     private void setHP(){
@@ -215,17 +219,20 @@ public class Stage2Panel {
         //호랑이몬스터와 돌 부딪혔을때 호랑이 몬스터 방향전환
         stage2Controller.setTigerMonsterMovement(tigers,rock1, rock2);
         //호랑이 몬스터가 출구에 도착했을때 삭제
-        stage2Controller.removeTigerMonster(tigers,monsterExit,panel);
+        stage2Controller.removeTigerMonster(tigers,monsterExit,panel,isTigerFalling);
         //곰이 큰 바위를 들었을때 상호작용
         stage2Controller.setBigRockInteraction(bigRock,bearPlayer,stage2BearKeyListener,wall4);
         //곰과 몬스터가 부딪혔을때 hp감소시키는 로직
         setMonsterBearInteraction();
 
+        if(bigRock.getX() == 500 && bigRock.getY()==40){
+            stopMonsterSpawn();
+        }
         //아이템 먹은 개수 확인
         itemCount = stage2Controller.setItemInteraction(tigerPlayer,bearPlayer,item1,item2,item3,item4,itemCount,panel);
 
         //게임 클리어 조건 설정
-        stage2Controller.checkStageFinish(itemCount,bigRock,tigerPlayer,bearPlayer,exit,panel);
+        stage2Controller.checkStageFinish(itemCount,bigRock,tigerPlayer,bearPlayer,exit,panel,tigers);
 
         //게임 오버 조건 설정
         stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount);
@@ -237,6 +244,7 @@ public class Stage2Panel {
             if (isCooldown) {
                 return; // 유예 중일 때는 아무 작업도 하지 않음
             }
+
 
             if (stage2Controller.isTigerMonsterOverlapping(bearPlayer,tigers)!=-1) {
                 for (JLabel hp : hps) {
@@ -319,7 +327,7 @@ public class Stage2Panel {
                 stage2Controller.animateElement(tigers.get(i).getLabel(), tigers.get(i).getLabel().getY() + 200);
 
                 int finalI = i;
-                Timer timer = new Timer(1000, e -> SwingUtilities.invokeLater(()->checkIfLanded(tigers.get(finalI).getLabel(),finalI)));
+                Timer timer = new Timer(1300, e -> checkIfLanded(tigers.get(finalI).getLabel(),finalI));
                 timer.setRepeats(false);
                 timer.start();
 
@@ -331,7 +339,7 @@ public class Stage2Panel {
             isBearPlayerFalling = true;
             stage2Controller.animateBearPlayer(storage.getBear(), storage.getBear().y + 200);
 
-            Timer timer = new Timer(1000, e -> checkIfBearPlayerLanded());
+            Timer timer = new Timer(1500, e -> checkIfBearPlayerLanded());
             timer.setRepeats(false);
             timer.start();
         }
@@ -340,7 +348,7 @@ public class Stage2Panel {
             isTigerPlayerFalling = true;
             stage2Controller.fallTigerPlayer(storage.getTiger(), storage.getTiger().y + 200);
 
-            Timer timer = new Timer(1000, e -> checkIfTigerPlayerLanded());
+            Timer timer = new Timer(1500, e -> checkIfTigerPlayerLanded());
             timer.setRepeats(false);
             timer.start();
         }
@@ -376,14 +384,20 @@ public class Stage2Panel {
         isTigerFalling.add(false);
         container.repaint();
 
-        Timer monsterTimer = new Timer(30000, e ->SwingUtilities.invokeLater(()-> {
+         monsterSpawnTimer = new Timer(25000, e ->SwingUtilities.invokeLater(()-> {
             TigerMonster tigerMonster2 = new TigerMonster(50, 75);
             tigerMonster2.setMonster(panelWidth, panelHeight, panel);
             tigers.add(tigerMonster2);
             isTigerFalling.add(false);
             container.repaint();
         }));
-        monsterTimer.start();
+        monsterSpawnTimer.start();
+    }
+
+    private void stopMonsterSpawn() {
+        if (monsterSpawnTimer != null && monsterSpawnTimer.isRunning()) {
+            monsterSpawnTimer.stop(); // 타이머 중단
+        }
     }
 
     //스테이지 구성 요소들 라벨 생성하여 각 위치에 배치

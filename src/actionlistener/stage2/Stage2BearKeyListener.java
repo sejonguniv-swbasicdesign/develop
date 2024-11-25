@@ -18,6 +18,7 @@ public class Stage2BearKeyListener implements KeyListener {
     private JLabel bigRock;
     private Timer throwRockTimer; // 던지기 애니메이션 타이머
 
+
     public Stage2BearKeyListener(BearPlayer bearPlayer) {
         this.bearPlayer = bearPlayer;
     }
@@ -40,21 +41,16 @@ public class Stage2BearKeyListener implements KeyListener {
                 bearPlayer.setPosition(500, 480);
             }
             if (isBigRock) {
+                throwRockCooldown();
                 throwRock();
-                isBigRock = false;
             }
         }
         if (key == KeyEvent.VK_LEFT) {
             isLeftPressed = true;
-            if (isBigRock) {
-                moveRock(-10);
-            }
+
         }
         if (key == KeyEvent.VK_RIGHT) {
             isRightPressed = true;
-            if (isBigRock) {
-                moveRock(10);
-            }
         }
 
         if (isUpPressed && isLeftPressed && !hasJumped && !isBigRock) {
@@ -65,13 +61,25 @@ public class Stage2BearKeyListener implements KeyListener {
             bearPlayer.jumpRight(130, 60);
             hasJumped = true;
             startJumpCooldown();
-        } else {
+        }
+        else if(isUpPressed && !hasJumped && !isBigRock && !isPortal1 && !isPortal2){
+            bearPlayer.jumpUp(140);
+            hasJumped = true;
+            startJumpUpCooldown();
+        }
+        else {
             switch (key) {
                 case KeyEvent.VK_LEFT:
                     bearPlayer.move(-10, 0);
+                    if (isBigRock) {
+                        moveRock(-10);
+                    }
                     break;
                 case KeyEvent.VK_RIGHT:
                     bearPlayer.move(10, 0);
+                    if (isBigRock) {
+                        moveRock(10);
+                    }
                     break;
             }
         }
@@ -109,10 +117,22 @@ public class Stage2BearKeyListener implements KeyListener {
         return hasJumped;
     }
 
+    private void throwRockCooldown(){
+        Timer rockTimer = new Timer(1000, e ->  isBigRock = false);
+        rockTimer.setRepeats(false);
+        rockTimer.start();
+    }
+
     private void startJumpCooldown() {
-        Timer jumpCooldownTimer = new Timer(900, e -> hasJumped = false);
+        Timer jumpCooldownTimer = new Timer(1500, e -> hasJumped = false);
         jumpCooldownTimer.setRepeats(false);
         jumpCooldownTimer.start();
+    }
+
+    private void startJumpUpCooldown() {
+        Timer jumpUpCooldownTimer = new Timer( 3000, e -> hasJumped = false);
+        jumpUpCooldownTimer.setRepeats(false);
+        jumpUpCooldownTimer.start();
     }
 
     private void moveRock(int dx) {
@@ -157,4 +177,7 @@ public class Stage2BearKeyListener implements KeyListener {
             throwRockTimer.stop(); // 돌의 이동을 멈춤
         }
     }
+
+
+
 }

@@ -130,10 +130,11 @@ public class Stage2Controller {
     }
 
     //호랑이 몬스터가 출구에 닿을때 삭제
-    public void removeTigerMonster(ArrayList<TigerMonster> tigerMonster,JLabel monsterExit, JPanel panel){
+    public void removeTigerMonster(ArrayList<TigerMonster> tigerMonster,JLabel monsterExit, JPanel panel,ArrayList<Boolean> isTigerFalling){
         int index = isTigerMonsterOverlapping(monsterExit,tigerMonster);
         if(index!=-1){
             tigerMonster.get(index).getLabel().setVisible(false);
+            tigerMonster.get(index).stopMoving();
         }
     }
 
@@ -145,9 +146,9 @@ public class Stage2Controller {
         if(index!=-1){
             tigerMonster.get(index).changeDirection(tigerMonster.get(index).getDirection()*-1);
         }
-        else if(index2!=-1){
-            tigerMonster.get(index2).changeDirection(tigerMonster.get(index2).getDirection()*-1);
-        }
+//        else if(index2!=-1){
+//            tigerMonster.get(index2).changeDirection(tigerMonster.get(index2).getDirection()*-1);
+//        }
     }
 
     //호랑이 플레이어가 벽 타고 올라가도록 구현
@@ -236,9 +237,9 @@ public class Stage2Controller {
     }
 
     //게임 클리어 조건 확인
-    public void checkStageFinish(int itemCount, JLabel bigRock, JLabel tigerPlayer, JLabel bearPlayer,JLabel exit,JPanel panel){
+    public void checkStageFinish(int itemCount, JLabel bigRock, JLabel tigerPlayer, JLabel bearPlayer,JLabel exit,JPanel panel, ArrayList<TigerMonster> tigers){
 
-        if(itemCount == 4 && bigRock.getY()<100){
+        if(itemCount == 4 && bigRock.getY()<100 && allTigersInvisible(tigers)){
             if(isLabelOverlapping(tigerPlayer,exit)){
                 panel.remove(tigerPlayer);
             }
@@ -247,7 +248,15 @@ public class Stage2Controller {
             }
         }
     }
-
+    private boolean allTigersInvisible(ArrayList<TigerMonster> tigers) {
+        // tigers 리스트의 모든 요소가 visible이 false인지 확인
+        for (TigerMonster tiger : tigers) {
+            if (tiger.getLabel().isVisible()) {
+                return false;
+            }
+        }
+        return true; // 모든 요소가 invisible일 경우 true 반환
+    }
     //게임 오버 된지 확인(일단 게임 오버 된지 로그로 찍기만 가능)
     public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, ArrayList<TigerMonster> tigerMonster, int hpCount){
         if(bearPlayer.getY()>1000 || tigerPlayer.getY()>1000 || isCheckTigerMonsterFall(tigerMonster) || hpCount==3){
@@ -257,7 +266,7 @@ public class Stage2Controller {
 
     private boolean isCheckTigerMonsterFall(ArrayList<TigerMonster> tigerMonsters){
         for(TigerMonster tigerMonster : tigerMonsters){
-            if(tigerMonster.getLabel().getY() > 1000){
+            if(tigerMonster.getLabel().getY() > 1000 && tigerMonster.getLabel().isVisible()){
                 return true;
             }
         }
@@ -284,9 +293,8 @@ public class Stage2Controller {
     }
 
     public int isTigerMonsterOverlapping(JLabel label, ArrayList<TigerMonster> tigerMonsters){
-
         for (int i = 0 ;i<tigerMonsters.size();i++) {
-            if (isLabelOverlapping(tigerMonsters.get(i).getLabel(), label)) {
+            if (isLabelOverlapping(tigerMonsters.get(i).getLabel(), label) && tigerMonsters.get(i).getLabel().isVisible()) {
                 return i;
             }
         }
