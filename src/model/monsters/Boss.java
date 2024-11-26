@@ -15,9 +15,11 @@ public class Boss extends Monster {
 
     private Boolean isAngryState;
     private Boolean isFaintedState;
+    private int maxHp;
 
     public Boss(int hp, int x, int y) throws IOException {
         super(hp, x, y);
+        maxHp = hp;
         isAngryState = false;
         isFaintedState = false;
         bossIcon = new ImageIcon(ImageIO.read(new File(originFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
@@ -50,17 +52,27 @@ public class Boss extends Monster {
     }
 
     public void setHp(int newHp) {
-        this.hp = newHp;
+        super.hp = newHp;
 
-        // 기절 상태에서는 이미지 변경 로직을 실행하지 않음
         if (!isFaintedState) {
             updateStateBasedOnHp();
         }
     }
 
-    private void updateStateBasedOnHp() {
-        if (hp <= 250) {
-            // 분노 상태로 전환
+    public int getHp() {
+        return super.hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public boolean isRageMode() {
+        return isAngryState;
+    }
+
+    public void updateStateBasedOnHp() {
+        if (hp <= maxHp / 2) {
             if (!isAngryState) {
                 try {
                     bossIcon = new ImageIcon(ImageIO.read(new File(angryFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
@@ -70,7 +82,6 @@ public class Boss extends Monster {
                 }
             }
         } else {
-            // 원래 상태로 복구
             try {
                 bossIcon = new ImageIcon(ImageIO.read(new File(originFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
                 isAngryState = false;

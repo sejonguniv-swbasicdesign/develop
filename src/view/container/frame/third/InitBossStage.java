@@ -73,13 +73,8 @@ public class InitBossStage extends JFrame {
 
         // 보스 공격 컨트롤러 초기화
         Storage storage = Storage.getInstance();
-        bossAttackController = new BossAttackController(
-                boss,
-                storage.getBear(),
-                storage.getTiger(),
-                layeredPane,
-                stageController
-        );
+
+        setTestButton();
     }
 
     private void setBackgroundImage() {
@@ -119,5 +114,33 @@ public class InitBossStage extends JFrame {
         bossInitializerPanel.setBounds(0, 0, frameSize.width, frameSize.height);
 
         layeredPane.add(bossInitializerPanel, JLayeredPane.MODAL_LAYER);
+
+        // Boss JLabel 추적
+        JLabel bossLabel = bossInitializerPanel.bossLabel;
+
+        // 보스 공격 컨트롤러 초기화
+        Storage storage = Storage.getInstance();
+        bossAttackController = new BossAttackController(
+                boss,
+                bossLabel, // 보스 JLabel 전달
+                storage.getBear(),
+                storage.getTiger(),
+                layeredPane,
+                stageController
+        );
     }
+
+
+    private void setTestButton() {
+        JButton testButton = new JButton("Reduce HP");
+        testButton.setBounds(10, 700, 150, 50);
+        testButton.addActionListener(e -> {
+            boss.setHp(boss.getMaxHp() / 2 - 100); // HP 감소
+            System.out.println(boss.getHp());
+            bossAttackController.checkBossRageMode(); // 분노 상태 체크
+        });
+
+        layeredPane.add(testButton, JLayeredPane.PALETTE_LAYER);
+    }
+
 }

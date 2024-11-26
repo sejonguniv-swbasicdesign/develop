@@ -40,6 +40,7 @@ public class TigerPlayer extends Character {
         Storage storage = Storage.getInstance();
         for (int i = 0; i < damage; i++) {
             storage.decreaseSharedHp(); // 공유 HP 감소
+            super.hp--;
         }
     }
 

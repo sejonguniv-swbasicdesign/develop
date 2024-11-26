@@ -20,6 +20,10 @@ public abstract class Character {
         this.isFacingRight = true;
     }
 
+    public int getHp() {
+        return this.hp;
+    }
+
     protected void resetHp() {
         hp = 3;
     }

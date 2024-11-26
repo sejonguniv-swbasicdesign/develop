@@ -14,6 +14,7 @@ public class StageController {
     private ImageIcon fullHeartIcon;
     private ImageIcon emptyHeartIcon;
     private JPanel overlayPanel; // 재시작 패널
+    private JLabel countdownLabel;
     private Storage storage;
     private LightningAttackController lightningAttackController;
 
@@ -23,6 +24,7 @@ public class StageController {
         this.storage = Storage.getInstance();
 
         initializeHpDisplay();
+        initializeCountdownLabel();
     }
 
     // HP 이미지를 초기화하고 화면에 표시
@@ -64,7 +66,7 @@ public class StageController {
     }
 
     // 스테이지 종료 처리
-    private void endStage() {
+    public void endStage() {
         if (overlayPanel != null) return;
 
         // 번개 공격 중단
@@ -113,5 +115,23 @@ public class StageController {
     // 번개 컨트롤러 설정
     public void setLightningAttackController(LightningAttackController controller) {
         this.lightningAttackController = controller;
+    }
+
+    private void initializeCountdownLabel() {
+        countdownLabel = new JLabel();
+        countdownLabel.setBounds(layeredPane.getWidth() - 400, 10, 160, 50); // 오른쪽 상단
+        countdownLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        countdownLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        countdownLabel.setOpaque(true);
+        countdownLabel.setBackground(Color.BLACK);
+        countdownLabel.setForeground(Color.WHITE);
+        countdownLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+        countdownLabel.setVisible(true); // 기본적으로 숨김
+
+        layeredPane.add(countdownLabel, JLayeredPane.DRAG_LAYER);
+    }
+
+    public JLabel getCountdownLabel() {
+        return countdownLabel;
     }
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class BossInitializerPanel extends JPanel {
 
-    private JLabel bossLabel;
+    public JLabel bossLabel;
     private Boss bossMonster;
 
     public BossInitializerPanel() {
