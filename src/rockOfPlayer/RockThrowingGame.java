@@ -543,14 +543,14 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}// -----------------------넣어라??--------------------
 
 	public boolean checkBoundaryForBearPlayer() {
-		if (bearPlayer.getY() < 385 || bearPlayer.getY() > 475)
+		if (bearPlayer.getY() < 385 || bearPlayer.getY() > 465)
 			return true;
 		else
 			return false;
 	}
 
 	public boolean checkBoundaryForTigerPlayer() {
-		if (tigerPlayer.getY() < 385 || tigerPlayer.getY() > 475)
+		if (tigerPlayer.getY() < 385 || tigerPlayer.getY() > 465)
 			return true;
 		else
 			return false;
