@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Player {
+public class Player {//-------------------------int name=0->곰 플레이어,  int name=1->호랑이 플레이어
 
 	private int x, y;
 	private int hp;
@@ -86,8 +86,8 @@ public class Player {
 			dirY /= length;
 		}
 		if (name == 0) {
-			x += dirX * 2;
-			y += dirY * 2;
+			x += dirX * 3;
+			y += dirY * 3;
 		} else {
 			x += dirX * 4;
 			y += dirY * 4;

@@ -52,15 +52,16 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
-public class MovingMonster {
+public class MovingMonster {//---------------------곰부족
     private int x, y;
     private static final int SPEED = 4;
     private Image RightmonsterImage;
     private Image LeftmonsterImage;
     private int checkDirection;
     // 이미지 파일 경로
-    private String RightimagePath = "./src/assets/image/곰_완쪽.png"; 
-    private String LeftimagePath = "./src/assets/image/곰.png"; 
+	private String RightimagePath = "./src/assets/image/곰부족_왼쪽.png";
+	private String LeftimagePath = "./src/assets/image/곰부족.png";
+
     public MovingMonster(int x, int y) {
         this.x = x;
         this.y = y;

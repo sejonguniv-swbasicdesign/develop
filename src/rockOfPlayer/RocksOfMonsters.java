@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class RocksOfMonsters {
+public class RocksOfMonsters {//-------------바위산신이 던지는 돌
 	private int x, y;
 	private double angle;
 	private boolean destroyed = false;

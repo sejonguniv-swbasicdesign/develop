@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class RockForAttack {
+public class RockForAttack {//-----------------------곰플레이어가 던지는 돌
 	private double x, y;
 	private Image rockImage;
 	private boolean destroyed = false;
@@ -17,7 +17,7 @@ public class RockForAttack {
 		this.y = y;
         try {
             rockImage = ImageIO.read(new File("./src/assets/image/돌_공격용.png"));
-            rockImage = rockImage.getScaledInstance(20, 20, Image.SCALE_SMOOTH); 
+            rockImage = rockImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH); 
 
         } catch (IOException e) {
             System.err.println("이미지 로드 실패: " + e.getMessage());
@@ -48,9 +48,9 @@ public class RockForAttack {
 		int monsterX = rockMonster.getX();
 		int monsterY = rockMonster.getY();
 		
-		return Math.hypot(x - monsterX, y - monsterY) < 20;
+		return Math.hypot(x - monsterX, y - monsterY) < 30;
 	}
 	public void draw(Graphics g) {
-		 g.drawImage(rockImage, (int)x - 10,(int) y - 10, null); 
+		 g.drawImage(rockImage, (int)(x - 12.5),(int)( y - 12.5), null); 
 	}
 }

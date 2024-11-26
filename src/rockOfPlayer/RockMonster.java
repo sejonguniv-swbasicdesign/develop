@@ -10,7 +10,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class RockMonster {
+public class RockMonster {//-------------------바위산신
 	private int x, y;
 	private int hp;
 	private Random random = new Random();
