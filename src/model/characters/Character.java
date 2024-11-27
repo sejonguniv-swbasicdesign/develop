@@ -119,46 +119,4 @@ public abstract class Character {
         currentTimer.start();
     }
 
-    public void jumpUp(int deltaY) {
-        if (isMoving) return; // 이미 움직이는 중이면 새로운 점프 무시
-        isMoving = true;
-
-        int originalY = this.y;
-        int peakY = this.y - deltaY; // 점프하는 동안 상승할 y의 최고 위치
-
-        currentTimer = new Timer(10, null); // 10밀리초 간격으로 움직임
-        currentTimer.addActionListener(e -> {
-            if (this.y > peakY) {
-                move(0, -4); // y축만 위로 이동하여 점프
-            } else {
-                currentTimer.stop(); // 상승 끝나면 타이머 정지
-                stayAtPeak(300,originalY); // 원래 y위치로 돌아가기
-            }
-        });
-        currentTimer.start();
-    }
-
-    private void stayAtPeak(int stayDuration, int originalY) {
-        Timer stayTimer = new Timer(stayDuration, null); // 0.3초 대기 타이머
-        stayTimer.addActionListener(e -> {
-            // 0.3초가 지난 후 하강 시작
-            fallDown(originalY);
-            stayTimer.stop(); // 대기 타이머 정지
-        });
-        stayTimer.start();
-    }
-
-    private void fallDown(int originalY) {
-        currentTimer = new Timer(10, null);
-        currentTimer.addActionListener(e -> {
-            if (this.y < originalY) {
-                move(0, 4); // y축만 아래로 이동하여 원래 y위치로 돌아가기
-            } else {
-                this.y = originalY; // 정확한 y 위치로 고정
-                currentTimer.stop(); // 하강 완료 후 타이머 정지
-                isMoving = false; // 움직임 상태 초기화
-            }
-        });
-        currentTimer.start();
-    }
 }

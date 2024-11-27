@@ -62,11 +62,7 @@ public class Stage2BearKeyListener implements KeyListener {
             hasJumped = true;
             startJumpCooldown();
         }
-        else if(isUpPressed && !hasJumped && !isBigRock && !isPortal1 && !isPortal2){
-            bearPlayer.jumpUp(140);
-            hasJumped = true;
-            startJumpUpCooldown();
-        }
+
         else {
             switch (key) {
                 case KeyEvent.VK_LEFT:
@@ -127,12 +123,6 @@ public class Stage2BearKeyListener implements KeyListener {
         Timer jumpCooldownTimer = new Timer(1500, e -> hasJumped = false);
         jumpCooldownTimer.setRepeats(false);
         jumpCooldownTimer.start();
-    }
-
-    private void startJumpUpCooldown() {
-        Timer jumpUpCooldownTimer = new Timer( 3000, e -> hasJumped = false);
-        jumpUpCooldownTimer.setRepeats(false);
-        jumpUpCooldownTimer.start();
     }
 
     private void moveRock(int dx) {

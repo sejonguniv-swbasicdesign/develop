@@ -146,9 +146,6 @@ public class Stage2Controller {
         if(index!=-1){
             tigerMonster.get(index).changeDirection(tigerMonster.get(index).getDirection()*-1);
         }
-//        else if(index2!=-1){
-//            tigerMonster.get(index2).changeDirection(tigerMonster.get(index2).getDirection()*-1);
-//        }
     }
 
     //호랑이 플레이어가 벽 타고 올라가도록 구현

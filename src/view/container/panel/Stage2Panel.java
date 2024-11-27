@@ -83,7 +83,8 @@ public class Stage2Panel {
         setHP();
 
         container.add(layeredPane);
-
+//        layeredPane.add(stageClearPanel);
+//        panel.setComponentZOrder(stageClearPanel, 0);
     }
 
     private void setHP(){
@@ -239,13 +240,12 @@ public class Stage2Panel {
     
     //곰과 호랑이 몬스터가 부딪혔을때 하트 하나 삭제
     private void setMonsterBearInteraction(){
-        if(stage2Controller.isTigerMonsterOverlapping(bearPlayer,tigers)!=-1){
+        if(stage2Controller.isTigerMonsterOverlapping(bearPlayer,tigers)!=-1 && !stage2BearKeyListener.getBearPlayerJump()){
             if (isCooldown) {
                 return; // 유예 중일 때는 아무 작업도 하지 않음
             }
 
-
-            if (stage2Controller.isTigerMonsterOverlapping(bearPlayer,tigers)!=-1) {
+            if (stage2Controller.isTigerMonsterOverlapping(bearPlayer,tigers)!=-1 && !stage2BearKeyListener.getBearPlayerJump()) {
                 for (JLabel hp : hps) {
                     if (hp.isVisible()) {
                         hp.setVisible(false); // 해당 라벨을 invisible 처리
@@ -383,7 +383,7 @@ public class Stage2Panel {
         isTigerFalling.add(false);
         container.repaint();
 
-         monsterSpawnTimer = new Timer(25000, e ->SwingUtilities.invokeLater(()-> {
+         monsterSpawnTimer = new Timer(20000, e ->SwingUtilities.invokeLater(()-> {
             TigerMonster tigerMonster2 = new TigerMonster(50, 75);
             tigerMonster2.setMonster(panelWidth, panelHeight, panel);
             tigers.add(tigerMonster2);
