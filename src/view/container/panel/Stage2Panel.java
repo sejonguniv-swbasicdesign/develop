@@ -64,7 +64,6 @@ public class Stage2Panel {
 
 
     public Stage2Panel() {
-
         stage2Controller = new Stage2Controller();
     }
 
@@ -84,7 +83,7 @@ public class Stage2Panel {
         setHP();
 
         container.add(layeredPane);
-        layeredPane.add(stageClearPanel);
+
     }
 
     private void setHP(){
