@@ -95,7 +95,7 @@ public class Stage2Panel {
         panel.add(hpPanel);
 
         for (int i = 1; i <= 3; i++) {
-            ImageIcon originalIcon = new ImageIcon("src/assets/image/하트.png");
+            ImageIcon originalIcon = new ImageIcon("src/assets/image/component/하트.png");
             Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
             ImageIcon resizedIcon = new ImageIcon(scaledImage);
             JLabel label = new JLabel(resizedIcon);
