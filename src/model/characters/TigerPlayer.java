@@ -1,5 +1,7 @@
 package model.characters;
 
+import view.container.panel.Stage2Panel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

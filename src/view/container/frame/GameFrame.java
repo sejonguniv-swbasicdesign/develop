@@ -1,6 +1,7 @@
 package view.container.frame;
 
 import view.container.panel.Stage2Panel;
+import view.container.panel.StageClearPanel;
 
 
 import javax.swing.*;
@@ -13,7 +14,6 @@ public class GameFrame extends JFrame{
     public GameFrame(){
         stage2Panel = new Stage2Panel();
         setFrame();
-
     }
 
     private void setFrame(){
