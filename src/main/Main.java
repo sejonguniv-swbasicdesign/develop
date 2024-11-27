@@ -14,8 +14,9 @@ public class Main {
 		
 		frame.add(stage1);
 
-		frame.pack();
+		frame.setSize(600,800);
 
+        //frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		

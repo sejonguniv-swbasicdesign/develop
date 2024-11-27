@@ -86,8 +86,8 @@ public class Player {//-------------------------int name=0->곰 플레이어,  i
 			dirY /= length;
 		}
 		if (name == 0) {
-			x += dirX * 3;
-			y += dirY * 3;
+			x += dirX * 2;
+			y += dirY * 2;
 		} else {
 			x += dirX * 4;
 			y += dirY * 4;

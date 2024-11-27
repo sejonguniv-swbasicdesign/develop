@@ -13,7 +13,7 @@ public class RocksOfMonsters {//-------------바위산신이 던지는 돌
 	private double angle;
 	private boolean destroyed = false;
 	private int distanceTraveled = 0;
-	private static final int MAX_DISTANCE = 500;
+	private static final int MAX_DISTANCE = 1000;
 	 private Image rockImage;
 
 	public RocksOfMonsters(int x, int y, double angle) {

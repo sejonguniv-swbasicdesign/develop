@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 public class RockMonster {//-------------------바위산신
 	private int x, y;
 	private int hp;
+
 	private Random random = new Random();
     private Image monsterImage;
     private String monsterimagePath = "./src/assets/image/산신.png"; 
@@ -20,6 +21,7 @@ public class RockMonster {//-------------------바위산신
 		this.x = x;
 		this.y = y;
 		hp=2;
+
         try {
             monsterImage = ImageIO.read(new File(monsterimagePath));
             monsterImage = monsterImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
@@ -46,7 +48,7 @@ public class RockMonster {//-------------------바위산신
 	
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
 		if (random.nextInt(50) == 0) { 
-			rocks.add(new RocksOfMonsters(x, y, random.nextInt(360)));
+			rocks.add(new RocksOfMonsters(x, y, 45+random.nextInt(90)));
 		}
 		
 	}
@@ -56,4 +58,5 @@ public class RockMonster {//-------------------바위산신
             g.drawImage(monsterImage, x - 20, y - 20, null); 
 
 	}
+
 }
