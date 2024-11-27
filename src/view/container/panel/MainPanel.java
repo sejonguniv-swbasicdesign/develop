@@ -50,7 +50,9 @@ public class MainPanel {
         buttonPanel.setOpaque(false);
 
         DesignedButton startButton = new DesignedButton();
+        startButton.setTextColor(Color.BLACK, Color.BLUE);
         DesignedButton settingButton = new DesignedButton();
+        settingButton.setTextColor(Color.BLACK, Color.BLUE);
         startButton.setText("Start");
         settingButton.setText("Setting");
 
@@ -61,10 +63,10 @@ public class MainPanel {
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(container);
             currentFrame.dispose();
 
-            Stage1Frame stage1Frame = new Stage1Frame();
-            stage1Frame.setStage1Frame();
-//            GameFrame gameFrame = new GameFrame();
-//            gameFrame.setVisible(true);
+//            Stage1Frame stage1Frame = new Stage1Frame();
+//            stage1Frame.setStage1Frame();
+            GameFrame gameFrame = new GameFrame();
+            gameFrame.setVisible(true);
         });
         settingButton.addActionListener(e -> {
             container.removeAll();

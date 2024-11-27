@@ -9,6 +9,7 @@ import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
+import view.container.frame.StageClearFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 public class Stage2Controller {
     private boolean isRockFalling = false;
+    private boolean isStageClear = false;
 
     public Stage2Controller(){
 
@@ -238,13 +240,22 @@ public class Stage2Controller {
 
         if(itemCount == 4 && bigRock.getY()<100 && allTigersInvisible(tigers)){
             if(isLabelOverlapping(tigerPlayer,exit)){
-                panel.remove(tigerPlayer);
+                tigerPlayer.setVisible(false);
             }
             if(isLabelOverlapping(bearPlayer,exit)){
-                panel.remove(bearPlayer);
+                bearPlayer.setVisible(false);
             }
         }
     }
+
+    public void showStageClear(JLabel tigerPlayer, JLabel bearPlayer,Container container){
+        if(!tigerPlayer.isVisible() && !bearPlayer.isVisible() && !isStageClear){
+            isStageClear = true;
+            StageClearFrame stageClearFrame = new StageClearFrame("stage3",container);
+            stageClearFrame.setVisible(true);
+        }
+    }
+
     private boolean allTigersInvisible(ArrayList<TigerMonster> tigers) {
         // tigers 리스트의 모든 요소가 visible이 false인지 확인
         for (TigerMonster tiger : tigers) {

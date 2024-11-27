@@ -18,8 +18,6 @@ public class DesignedButton extends JButton {
     public void decorate() {
         setBorderPainted(false);
         setOpaque(false);
-        textColor = Color.black;
-        hoverTextColor = Color.blue;
 
         setFont(new Font("Arial", Font.BOLD, 30));
 
@@ -56,5 +54,9 @@ public class DesignedButton extends JButton {
         graphics.drawString(getText(), textX, textY);
         graphics.dispose();
 
+    }
+    public void setTextColor(Color textColor, Color hoverTextColor){
+        this.textColor = textColor;
+        this.hoverTextColor = hoverTextColor;
     }
 }

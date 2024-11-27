@@ -8,6 +8,7 @@ import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
 import controller.Stage2Controller;
 import model.Storage;
+import view.container.frame.StageClearFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,6 @@ import java.util.List;
 //게임 패널 설정
 public class Stage2Panel {
 
-    private StageClearPanel stageClearPanel;
     private ImagePanel imagePanel;
     private Container container;
     private JPanel panel;
@@ -69,9 +69,6 @@ public class Stage2Panel {
 
     public void setStage2Panel(Container container){
         this.container = container;
-        stageClearPanel = new StageClearPanel();
-        stageClearPanel.setPanel();
-        stageClearPanel.setBounds(750,500,500,400);
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(container.getSize());
 
@@ -83,8 +80,6 @@ public class Stage2Panel {
         setHP();
 
         container.add(layeredPane);
-//        layeredPane.add(stageClearPanel);
-//        panel.setComponentZOrder(stageClearPanel, 0);
     }
 
     private void setHP(){
@@ -233,9 +228,11 @@ public class Stage2Panel {
 
         //게임 클리어 조건 설정
         stage2Controller.checkStageFinish(itemCount,bigRock,tigerPlayer,bearPlayer,exit,panel,tigers);
+        stage2Controller.showStageClear(tigerPlayer,bearPlayer,container);
 
         //게임 오버 조건 설정
         stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount);
+
     }
     
     //곰과 호랑이 몬스터가 부딪혔을때 하트 하나 삭제
@@ -326,7 +323,7 @@ public class Stage2Panel {
                 stage2Controller.animateElement(tigers.get(i).getLabel(), tigers.get(i).getLabel().getY() + 200);
 
                 int finalI = i;
-                Timer timer = new Timer(1300, e -> checkIfLanded(tigers.get(finalI).getLabel(),finalI));
+                Timer timer = new Timer(1400, e -> checkIfLanded(tigers.get(finalI).getLabel(),finalI));
                 timer.setRepeats(false);
                 timer.start();
 
@@ -396,6 +393,7 @@ public class Stage2Panel {
     private void stopMonsterSpawn() {
         if (monsterSpawnTimer != null && monsterSpawnTimer.isRunning()) {
             monsterSpawnTimer.stop(); // 타이머 중단
+            monsterSpawnTimer = null;
         }
     }
 
