@@ -1,30 +1,22 @@
 package controller;
 
-import view.Stage;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.Timer;
+import model.Storage;
+
+import javax.swing.*;
 
 public class MoveInteraction {
-    private Stage tmpStage;
-    private Timer timer;
 
-    public MoveInteraction(Stage tmpStage) {
-        this.tmpStage = tmpStage;
+    private Storage storage;
 
-        // 60 FPS로 캐릭터 위치 업데이트
-        timer = new Timer(1000 / 60, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tmpStage.updateCharacterPositions();
-            }
-        });
-        timer.start();
+    public MoveInteraction() {
+        storage = Storage.getInstance();
     }
 
-    public void stop() {
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
+    public void updateCharacterPositions(JLabel bearLabel, JLabel tigerLabel) {
+        bearLabel.setIcon(storage.getBear().getCurrentIcon());
+        tigerLabel.setIcon(storage.getTiger().getCurrentIcon());
+
+        bearLabel.setLocation(storage.getBear().x, storage.getBear().y);
+        tigerLabel.setLocation(storage.getTiger().x, storage.getTiger().y);
     }
 }

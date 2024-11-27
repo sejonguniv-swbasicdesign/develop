@@ -26,6 +26,10 @@ public abstract class Character {
         this.isMoving = false;
     }
 
+    public int getHp() {
+        return this.hp;
+    }
+
     protected void resetHp() {
         hp = 3;
     }

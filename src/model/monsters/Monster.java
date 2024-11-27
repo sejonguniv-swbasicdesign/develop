@@ -13,7 +13,6 @@ public abstract class Monster {
     }
 
 
-
     public void move(){}
 
     protected void resetHp(int hp)  {

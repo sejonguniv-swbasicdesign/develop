@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.Storage;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,20 +12,36 @@ public class TigerPlayer extends Character {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
-    private String leftFilePath = "src/assets/image/호랑이.png";
-    private String rightFilePath = "src/assets/image/호랑이_오른쪽.png";
+    private String leftFilePath = "src/assets/image/characters/호랑이.png";
+    private String rightFilePath = "src/assets/image/characters/호랑이_오른쪽.png";
 
     public TigerPlayer() {
     }
 
     public TigerPlayer(int x, int y) throws IOException {
         super(x, y);
-        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
     }
 
     public ImageIcon getCurrentIcon() {
         return isFacingRight ? rightIcon : leftIcon;
+    }
+
+    public void setOppositeDirection() {
+        if(isFacingRight) {
+            isFacingRight = false;
+        } else {
+            isFacingRight = true;
+        }
+    }
+
+    public void decreaseHp(int damage) {
+        Storage storage = Storage.getInstance();
+        for (int i = 0; i < damage; i++) {
+            storage.decreaseSharedHp(); // 공유 HP 감소
+            super.hp--;
+        }
     }
 
     public void resetTigerHp() {
@@ -50,5 +68,8 @@ public class TigerPlayer extends Character {
         }
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
+    }
 
 }
