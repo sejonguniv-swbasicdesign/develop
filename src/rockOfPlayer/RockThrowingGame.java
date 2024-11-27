@@ -107,7 +107,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		try {
 
 			bridgeImage=ImageIO.read(new File("./src/assets/image/다리.png"));
-			bridgeImage=bridgeImage.getScaledInstance(80,80 , Image.SCALE_SMOOTH);
+			bridgeImage=bridgeImage.getScaledInstance(120,80 , Image.SCALE_SMOOTH);
 			
 			brokenBridgeImage=ImageIO.read(new File("./src/assets/image/부서진다리.png"));
 			brokenBridgeImage=brokenBridgeImage.getScaledInstance(80,80 , Image.SCALE_SMOOTH);
@@ -245,7 +245,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			g.drawImage(brokenBridgeImage,300,380,null);
 		
 		} else {
-			g.drawImage(bridgeImage,300,380,null);
+			g.drawImage(bridgeImage,279,378,null);
 	
 		}
 
