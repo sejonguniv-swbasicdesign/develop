@@ -1,11 +1,10 @@
-package model;
+package model.monsters;
 
-//몬스터 객체
 public abstract class Monster {
 
-    //체력, x,y좌표
     public int hp;
-    public int x,y;
+    public int x;
+    public int y;
 
     public Monster(int hp, int x, int y) {
         this.hp = hp;
@@ -13,9 +12,12 @@ public abstract class Monster {
         this.y = y;
     }
 
+
+
     public void move(){}
 
     protected void resetHp(int hp)  {
         this.hp = hp;
     }
+
 }

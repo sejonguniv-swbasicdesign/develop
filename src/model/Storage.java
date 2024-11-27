@@ -23,6 +23,18 @@ public class Storage {
         return instance;
     }
 
+    private Storage(int x, int y) throws IOException {
+        this.bearPlayer = new BearPlayer(x, y);
+        this.tigerPlayer = new TigerPlayer(x+70, y);
+    }
+
+    public static Storage getInstance(int x ,int y) throws IOException {
+        if (instance == null) {
+            instance = new Storage(x,y);
+        }
+        return instance;
+    }
+
     public BearPlayer getBear() {
         return bearPlayer;
     }

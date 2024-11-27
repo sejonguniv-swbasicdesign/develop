@@ -78,6 +78,7 @@ public class MainPanel {
         buttonPanel.setBounds(x, y, 200, 100);
 
         imagePanel.add(buttonPanel);
+        imagePanel.setComponentZOrder(buttonPanel,0);
     }
 
     private void setImagePanel() {
