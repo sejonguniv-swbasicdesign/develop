@@ -2,6 +2,7 @@ package view.container.panel;
 
 import view.component.DesignedButton;
 import view.container.frame.GameFrame;
+import view.container.frame.Stage1Frame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ public class MainPanel {
     private ImagePanel imagePanel;
     private Container container;
     private SettingPanel settingPanel;
+    private JLayeredPane layeredPane;
 
     public MainPanel(SettingPanel settingPanel) {
         this.settingPanel = settingPanel;
@@ -24,6 +26,7 @@ public class MainPanel {
         setImagePanel();
         setTitle();
         setButtons();
+        container.add(layeredPane);
         container.revalidate();
         container.repaint();
     }
@@ -47,7 +50,9 @@ public class MainPanel {
         buttonPanel.setOpaque(false);
 
         DesignedButton startButton = new DesignedButton();
+        startButton.setTextColor(Color.BLACK, Color.BLUE);
         DesignedButton settingButton = new DesignedButton();
+        settingButton.setTextColor(Color.BLACK, Color.BLUE);
         startButton.setText("Start");
         settingButton.setText("Setting");
 
@@ -58,6 +63,8 @@ public class MainPanel {
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(container);
             currentFrame.dispose();
 
+//            Stage1Frame stage1Frame = new Stage1Frame();
+//            stage1Frame.setStage1Frame();
             GameFrame gameFrame = new GameFrame();
             gameFrame.setVisible(true);
         });
@@ -77,14 +84,15 @@ public class MainPanel {
         int y = (imagePanel.getHeight() - buttonPanel.getHeight()) / 2;
         buttonPanel.setBounds(x, y, 200, 100);
 
-        imagePanel.add(buttonPanel);
+        layeredPane.add(buttonPanel);
+        layeredPane.setComponentZOrder(buttonPanel,0);
     }
 
     private void setImagePanel() {
         this.imagePanel = new ImagePanel();
         imagePanel.setImage("src/assets/image/background/cave_background.jpg");
 
-        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(container.getSize());
 
         imagePanel.setBounds(0, 0, container.getWidth(), container.getHeight());
@@ -104,6 +112,5 @@ public class MainPanel {
 
         layeredPane.add(bearTigerLabel, JLayeredPane.PALETTE_LAYER);
 
-        container.add(layeredPane);
     }
 }

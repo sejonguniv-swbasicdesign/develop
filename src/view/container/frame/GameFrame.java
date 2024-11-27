@@ -1,6 +1,8 @@
 package view.container.frame;
 
-import view.container.panel.GamePanel;
+import view.container.panel.Stage2Panel;
+import view.container.panel.StageClearPanel;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,11 +10,10 @@ import java.awt.*;
 //게임 화면
 public class GameFrame extends JFrame{
 
-    private GamePanel gamePanel;
+    private Stage2Panel stage2Panel;
     public GameFrame(){
-        gamePanel = new GamePanel();
+        stage2Panel = new Stage2Panel();
         setFrame();
-
     }
 
     private void setFrame(){
@@ -27,6 +28,7 @@ public class GameFrame extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
 
-        gamePanel.setGamePanel(this.getContentPane());
+        stage2Panel.setStage2Panel(this.getContentPane());
+
     }
 }

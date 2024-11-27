@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.Storage;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +28,22 @@ public class TigerPlayer extends Character {
         return isFacingRight ? rightIcon : leftIcon;
     }
 
+    public void setOppositeDirection() {
+        if(isFacingRight) {
+            isFacingRight = false;
+        } else {
+            isFacingRight = true;
+        }
+    }
+
+    public void decreaseHp(int damage) {
+        Storage storage = Storage.getInstance();
+        for (int i = 0; i < damage; i++) {
+            storage.decreaseSharedHp(); // 공유 HP 감소
+            super.hp--;
+        }
+    }
+
     public void resetTigerHp() {
         super.resetHp();
     }
@@ -42,13 +60,16 @@ public class TigerPlayer extends Character {
         }
 
         if (this.x < 0) {
-            this.x -= x;
+            this.x = 0; // 화면 밖으로 나가지 않도록 보정
         }
 
         if (this.y < 0) {
-            this.y -= y;
+            this.y = 0; // 화면 밖으로 나가지 않도록 보정
         }
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
+    }
 
 }

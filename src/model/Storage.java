@@ -9,16 +9,34 @@ public class Storage {
     private static Storage instance;
     private BearPlayer bearPlayer;
     private TigerPlayer tigerPlayer;
+    private int sharedHp; // 공유 HP
 
     // private 생성자를 통해 외부에서 객체 생성 방지
-    private Storage() throws IOException {
-        this.bearPlayer = new BearPlayer(0, 6);
-        this.tigerPlayer = new TigerPlayer(0, 0);
+    private Storage() {
+        try {
+            this.bearPlayer = new BearPlayer(0, 6);
+            this.tigerPlayer = new TigerPlayer(0, 0);
+            this.sharedHp = 3;
+        } catch (IOException e){
+            System.out.println("파일을 읽어들이는 데에 실패했습니다. 프로그램을 다시 실행해 주세요.");
+        }
     }
 
-    public static Storage getInstance() throws IOException {
+    public static Storage getInstance() {
         if (instance == null) {
             instance = new Storage();
+        }
+        return instance;
+    }
+
+    private Storage(int x, int y) throws IOException {
+        this.bearPlayer = new BearPlayer(x, y);
+        this.tigerPlayer = new TigerPlayer(x+70, y);
+    }
+
+    public static Storage getInstance(int x ,int y) throws IOException {
+        if (instance == null) {
+            instance = new Storage(x,y);
         }
         return instance;
     }
@@ -29,6 +47,20 @@ public class Storage {
 
     public TigerPlayer getTiger() {
         return tigerPlayer;
+    }
+
+    public int getSharedHp() {
+        return sharedHp;
+    }
+
+    public void decreaseSharedHp() {
+        if (sharedHp > 0) {
+            sharedHp--;
+        }
+    }
+
+    public void resetSharedHp() {
+        sharedHp = 3;
     }
 
 }

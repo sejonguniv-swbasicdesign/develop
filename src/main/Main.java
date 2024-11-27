@@ -1,10 +1,10 @@
 package main;
 
-import view.Stage;
-import view.container.frame.*;
+import view.container.frame.MainFrame;
+
 
 public class Main {
     public static void main(String[] args) {
-        new BossStage();
+        new MainFrame();
     }
 }
