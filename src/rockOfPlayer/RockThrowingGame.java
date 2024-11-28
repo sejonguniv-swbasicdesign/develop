@@ -13,10 +13,11 @@ import java.util.Random;
 public class RockThrowingGame extends JPanel implements ActionListener, KeyListener {
 
 	// --stage1---------------------------------------------------
+	private int hp;
 	private Image backgroundImage;
 	private Image bridgeImage;
 	private Image brokenBridgeImage;
-	private Image hp;
+	private Image hpImage;
 	private boolean isBridgeBroken; // 다리 초기 상태
 	private boolean checkSuccess;
 	// MovingMonster-----------------------------------------------
@@ -75,7 +76,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}
 
 	public void checkGameover() {
-		if (bearPlayer.getHp() <= 0 || tigerPlayer.getHp() <= 0) {
+		if (hp<= 0) {
 			System.exit(0); // End the game
 		}
 
@@ -102,8 +103,8 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			e.printStackTrace();
 		}
 		try {
-			hp = ImageIO.read(new File("./src/assets/image/하트.png"));
-			hp = hp.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+			hpImage = ImageIO.read(new File("./src/assets/image/하트.png"));
+			hpImage = hpImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -126,7 +127,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		}
 
 //stage1-------------------------------------
-
+		hp=3;
 		monsters = new ArrayList<>();
 		rocksOfPlayer = new ArrayList<>();
 
@@ -157,8 +158,8 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		setFocusable(true);
 		// 바위산신 ----------
 		followingMonsters = new ArrayList<>();
-		followingMonsters.add(new FollowingMonster(200, 550));
-		followingMonsters.add(new FollowingMonster(400, 550));
+		followingMonsters.add(new FollowingMonster(200, 500));
+		followingMonsters.add(new FollowingMonster(400, 500));
 	}
 
 	@Override
@@ -280,23 +281,14 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	private void drawHpStatus(Graphics g) {
 
-		for (int i = 0; i < bearPlayer.getHp(); i++) {
-			g.drawImage(hp, 7 + 42 * i, 20, null);
 
+
+		for (int i = 0; i < hp; i++) {
+			g.drawImage(hpImage, 460 + 42 * i, 20, null);
 		}
 
-		for (int i = 0; i < tigerPlayer.getHp(); i++) {
-			g.drawImage(hp, 460 + 42 * i, 20, null);
-		}
 
-		Color brown = new Color(165, 42, 42);
-
-		Font customFont = new Font("Serif", Font.BOLD, 15);
-		g.setColor(brown);
-		g.setFont(customFont);
-		g.drawString("곰", 5, 15);
-		g.setColor(Color.ORANGE);
-		g.drawString("호랑이", 450, 15);
+	
 
 	}
 
@@ -362,10 +354,11 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			}
 		}
 		if (check == 1 && who == 0) {
-			bearPlayer.setHp(-1);
+			hp--;
+			restart();
 			// System.exit(0); // End the game
 		} else if (check == 1 && who == 1) {
-			tigerPlayer.setHp(-1);
+			hp--;
 			restart();
 			// System.exit(0); // End the game
 		}
@@ -405,9 +398,9 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		for (RocksOfMonsters rock : rocksOfMonsters) {
 			if (rock.collidesWith(bearPlayer) || rock.collidesWith(tigerPlayer)) {
 				if (rock.collidesWith(bearPlayer))
-					bearPlayer.setHp(-1);
+					hp--;
 				else if (rock.collidesWith(tigerPlayer))
-					tigerPlayer.setHp(-1);
+					hp--;
 				restart();
 
 			}
@@ -448,9 +441,9 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			ThrowingMonster monster = monsters.get(i);
 			if (monster.collidesWith(bearPlayer) || monster.collidesWith(tigerPlayer)) {
 				if (monster.collidesWith(bearPlayer))
-					bearPlayer.setHp(-1);
+					hp--;
 				else if (monster.collidesWith(tigerPlayer))
-					tigerPlayer.setHp(-1);
+					hp--;
 				restart();
 
 			}
@@ -497,10 +490,10 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		}
 
 		if (check == 1 && who == 0) {
-			bearPlayer.setHp(-1);
+			hp--;
 			// System.exit(0); // End the game
 		} else if (check == 1 && who == 1) {
-			tigerPlayer.setHp(-1);
+			hp--;
 			// System.exit(0); // End the game
 		}
 		if (check == 1)

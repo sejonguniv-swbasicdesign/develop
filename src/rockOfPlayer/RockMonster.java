@@ -24,7 +24,7 @@ public class RockMonster {//-------------------바위산신
 
         try {
             monsterImage = ImageIO.read(new File(monsterimagePath));
-            monsterImage = monsterImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
+            monsterImage = monsterImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH); 
 
         } catch (IOException e) {
             System.err.println("이미지 로드 실패: " + e.getMessage());
@@ -55,7 +55,7 @@ public class RockMonster {//-------------------바위산신
 
 	public void draw(Graphics g) {
 
-            g.drawImage(monsterImage, x - 20, y - 20, null); 
+            g.drawImage(monsterImage, x - 25, y - 25, null); 
 
 	}
 
