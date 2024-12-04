@@ -21,6 +21,7 @@ public class TigerMonster extends Monster {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
     private boolean isMoving = true;
+    private long lastDirectionChangeTime = 0; // 방향 변경 시간을 추적
 
     public TigerMonster(int x, int y) {
         super(3, x, y);
@@ -77,8 +78,11 @@ public class TigerMonster extends Monster {
             // 방향 전환 스케줄러 (3초마다 랜덤 방향 전환)
             directionExecutor = Executors.newSingleThreadScheduledExecutor();
             directionExecutor.scheduleAtFixedRate(() -> {
-                direction = random.nextInt(2) == 0 ? -1 : 1;
-                SwingUtilities.invokeLater(this::updateMonsterIcon);
+                if (canChangeDirection()) {
+                    direction = random.nextInt(2) == 0 ? -1 : 1;
+                    lastDirectionChangeTime = System.currentTimeMillis(); // 방향 변경 시간 기록
+                    SwingUtilities.invokeLater(this::updateMonsterIcon);
+                }
             }, 0, 3, TimeUnit.SECONDS);
 
             // 움직임 스케줄러 (30ms마다 위치 업데이트)
@@ -105,10 +109,18 @@ public class TigerMonster extends Monster {
         }
     }
 
+    private boolean canChangeDirection() {
+        // 마지막 방향 변경 시간으로부터 0.5초가 지났을 경우에만 방향 변경 가능
+        return System.currentTimeMillis() - lastDirectionChangeTime >= 500;
+    }
+
     public void changeDirection(int newDirection) {
         if (newDirection == 1 || newDirection == -1) {
-            direction = newDirection;
-            updateMonsterIcon();
+            if (canChangeDirection()) {
+                direction = newDirection;
+                lastDirectionChangeTime = System.currentTimeMillis(); // 방향 변경 시간 기록
+                updateMonsterIcon();
+            }
         } else {
             throw new IllegalArgumentException("Direction must be 1 (right) or -1 (left).");
         }
