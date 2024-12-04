@@ -45,7 +45,7 @@ public class RockMonster {//-------------------바위산신
 		return hp;
 		
 	}
-	
+
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
 		if (random.nextInt(50) == 0) { 
 			rocks.add(new RocksOfMonsters(x, y, 45+random.nextInt(90)));

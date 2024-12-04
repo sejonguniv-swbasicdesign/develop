@@ -7,8 +7,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 
-public class Player {//-------------------------int name=0->곰 플레이어,  int name=1->호랑이 플레이어
+public class Player {// ------------------------- name=0->곰 플레이어, name=1->호랑이 플레이어
 
 	private int x, y;
 	private int hp;
@@ -23,17 +24,31 @@ public class Player {//-------------------------int name=0->곰 플레이어,  i
 	private Image LeftBearImage;
 	private Image RightTigerImage;
 	private Image LeftTigerImage;
-
+	private boolean ifOnBridge;
+	private boolean ifOnUpperSide;
+	private int minX, maxX;
+	private int minY, maxY;
+	private boolean isVisible; 
+	private boolean restart;
+	  private Timer blinkTimer;
+	  private boolean doesRestart = false;
 	public Player(int x, int y, int name) {
 		this.x = x;
 		this.y = y;
-		hp=3;
+		hp = 3;
 		this.name = name;
-		if(name==0) {
-		checkDirection = 1;
-		}
-		else {
-			checkDirection=0;
+		ifOnBridge = false;
+		ifOnUpperSide = false;
+		minX = 10;
+		maxX = 575;
+		minY = 455;
+		maxY = 753;
+		isVisible=true;
+		restart=false;
+		if (name == 0) {
+			checkDirection = 1;
+		} else {
+			checkDirection = 0;
 		}
 		try {
 			RightBearImage = ImageIO.read(new File(bearRightimagePath));
@@ -92,8 +107,54 @@ public class Player {//-------------------------int name=0->곰 플레이어,  i
 			x += dirX * 4;
 			y += dirY * 4;
 		}
-		x = Math.max(0, Math.min(x, 800));
-		y = Math.max(0, Math.min(y, 600));
+		if (name == 1) {
+			System.out.println(x);
+			System.out.println(y);
+		}
+
+		if (name == 1) {
+			if(ifOnBridge==true) {
+				if(((340<=x&&x<=346)&&(454<=y&&y<=459))||((340<=x&&x<=346)&&(360<=y&&y<=363))) {
+					minX = 340;
+					maxX = 346;
+					minY = 359;
+					maxY = 458;
+				}
+				else if((10<x&&x<340)&&(455<y)||(340<=x&&x<=346)&&(458<y)||(346<x&&x<570)&&(455<y)) {
+					minX = 10;
+					maxX = 575;
+					minY = 455;
+					maxY = 753;
+				}
+				else if((10<x&&x<340)&&(y<344)||(340<=x&&x<=346)&&(y<360)||(346<x&&x<570)&&(y<344)) {
+					minX = 10;
+					maxX = 575;
+					minY = 10;
+					maxY = 360;
+				}
+			}
+			else {
+
+				if((10<x&&x<340)&&(455<y)||(340<=x&&x<=346)&&(458<y)||(346<x&&x<570)&&(455<y)) {
+					minX = 10;
+					maxX = 575;
+					minY = 455;
+					maxY = 753;
+				}
+				else if((10<x&&x<340)&&(y<344)||(340<=x&&x<=346)&&(y<360)||(346<x&&x<570)&&(y<344)) {
+					minX = 10;
+					maxX = 575;
+					minY = 10;
+					maxY = 360;
+				}
+			}
+
+
+		}
+
+		x = Math.max(minX, Math.min(x, maxX));
+		y = (Math.max(minY, Math.min(y, maxY)));
+
 	}
 
 	public void draw(Graphics g) {
@@ -117,7 +178,33 @@ public class Player {//-------------------------int name=0->곰 플레이어,  i
 		}
 
 	}
+    public void blinkImage() {
+        if (blinkTimer != null && blinkTimer.isRunning()) {
+            blinkTimer.stop(); // 이전 타이머 중지
+        }
 
+        int duration = 3000; // 3초 동안 깜빡임
+        int interval = 200; // 200ms 간격으로 토글
+
+        Timer timer = new Timer(interval, e -> {
+            isVisible = !isVisible; // 보이는 상태를 토글
+            if (doesRestart) {
+                doesRestart = false;
+                ((Timer) e.getSource()).stop(); // 타이머 종료
+                isVisible = true; // 종료 후 보이는 상태로 복원
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
+
+        // 일정 시간 후 타이머 종료
+        new Timer(duration, e -> {
+            timer.stop();
+            isVisible = true; // 항상 보이도록 복원
+        }).start();
+
+        this.blinkTimer = timer;
+    }
 	public int getX() {
 		return x;
 	}
@@ -133,12 +220,30 @@ public class Player {//-------------------------int name=0->곰 플레이어,  i
 	public void setY(int y) {
 		this.y = y;
 	}
+
 	public void setHp(int x) {
-		hp+=x;
-		
+		hp += x;
+
 	}
+
 	public int getHp() {
 		return hp;
+
+	}
+	public boolean getDoesRestart() {
+		return restart;
 		
 	}
+	public void setDoesRestart(boolean i) {
+		this.restart=i;
+		
+	}
+	public int getCheckDirection() {
+		return checkDirection;
+	}
+
+	public void setIfOnBridge(boolean i) {
+		ifOnBridge = i;
+	}
+
 }

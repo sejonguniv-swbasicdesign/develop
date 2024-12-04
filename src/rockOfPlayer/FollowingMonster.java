@@ -72,7 +72,12 @@ public class FollowingMonster {//--------------------바위 몬스터
 	public int getY() {
 		return y;
 	}
-
+	public void setX(int x) {
+		this.x=x;
+		}
+	public void setY(int y) {
+		this.y=y;
+	}
     public void draw(Graphics g) {
         if (checkDirection==1) {
             // 이미지 중심을 기준으로 그리기
