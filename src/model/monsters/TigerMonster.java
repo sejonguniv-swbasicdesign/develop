@@ -1,18 +1,19 @@
 package model.monsters;
 
-import model.Monster;
+import model.monsters.Monster;
 
 import javax.swing.*;
-import java.awt.Image;
+import java.awt.*;
 import java.util.Random;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class TigerMonster extends Monster {
 
     private JLabel monsterLabel;
-    private Timer movementTimer;
-    private Timer directionTimer;
-
+    private ScheduledExecutorService movementExecutor;
+    private ScheduledExecutorService directionExecutor;
     private int direction = 1;
     private JPanel panel;
     private int panelWidth;
@@ -22,18 +23,17 @@ public class TigerMonster extends Monster {
     private boolean isMoving = true;
 
     public TigerMonster(int x, int y) {
-        super(3,x,y);
-
+        super(3, x, y);
     }
 
-    //몬스터 이미지 설정
+    // 몬스터 이미지 설정
     public void setMonster(int panelWidth, int panelHeight, JPanel panel) {
-        //왼쪽 방향
+        // 왼쪽 방향
         ImageIcon originalLeftIcon = new ImageIcon("src/assets/image/stage2/tiger_monster_left.png");
         Image leftImage = originalLeftIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         leftIcon = new ImageIcon(leftImage);
 
-        //오른쪽 방향
+        // 오른쪽 방향
         ImageIcon originalRightIcon = new ImageIcon("src/assets/image/stage2/tiger_monster_right.png");
         Image rightImage = originalRightIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         rightIcon = new ImageIcon(rightImage);
@@ -46,7 +46,6 @@ public class TigerMonster extends Monster {
         move();
     }
 
-
     private void addMonsterToCenter() {
         int monsterWidth = monsterLabel.getIcon().getIconWidth();
         int monsterHeight = monsterLabel.getIcon().getIconHeight();
@@ -56,39 +55,48 @@ public class TigerMonster extends Monster {
         panel.setComponentZOrder(monsterLabel, 0);
     }
 
-    public void stopMoving(){
+    public void stopMoving() {
         this.isMoving = false;
+        shutdownExecutors();
     }
-    //몬스터 움직임
+
+    private void shutdownExecutors() {
+        if (movementExecutor != null && !movementExecutor.isShutdown()) {
+            movementExecutor.shutdownNow();
+        }
+        if (directionExecutor != null && !directionExecutor.isShutdown()) {
+            directionExecutor.shutdownNow();
+        }
+    }
+
     @Override
     public void move() {
-
-        if(isMoving){
-            //3초마다 랜덤으로 좌우로 방향 변화
+        if (isMoving) {
             Random random = new Random();
 
-            directionTimer = new Timer(3000, e -> {
+            // 방향 전환 스케줄러 (3초마다 랜덤 방향 전환)
+            directionExecutor = Executors.newSingleThreadScheduledExecutor();
+            directionExecutor.scheduleAtFixedRate(() -> {
                 direction = random.nextInt(2) == 0 ? -1 : 1;
-                updateMonsterIcon();
-            });
-            directionTimer.start();
+                SwingUtilities.invokeLater(this::updateMonsterIcon);
+            }, 0, 3, TimeUnit.SECONDS);
 
-            //자동으로 움직임
-            movementTimer = new Timer(30, e -> {
+            // 움직임 스케줄러 (30ms마다 위치 업데이트)
+            movementExecutor = Executors.newSingleThreadScheduledExecutor();
+            movementExecutor.scheduleAtFixedRate(() -> {
                 super.x += direction * 5;
                 if (super.x < 0 || super.x > panelWidth - monsterLabel.getWidth()) {
                     direction *= -1;
-                    updateMonsterIcon();
+                    SwingUtilities.invokeLater(this::updateMonsterIcon);
                 }
-                monsterLabel.setLocation(super.x, monsterLabel.getY());
-                panel.repaint();
-            });
-            movementTimer.start();
+                SwingUtilities.invokeLater(() -> {
+                    monsterLabel.setLocation(super.x, monsterLabel.getY());
+                    panel.repaint();
+                });
+            }, 0, 30, TimeUnit.MILLISECONDS);
         }
-
     }
 
-    //방향에 따라 이미지 변경
     private void updateMonsterIcon() {
         if (direction == 1) {
             monsterLabel.setIcon(rightIcon);
@@ -97,39 +105,19 @@ public class TigerMonster extends Monster {
         }
     }
 
-    // 방향 수동 변경 메서드
     public void changeDirection(int newDirection) {
         if (newDirection == 1 || newDirection == -1) {
             direction = newDirection;
             updateMonsterIcon();
-            Timer smoothMoveTimer = new Timer(30, null); // 30ms 간격으로 실행
-            int targetDistance = 30 * direction; // 이동할 목표 거리
-            int steps = 10; // 이동 단계를 설정
-            int distancePerStep = targetDistance / steps; // 단계별 이동 거리
-            int[] currentStep = {0}; // 현재 단계
-
-            smoothMoveTimer.addActionListener(e -> {
-                // 단계별로 이동
-                if (currentStep[0] < steps) {
-                    super.x += distancePerStep; // x 좌표를 단계별로 증가/감소
-                    monsterLabel.setLocation(super.x, monsterLabel.getY());
-                    panel.repaint();
-                    currentStep[0]++;
-                } else {
-                    // 모든 단계가 완료되면 타이머 중지
-                    ((Timer) e.getSource()).stop();
-                }
-            });
-
-            smoothMoveTimer.start();
         } else {
             throw new IllegalArgumentException("Direction must be 1 (right) or -1 (left).");
         }
     }
 
-    public int getDirection(){
+    public int getDirection() {
         return direction;
     }
+
     public JLabel getLabel() {
         return monsterLabel;
     }

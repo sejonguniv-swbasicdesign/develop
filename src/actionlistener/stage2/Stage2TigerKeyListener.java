@@ -100,28 +100,45 @@ public class Stage2TigerKeyListener implements KeyListener {
 
     //사다리 타고 올라가거나 내려갈때 부드럽게 이동
     private void smoothMove(TigerPlayer tigerPlayer, int targetX, int targetY) {
-        Timer timer = new Timer(10, null); // 10ms 간격으로 실행
-        timer.addActionListener(e -> {
+        new Thread(() -> {
             int currentX = tigerPlayer.x;
             int currentY = tigerPlayer.y;
 
-            // x와 y의 이동 방향 계산
-            int stepX = (targetX > currentX) ? 2 : (targetX < currentX) ? -2 : 0;
-            int stepY = (targetY > currentY) ? 2 : (targetY < currentY) ? -2 : 0;
+            while (currentX != targetX || currentY != targetY) {
+                // x와 y의 이동 방향 계산
+                int stepX = (targetX > currentX) ? 2 : (targetX < currentX) ? -2 : 0;
+                int stepY = (targetY > currentY) ? 2 : (targetY < currentY) ? -2 : 0;
 
-            // 새로운 위치로 업데이트
-            tigerPlayer.setPosition(currentX + stepX, currentY + stepY);
+                currentX += stepX;
+                currentY += stepY;
 
-            // 목표 위치에 도달하면 타이머 중지
-            if (currentX == targetX && currentY == targetY) {
-                ((Timer) e.getSource()).stop();
+                int finalX = currentX;
+                int finalY = currentY;
+
+                // GUI 업데이트는 스레드 안전하게 처리
+                SwingUtilities.invokeLater(() -> tigerPlayer.setPosition(finalX, finalY));
+
+                // 목표 위치에 도달한 경우 루프 종료
+                if (currentX == targetX && currentY == targetY) break;
+
+                try {
+                    Thread.sleep(10); // 10ms 간격으로 실행
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
-        });
-        timer.start();
+        }).start();
     }
+
     private void startJumpCooldown() {
-        Timer jumpCooldownTimer = new Timer(1500, e -> hasJumped = false); // 500ms 후에 hasJumped를 false로 설정
-        jumpCooldownTimer.setRepeats(false); // 한 번만 실행되도록 설정
-        jumpCooldownTimer.start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000); // 1.5초 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            hasJumped = false;
+        }).start();
     }
+
 }

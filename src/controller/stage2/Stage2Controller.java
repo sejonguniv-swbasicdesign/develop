@@ -1,4 +1,4 @@
-package controller;
+package controller.stage2;
 
 import actionlistener.stage2.Stage2BearKeyListener;
 import actionlistener.stage2.Stage2TigerKeyListener;
@@ -310,76 +310,85 @@ public class Stage2Controller {
     }
 
 
-    public void animateElement(JLabel element, int targetY){
-        Timer animationTimer = new Timer(10, new ActionListener() {
+    public void animateElement(JLabel element, int targetY) {
+        new Thread(() -> {
             int currentY = element.getY();
-            int direction = targetY > currentY ? 1 : -1; // 위로 올라가거나 아래로 내려가도록 방향 설정
+            int direction = targetY > currentY ? 1 : -1;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
-                    currentY += direction * 5; // 속도 조절을 위해 한번에 이동하는 거리 설정
-                    element.setLocation(element.getX(), currentY);
-                } else {
-                    ((Timer)e.getSource()).stop(); // 목표 위치에 도달하면 타이머 중지
+            while ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
+                currentY += direction * 5;
+
+                // GUI 업데이트를 스레드 안전하게 수행
+                int finalY = currentY;
+                SwingUtilities.invokeLater(() -> element.setLocation(element.getX(), finalY));
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        });
-        animationTimer.start();
+        }).start();
     }
 
-    public void animateBearPlayer(BearPlayer player, int targetY){
-        Timer timer = new Timer(10, new ActionListener() {
+    public void animateBearPlayer(BearPlayer player, int targetY) {
+        new Thread(() -> {
             int currentY = player.y;
             int direction = targetY > currentY ? 1 : -1;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
-                    currentY += direction * 5; // 속도 조절을 위해 한번에 이동하는 거리 설정
-                    player.setPosition(player.x, currentY);
-                } else {
-                    ((Timer)e.getSource()).stop(); // 목표 위치에 도달하면 타이머 중지
+            while ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
+                currentY += direction * 5;
+
+                int finalY = currentY;
+                SwingUtilities.invokeLater(() -> player.setPosition(player.x, finalY));
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        });
-        timer.start();
+        }).start();
     }
 
-    public void fallTigerPlayer(TigerPlayer player, int targetY){
-        Timer timer = new Timer(10, new ActionListener() {
+    public void fallTigerPlayer(TigerPlayer player, int targetY) {
+        new Thread(() -> {
             int currentY = player.y;
             int direction = targetY > currentY ? 1 : -1;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
-                    currentY += direction * 5; // 속도 조절을 위해 한번에 이동하는 거리 설정
-                    player.setPosition(player.x, currentY);
-                } else {
-                    ((Timer)e.getSource()).stop(); // 목표 위치에 도달하면 타이머 중지
+            while ((direction == 1 && currentY < targetY) || (direction == -1 && currentY > targetY)) {
+                currentY += direction * 5;
+
+                int finalY = currentY;
+                SwingUtilities.invokeLater(() -> player.setPosition(player.x, finalY));
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        });
-        timer.start();
+        }).start();
     }
 
-    public void animateTigerPlayer(TigerPlayer player, int targetY){
-        Timer timer = new Timer(10, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int currentY = player.y; // 현재 y 좌표 가져오기
-                int step = 5; // 이동 속도 (한번에 이동할 거리)
+    public void animateTigerPlayer(TigerPlayer player, int targetY) {
+        new Thread(() -> {
+            int currentY = player.y;
+            int step = 5;
 
-                if (currentY > targetY) {
-                    // 목표보다 현재 위치가 아래에 있으면 위로 이동
-                    player.setPosition(player.x, Math.max(currentY - step, targetY));
-                } else {
-                    // 목표 위치에 도달하면 타이머 중지
-                    ((Timer) e.getSource()).stop();
+            while (currentY > targetY) {
+                currentY = Math.max(currentY - step, targetY);
+
+                int finalY = currentY;
+                SwingUtilities.invokeLater(() -> player.setPosition(player.x, finalY));
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        });
-        timer.start();
+        }).start();
     }
+
 }

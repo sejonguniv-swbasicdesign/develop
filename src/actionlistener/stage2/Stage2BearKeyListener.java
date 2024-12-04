@@ -16,7 +16,7 @@ public class Stage2BearKeyListener implements KeyListener {
     private boolean isPortal2;
     private boolean isBigRock = false;
     private JLabel bigRock;
-    private Timer throwRockTimer; // 던지기 애니메이션 타이머
+    private Thread rockThrowThread;
 
 
     public Stage2BearKeyListener(BearPlayer bearPlayer) {
@@ -113,61 +113,91 @@ public class Stage2BearKeyListener implements KeyListener {
         return hasJumped;
     }
 
-    private void throwRockCooldown(){
-        Timer rockTimer = new Timer(1000, e ->  isBigRock = false);
-        rockTimer.setRepeats(false);
-        rockTimer.start();
+    private void throwRockCooldown() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000); // 1초 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            isBigRock = false;
+        }).start();
     }
 
     private void startJumpCooldown() {
-        Timer jumpCooldownTimer = new Timer(1500, e -> hasJumped = false);
-        jumpCooldownTimer.setRepeats(false);
-        jumpCooldownTimer.start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000); // 1.5초 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            hasJumped = false;
+        }).start();
     }
 
     private void moveRock(int dx) {
-        int currentRockX = bigRock.getX();
-        int currentRockY = bigRock.getY();
-        bigRock.setLocation(currentRockX + dx, currentRockY);
+        SwingUtilities.invokeLater(() -> {
+            int currentRockX = bigRock.getX();
+            int currentRockY = bigRock.getY();
+            bigRock.setLocation(currentRockX + dx, currentRockY);
+        });
     }
 
     public void throwRock() {
-        if (throwRockTimer != null && throwRockTimer.isRunning()) {
-            throwRockTimer.stop(); // 이미 실행 중인 타이머를 멈춤
+
+        // 기존 스레드가 실행 중인 경우 멈추고 새로운 스레드를 시작
+        if (rockThrowThread != null && rockThrowThread.isAlive()) {
+            rockThrowThread.interrupt(); // 이전 스레드를 중단
         }
 
-        double[] position = {bigRock.getX(), bigRock.getY()};
-        double targetX = 500;
-        double targetY = 40;
+        rockThrowThread = new Thread(() -> {
+            try {
+                double[] position = {bigRock.getX(), bigRock.getY()};
+                double targetX = 500;
+                double targetY = 40;
 
-        int steps = 50;
-        int delay = 10;
+                int steps = 50;
+                int delay = 10;
 
-        double dx = (targetX - position[0]) / steps;
-        double dy = (targetY - position[1]) / steps;
+                double dx = (targetX - position[0]) / steps;
+                double dy = (targetY - position[1]) / steps;
 
-        throwRockTimer = new Timer(delay, null);
-        throwRockTimer.addActionListener(e -> {
-            position[0] += dx;
-            position[1] += dy;
+                for (int i = 0; i < steps; i++) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        return; // 스레드가 중단되었으면 실행을 멈춤
+                    }
 
-            if (Math.abs(position[0] - targetX) < Math.abs(dx) && Math.abs(position[1] - targetY) < Math.abs(dy)) {
-                bigRock.setLocation((int) targetX, (int) targetY);
-                throwRockTimer.stop();
-            } else {
-                bigRock.setLocation((int) position[0], (int) position[1]);
+                    position[0] += dx;
+                    position[1] += dy;
+
+                    int finalX = (int) position[0];
+                    int finalY = (int) position[1];
+
+                    SwingUtilities.invokeLater(() -> bigRock.setLocation(finalX, finalY));
+
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // 스레드가 인터럽트되었으면 종료
+                        return;
+                    }
+                }
+
+                SwingUtilities.invokeLater(() -> bigRock.setLocation((int) targetX, (int) targetY));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        throwRockTimer.start();
+        rockThrowThread.start(); // 던지기 스레드 시작
     }
 
     public void stopRockMovement() {
-        if (throwRockTimer != null && throwRockTimer.isRunning()) {
-            throwRockTimer.stop(); // 돌의 이동을 멈춤
+        // 던지기 스레드를 중단
+        if (rockThrowThread != null && rockThrowThread.isAlive()) {
+            rockThrowThread.interrupt(); // 스레드 중단
         }
     }
-
 
 
 }

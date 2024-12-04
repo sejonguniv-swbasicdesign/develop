@@ -6,15 +6,17 @@ import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
-import controller.Stage2Controller;
+import controller.stage2.Stage2Controller;
 import model.Storage;
-import view.container.frame.StageClearFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 //게임 패널 설정
 public class Stage2Panel {
@@ -31,6 +33,7 @@ public class Stage2Panel {
     private Stage2BearKeyListener stage2BearKeyListener;
     private Stage2TigerKeyListener stage2TigerKeyListener;
     private Timer monsterSpawnTimer;
+    private ScheduledExecutorService monsterSpawnExecutor;
 
     private JLabel bearPlayer;
     private JLabel tigerPlayer;
@@ -290,13 +293,15 @@ public class Stage2Panel {
         }
     }
 
-    // 3초 뒤 레버 상태 초기화
     private void startLeverCooldown() {
-        Timer timer = new Timer(3000, e -> {
-            isLeverCooldown = false; // 중복 호출 가능하도록 설정
-        });
-        timer.setRepeats(false); // 한 번만 실행
-        timer.start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // 3초 동안 대기
+                isLeverCooldown = false; // 중복 호출 가능하도록 설정
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 스레드가 인터럽트 될 경우 처리
+            }
+        }).start();
     }
 
     // 레버와 발판 초기화
@@ -315,85 +320,129 @@ public class Stage2Panel {
     }
 
     //호랑이몬스터, 플레이어들 떨어짐 설정(Controller로 분리 실패)
-    private void setFalling(){
-        //호랑이 몬스터
-        for (int i = 0 ;i<tigers.size();i++) {
-            if (!isTigerFalling.get(i) && !stage2Controller.isLabelOverlappingRoads(tigers.get(i).getLabel(), roads) && !stage2Controller.isLabelOverlapping(tigers.get(i).getLabel(), step2) &&!stage2Controller.isLabelOverlapping(tigers.get(i).getLabel(), step1)) {
-                isTigerFalling.set(i,true);
+    private void setFalling() {
+        // 호랑이 몬스터
+        for (int i = 0; i < tigers.size(); i++) {
+            if (!isTigerFalling.get(i) &&
+                    !stage2Controller.isLabelOverlappingRoads(tigers.get(i).getLabel(), roads) &&
+                    !stage2Controller.isLabelOverlapping(tigers.get(i).getLabel(), step2) &&
+                    !stage2Controller.isLabelOverlapping(tigers.get(i).getLabel(), step1)) {
+
+                isTigerFalling.set(i, true);
                 stage2Controller.animateElement(tigers.get(i).getLabel(), tigers.get(i).getLabel().getY() + 200);
 
                 int finalI = i;
-                Timer timer = new Timer(1400, e -> checkIfLanded(tigers.get(finalI).getLabel(),finalI));
-                timer.setRepeats(false);
-                timer.start();
-
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                        checkIfLanded(tigers.get(finalI).getLabel(), finalI);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }).start();
             }
         }
 
-        //곰 플레이어
-        if(!stage2BearKeyListener.getBearPlayerJump() && !isBearPlayerFalling &&!stage2Controller.isLabelOverlappingRoads(bearPlayer, roads) && !stage2Controller.isLabelOverlapping(bearPlayer, step2)&& !stage2Controller.isLabelOverlapping(bearPlayer, step1)){
+        // 곰 플레이어
+        if (!stage2BearKeyListener.getBearPlayerJump() && !isBearPlayerFalling &&
+                !stage2Controller.isLabelOverlappingRoads(bearPlayer, roads) &&
+                !stage2Controller.isLabelOverlapping(bearPlayer, step2) &&
+                !stage2Controller.isLabelOverlapping(bearPlayer, step1)) {
+
             isBearPlayerFalling = true;
             stage2Controller.animateBearPlayer(storage.getBear(), storage.getBear().y + 200);
 
-            Timer timer = new Timer(1500, e -> checkIfBearPlayerLanded());
-            timer.setRepeats(false);
-            timer.start();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000); // 1.5초 대기
+                    checkIfBearPlayerLanded();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
         }
-        //호랑이 플레이어
-        if(!stage2TigerKeyListener.getTigerPlayerJump()  &&!isTigerPlayerFalling &&!stage2Controller.isLabelOverlappingRoads(tigerPlayer, roads) && !stage2Controller.isLabelOverlapping(tigerPlayer, step2)&& !stage2Controller.isLabelOverlapping(tigerPlayer, step1) && !stage2Controller.isLabelOverlapping(tigerPlayer,ladder) && !stage2Controller.isLabelOverlapping(tigerPlayer,wall1) && !stage2Controller.isLabelOverlapping(tigerPlayer,wall2)&& !stage2Controller.isLabelOverlapping(tigerPlayer,wall3)){
+
+        // 호랑이 플레이어
+        if (!stage2TigerKeyListener.getTigerPlayerJump() && !isTigerPlayerFalling &&
+                !stage2Controller.isLabelOverlappingRoads(tigerPlayer, roads) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, step2) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, step1) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, ladder) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, wall1) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, wall2) &&
+                !stage2Controller.isLabelOverlapping(tigerPlayer, wall3)) {
+
             isTigerPlayerFalling = true;
             stage2Controller.fallTigerPlayer(storage.getTiger(), storage.getTiger().y + 200);
 
-            Timer timer = new Timer(1500, e -> checkIfTigerPlayerLanded());
-            timer.setRepeats(false);
-            timer.start();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000); // 1.5초 대기
+                    checkIfTigerPlayerLanded();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
         }
     }
 
-    //호랑이 몬스터가 도로 위에 착지 했는지 확인
-    private void checkIfLanded(JLabel label,int i) {
+    // 호랑이 몬스터 착지 확인
+    private void checkIfLanded(JLabel label, int i) {
         if (stage2Controller.isLabelOverlappingRoads(label, roads)) {
-            isTigerFalling.set(i,false);
+            isTigerFalling.set(i, false);
         }
     }
 
-    //호랑이 플레이어가 도로 위에 착지 했는지 확인
-    private void checkIfTigerPlayerLanded(){
+    // 호랑이 플레이어 착지 확인
+    private void checkIfTigerPlayerLanded() {
         if (stage2Controller.isLabelOverlappingRoads(tigerPlayer, roads)) {
             isTigerPlayerFalling = false;
         }
     }
 
-    //곰 플레이어가 도로 위에 착지 했는지 확인
-    private void checkIfBearPlayerLanded(){
+    // 곰 플레이어 착지 확인
+    private void checkIfBearPlayerLanded() {
         if (stage2Controller.isLabelOverlappingRoads(bearPlayer, roads)) {
             isBearPlayerFalling = false;
         }
     }
+
     //몬스터 설정
-    private void setMonster(){
-        tigers= new ArrayList<>();
+    public void setMonster() {
+        tigers = new ArrayList<>();
         isTigerFalling = new ArrayList<>();
+
+        // 첫 번째 몬스터 생성
         TigerMonster tigerMonster = new TigerMonster(50, 75);
         tigerMonster.setMonster(panelWidth, panelHeight, panel);
         tigers.add(tigerMonster);
         isTigerFalling.add(false);
         container.repaint();
 
-         monsterSpawnTimer = new Timer(20000, e ->SwingUtilities.invokeLater(()-> {
-            TigerMonster tigerMonster2 = new TigerMonster(50, 75);
-            tigerMonster2.setMonster(panelWidth, panelHeight, panel);
-            tigers.add(tigerMonster2);
-            isTigerFalling.add(false);
-            container.repaint();
-        }));
-        monsterSpawnTimer.start();
+        // ScheduledExecutorService로 몬스터 스폰 작업 설정
+        monsterSpawnExecutor = Executors.newScheduledThreadPool(1);
+        monsterSpawnExecutor.scheduleAtFixedRate(() -> {
+            SwingUtilities.invokeLater(() -> {
+                TigerMonster tigerMonster2 = new TigerMonster(50, 75);
+                tigerMonster2.setMonster(panelWidth, panelHeight, panel);
+                tigers.add(tigerMonster2);
+                isTigerFalling.add(false);
+                container.repaint();
+            });
+        }, 20, 20, TimeUnit.SECONDS); // 초기 지연 20초, 이후 20초 간격으로 실행
     }
 
-    private void stopMonsterSpawn() {
-        if (monsterSpawnTimer != null && monsterSpawnTimer.isRunning()) {
-            monsterSpawnTimer.stop(); // 타이머 중단
-            monsterSpawnTimer = null;
+    public void stopMonsterSpawn() {
+        if (monsterSpawnExecutor != null && !monsterSpawnExecutor.isShutdown()) {
+            monsterSpawnExecutor.shutdown(); // 스레드 풀 종료
+            try {
+                if (!monsterSpawnExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    monsterSpawnExecutor.shutdownNow(); // 강제 종료
+                }
+            } catch (InterruptedException e) {
+                monsterSpawnExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

@@ -1,14 +1,12 @@
 package model.characters;
 
-import javax.swing.*;
-
 public abstract class Character {
 
     public int hp;
     public int x, y;
     public boolean isFacingRight;
-    private Timer currentTimer; // 현재 실행 중인 Timer 저장
     private boolean isMoving; // 현재 움직임 여부 저장
+    private Thread currentActionThread;
 
     public Character() {
         hp = 3;
@@ -34,7 +32,7 @@ public abstract class Character {
         hp = 3;
     }
 
-    public abstract void move(int x, int y);
+    public abstract void move(int deltaX, int deltaY);
 
     public void setPosition(int x, int y) {
         this.x = x;
@@ -43,8 +41,8 @@ public abstract class Character {
 
     // 외부에서 움직임 중단 요청
     public void stopCurrentAction() {
-        if (currentTimer != null && currentTimer.isRunning()) {
-            currentTimer.stop();
+        if (currentActionThread != null && currentActionThread.isAlive()) {
+            currentActionThread.interrupt(); // 현재 진행 중인 스레드 중단
         }
         isMoving = false;
     }
@@ -57,16 +55,19 @@ public abstract class Character {
         int originalY = this.y;
         int peakY = this.y - deltaY; // 점프하는 동안 상승할 y의 최고 위치
 
-        currentTimer = new Timer(10, null); // 10밀리초 간격으로 움직임
-        currentTimer.addActionListener(e -> {
-            if (this.y > peakY && this.x > targetX) {
-                move(-3, -3); // 왼쪽 위로 조금씩 이동하여 점프
-            } else {
-                currentTimer.stop(); // 상승 끝나면 타이머 정지
-                fallLeft(targetX, originalY); // 원래 y위치로 돌아가기
+        currentActionThread = new Thread(() -> {
+            try {
+                while (this.y > peakY && this.x > targetX && isMoving) {
+                    move(-3, -3); // 왼쪽 위로 조금씩 이동하여 점프
+                    Thread.sleep(10); // 10ms 대기
+                }
+                fallLeft(targetX, originalY); // 하강 동작
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 인터럽트 예외 처리
             }
         });
-        currentTimer.start();
+
+        currentActionThread.start();
     }
 
     public void jumpRight(int deltaX, int deltaY) {
@@ -77,46 +78,54 @@ public abstract class Character {
         int originalY = this.y;
         int peakY = this.y - deltaY; // 점프하는 동안 상승할 y의 최고 위치
 
-        currentTimer = new Timer(10, null); // 10밀리초 간격으로 움직임
-        currentTimer.addActionListener(e -> {
-            if (this.y > peakY && this.x < targetX) {
-                move(3, -3); // 오른쪽 위로 조금씩 이동하여 점프
-            } else {
-                currentTimer.stop(); // 상승 끝나면 타이머 정지
-                fallRight(targetX, originalY); // 원래 y위치로 돌아가기
+        currentActionThread = new Thread(() -> {
+            try {
+                while (this.y > peakY && this.x < targetX && isMoving) {
+                    move(3, -3); // 오른쪽 위로 조금씩 이동하여 점프
+                    Thread.sleep(10); // 10ms 대기
+                }
+                fallRight(targetX, originalY); // 하강 동작
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 인터럽트 예외 처리
             }
         });
-        currentTimer.start();
+
+        currentActionThread.start();
     }
 
     private void fallLeft(int targetX, int originalY) {
-        currentTimer = new Timer(10, null);
-        currentTimer.addActionListener(e -> {
-            if (this.y < originalY) {
-                move(-3, 3); // 아래로 조금씩 이동하여 원래 y위치로 돌아가기
-            } else {
-                this.y = originalY; // 정확한 y 위치로 고정
-                this.x = targetX; // x 위치를 목표 지점으로 설정
-                currentTimer.stop(); // 하강 완료 후 타이머 정지
-                isMoving = false; // 움직임 상태 초기화
+        new Thread(() -> {
+            try {
+                while (this.y < originalY && isMoving) {
+                    move(-3, 3); // 왼쪽 아래로 이동
+                    Thread.sleep(10); // 10ms 대기
+                }
+                synchronized (this) {
+                    this.y = originalY;
+                    this.x = targetX;
+                    isMoving = false; // 움직임 상태 초기화
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        });
-        currentTimer.start();
+        }).start();
     }
 
     private void fallRight(int targetX, int originalY) {
-        currentTimer = new Timer(10, null);
-        currentTimer.addActionListener(e -> {
-            if (this.y < originalY) {
-                move(3, 3); // 아래로 조금씩 이동하여 원래 y위치로 돌아가기
-            } else {
-                this.y = originalY; // 정확한 y 위치로 고정
-                this.x = targetX; // x 위치를 목표 지점으로 설정
-                currentTimer.stop(); // 하강 완료 후 타이머 정지
-                isMoving = false; // 움직임 상태 초기화
+        new Thread(() -> {
+            try {
+                while (this.y < originalY && isMoving) {
+                    move(3, 3); // 오른쪽 아래로 이동
+                    Thread.sleep(10); // 10ms 대기
+                }
+                synchronized (this) {
+                    this.y = originalY;
+                    this.x = targetX;
+                    isMoving = false; // 움직임 상태 초기화
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        });
-        currentTimer.start();
+        }).start();
     }
-
 }
