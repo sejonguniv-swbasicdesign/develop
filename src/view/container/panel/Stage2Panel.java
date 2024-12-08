@@ -8,6 +8,7 @@ import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
 import controller.stage2.Stage2Controller;
 import model.Storage;
+import view.container.frame.AnimationFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,8 @@ public class Stage2Panel {
     private boolean isLeverCooldown = false;
     private int itemCount = 0;
     private int hpCount = 0;
+    private boolean isInvincible = false;
+    private boolean isStageClear = false;
 
     private List<JLabel> hps;
     private JLabel[] roads;
@@ -231,11 +234,23 @@ public class Stage2Panel {
 
         //게임 클리어 조건 설정
         stage2Controller.checkStageFinish(itemCount,bigRock,tigerPlayer,bearPlayer,exit,panel,tigers);
-        stage2Controller.showStageClear(tigerPlayer,bearPlayer,container);
+        showStageClear(tigerPlayer,bearPlayer);
 
         //게임 오버 조건 설정
         stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount);
 
+    }
+
+    public void showStageClear(JLabel tigerPlayer, JLabel bearPlayer){
+        if(!tigerPlayer.isVisible() && !bearPlayer.isVisible() && !isStageClear){
+            isStageClear = true;
+            JFrame currentFrame = (JFrame) SwingUtilities.getRoot(layeredPane);
+            currentFrame.dispose();
+//            StageClearFrame stageClearFrame = new StageClearFrame("stage3",container);
+//            stageClearFrame.setVisible(true);
+            AnimationFrame frame = new AnimationFrame();
+            frame.setStage(3);
+        }
     }
     
     //곰과 호랑이 몬스터가 부딪혔을때 하트 하나 삭제
@@ -249,20 +264,34 @@ public class Stage2Panel {
                 for (JLabel hp : hps) {
                     if (hp.isVisible()) {
                         hp.setVisible(false); // 해당 라벨을 invisible 처리
-                        startCooldown(); // 3초 유예 시작
                         break; // 첫 번째 visible 라벨만 처리하고 종료
                     }
                 }
                 hpCount+=1;
+                startCooldown(); // 3초 유예 시작
+
             }
         }
     }
 
     private void startCooldown() {
         isCooldown = true; // 유예 시작
-        Timer timer = new Timer(3000, e -> isCooldown = false); // 3초 후 유예 해제
-        timer.setRepeats(false); // 한 번만 실행되도록 설정
-        timer.start();
+        stage2BearKeyListener.updateInvincible(true);
+        Timer blinkTimer = new Timer(150, null);
+        blinkTimer.addActionListener(e -> {
+            bearPlayer.setVisible(!bearPlayer.isVisible());
+        });
+        blinkTimer.start();
+
+        // 무적 상태 및 깜빡임 해제를 위한 Timer 설정
+        Timer cooldownTimer = new Timer(2000, e -> {
+            isCooldown = false; // 무적 상태 해제
+            stage2BearKeyListener.updateInvincible(false);
+            bearPlayer.setVisible(true); // 보이도록 고정
+            blinkTimer.stop(); // 깜빡임 중지
+        });
+        cooldownTimer.setRepeats(false); // 한 번만 실행되도록 설정
+        cooldownTimer.start();
     }
 
     //레버 상호작용 설정
@@ -429,7 +458,7 @@ public class Stage2Panel {
                 isTigerFalling.add(false);
                 container.repaint();
             });
-        }, 20, 20, TimeUnit.SECONDS); // 초기 지연 20초, 이후 20초 간격으로 실행
+        }, 7, 7, TimeUnit.SECONDS); // 초기 지연 20초, 이후 20초 간격으로 실행
     }
 
     public void stopMonsterSpawn() {

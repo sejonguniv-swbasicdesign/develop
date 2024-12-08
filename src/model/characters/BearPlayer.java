@@ -39,6 +39,22 @@ public class BearPlayer extends Character {
         resetHp();
     }
 
+    public void setLeftHurtIcon(){
+        try {
+            this.leftIcon = new ImageIcon(ImageIO.read(new File("src/assets/image/characters/맞은곰_왼쪽.png")).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setRightHurtIcon(){
+        try {
+            this.rightIcon = new ImageIcon(ImageIO.read(new File("src/assets/image/characters/맞은곰_오른쪽.png")).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void move(int x, int y) {
         this.x += x;

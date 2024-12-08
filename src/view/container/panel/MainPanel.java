@@ -1,6 +1,7 @@
 package view.container.panel;
 
 import view.component.DesignedButton;
+import view.container.frame.AnimationFrame;
 import view.container.frame.GameFrame;
 import view.container.frame.Stage1Frame;
 
@@ -65,8 +66,10 @@ public class MainPanel {
 
 //            Stage1Frame stage1Frame = new Stage1Frame();
 //            stage1Frame.setStage1Frame();
-            GameFrame gameFrame = new GameFrame();
-            gameFrame.setVisible(true);
+//            GameFrame gameFrame = new GameFrame();
+//            gameFrame.setVisible(true);
+            AnimationFrame frame = new AnimationFrame();
+            frame.setStage(1);
         });
         settingButton.addActionListener(e -> {
             container.removeAll();

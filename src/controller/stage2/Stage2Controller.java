@@ -9,6 +9,7 @@ import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
+import view.container.frame.AnimationFrame;
 import view.container.frame.StageClearFrame;
 
 import javax.swing.*;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 
 public class Stage2Controller {
     private boolean isRockFalling = false;
-    private boolean isStageClear = false;
 
     public Stage2Controller(){
 
@@ -75,12 +75,12 @@ public class Stage2Controller {
 
         if (!isBlueButtonPressed && (isLabelOverlapping(floorButton, tigerPlayer) || isLabelOverlapping(floorButton, bearPlayer))) {
             isBlueButtonPressed = true; // 위치 변경 후 상태 유지
-            animateElement(wall, wall.getY() - 120);
+            animateElement(wall, -120);
 
         }
         else if (isBlueButtonPressed && !isLabelOverlapping(floorButton, tigerPlayer) && !isLabelOverlapping(floorButton, bearPlayer)) {
             isBlueButtonPressed = false; // 상태 초기화
-            animateElement(wall, wall.getY() + 120);
+            animateElement(wall, 0);
         }
         return isBlueButtonPressed;
     }
@@ -248,13 +248,7 @@ public class Stage2Controller {
         }
     }
 
-    public void showStageClear(JLabel tigerPlayer, JLabel bearPlayer,Container container){
-        if(!tigerPlayer.isVisible() && !bearPlayer.isVisible() && !isStageClear){
-            isStageClear = true;
-            StageClearFrame stageClearFrame = new StageClearFrame("stage3",container);
-            stageClearFrame.setVisible(true);
-        }
-    }
+
 
     private boolean allTigersInvisible(ArrayList<TigerMonster> tigers) {
         // tigers 리스트의 모든 요소가 visible이 false인지 확인

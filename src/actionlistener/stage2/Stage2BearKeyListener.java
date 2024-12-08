@@ -17,7 +17,7 @@ public class Stage2BearKeyListener implements KeyListener {
     private boolean isBigRock = false;
     private JLabel bigRock;
     private Thread rockThrowThread;
-
+    private boolean isInvincible = false;
 
     public Stage2BearKeyListener(BearPlayer bearPlayer) {
         this.bearPlayer = bearPlayer;
@@ -30,6 +30,9 @@ public class Stage2BearKeyListener implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (isInvincible) {
+            return; // 무적 상태일 때는 키 입력을 무시
+        }
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_UP) {
@@ -103,6 +106,8 @@ public class Stage2BearKeyListener implements KeyListener {
     public void updatePortal2State(boolean isOverlapping) {
         this.isPortal2 = isOverlapping;
     }
+
+    public void updateInvincible(boolean isInvincible){this.isInvincible=isInvincible;}
 
     public void updateBigRockState(boolean isOverlapping, JLabel bigRock) {
         this.isBigRock = isOverlapping;
