@@ -147,6 +147,17 @@ public class BossAttackController {
         }
     }
 
+    public void resetAttackCycle() {
+        if (timer != null) {
+            timer.stop();
+        }
+        attackState = 0; // 공격 상태 초기화
+        lightningCount = 0; // 번개 공격 횟수 초기화
+        isTornadoActive = false; // 토네이도 비활성화
+        startAttackCycle(); // 루틴 재시작
+    }
+
+
     public void stop() {
         if (timer != null) {
             timer.stop();

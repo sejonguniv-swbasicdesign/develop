@@ -70,11 +70,6 @@ public class InitBossStage extends JFrame {
         repaint();
 
         SwingUtilities.invokeLater(() -> playerInitializerPanel.requestFocusInWindow());
-
-        // 보스 공격 컨트롤러 초기화
-        Storage storage = Storage.getInstance();
-
-        setTestButton();
     }
 
     private void setBackgroundImage() {
@@ -128,19 +123,6 @@ public class InitBossStage extends JFrame {
                 layeredPane,
                 stageController
         );
-    }
-
-
-    private void setTestButton() {
-        JButton testButton = new JButton("Reduce HP");
-        testButton.setBounds(10, 700, 150, 50);
-        testButton.addActionListener(e -> {
-            boss.setHp(boss.getMaxHp() / 2 - 100); // HP 감소
-            System.out.println(boss.getHp());
-            bossAttackController.checkBossRageMode(); // 분노 상태 체크
-        });
-
-        layeredPane.add(testButton, JLayeredPane.PALETTE_LAYER);
     }
 
 }

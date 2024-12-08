@@ -121,4 +121,7 @@ public class TornadoAttackController {
     public boolean isFinished() {
         return isTornadoFinished;
     }
+
+    public void stop() {
+    }
 }

@@ -90,4 +90,12 @@ public class Boss extends Monster {
             }
         }
     }
+
+    public void reset() {
+        hp = maxHp;
+        isFaintedState = false;
+        isAngryState = false;
+        updateStateBasedOnHp();
+    }
+
 }
