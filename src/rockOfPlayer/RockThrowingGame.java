@@ -37,17 +37,17 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	private ArrayList<RockForAttack> rocksOfPlayer;
 	private Player bearPlayer;
 	private Player tigerPlayer;
-	private ArrayList<RockForAttack> launchedRocks ;
-	private boolean hasRock = false;
+	private ArrayList<RockForAttack> launchedRocks;
 
 	private double rockDirectionX = 0, rockDirectionY = 0;
 	private Timer timer3;
 	// ------------------------------------------------------------------------------------
 	private Image doorToNextStage;
 	private Image bridgeButton;
+
 	// 바위 몬스터--------------------------------------------------------------------
 	private ArrayList<FollowingMonster> followingMonsters;
-
+	 private boolean isVisible = true;
 	public void gameSuccess(Graphics g) {
 		if (checkSuccess == true) {
 			try {
@@ -65,6 +65,8 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}
 
 	public void restart() {
+		bearPlayer.setHasRock(false);
+		tigerPlayer.setHasRock(false);
 		bearPlayer.setX(50);
 		bearPlayer.setY(650);
 		tigerPlayer.setX(550);
@@ -73,14 +75,13 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		followingMonsters.get(0).setY(500);
 		followingMonsters.get(1).setX(400);
 		followingMonsters.get(1).setY(500);
-		if(rockMonster.get(0)!=null) {
+		if (rockMonster.get(0) != null) {
 			rockMonster.get(0).setHp(2);
 		}
-	    // 깜빡임 효과 추가
-	    bearPlayer.blinkImage();
-	    tigerPlayer.blinkImage();
-	//	Timer timer = new Timer(2000, null);
-	//	timer.start();
+		// 깜빡임 효과 추가
+
+		// Timer timer = new Timer(2000, null);
+		// timer.start();
 
 	}
 
@@ -152,20 +153,21 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		rockMonster = new ArrayList<>();
 
 		rockMonster.add(new RockMonster(300, 80));
-
+		
 		rocksOfMonsters = new ArrayList<>();
 		timer2 = new Timer(20, this);
 		timer2.start();
 		// RockThrowingGame--------------------------------
 
 		generateRocksOfPlayer();
-		launchedRocks=new ArrayList<>();
+		launchedRocks = new ArrayList<>();
+	
 		timer3 = new Timer(20, this);
 		timer3.start();
-		
+
 		addKeyListener(this);
 		setFocusable(true);
-		
+
 		// 바위산신 ----------
 		followingMonsters = new ArrayList<>();
 		followingMonsters.add(new FollowingMonster(200, 500));
@@ -174,14 +176,14 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		 super.paintComponent(g);
+		super.paintComponent(g);
 
 		// 배경 이미지 그리기
 		if (backgroundImage != null) {
 			g.drawImage(backgroundImage, 0, 0, 600, 800, this);
 
 		}
-		
+
 		drawBridgeElements(g);
 
 		// ----------rocksOfPlayer-----------------------------------------------------
@@ -204,17 +206,18 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			monster.draw(g);
 		}
 		// RockMonster--------------------------------------------------
+		 if (isVisible) {
 		for (RockMonster monster : rockMonster) {
 			monster.draw(g);
 		}
+		 }
 
 		for (RocksOfMonsters rock : rocksOfMonsters) {
 			rock.draw(g);
 		}
 		bearPlayer.draw(g);
-		
+
 		tigerPlayer.draw(g);
-	
 
 		drawHpStatus(g);
 
@@ -253,6 +256,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		updateMonsters();
 		updateLaunchedRock();
 		checkCollisions();
+		checkDeliverRock();
 		// 바위몬스터-----------------------------------------------
 		updateFollowingMonsters();
 		checkCollisionsFollowingMonster();
@@ -292,14 +296,17 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			isBridgeBroken = true;
 		}
 	}
+
 	private void checkFallFromBridge() {
-		if(isBridgeBroken) {
-			if(340<tigerPlayer.getX()&&tigerPlayer.getX()<346&&363<tigerPlayer.getY()&&tigerPlayer.getY()<455) {
+		if (isBridgeBroken) {
+			if (340 < tigerPlayer.getX() && tigerPlayer.getX() < 346 && 363 < tigerPlayer.getY()
+					&& tigerPlayer.getY() < 455) {
 				hp--;
 				restart();
 			}
 		}
 	}
+
 	private void drawHpStatus(Graphics g) {
 
 		for (int i = 0; i < hp; i++) {
@@ -394,10 +401,24 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	private void updateRockMonster() {
 		for (int i = rockMonster.size() - 1; i >= 0; i--) {
-			for(int j=launchedRocks.size()-1;j>=0;j--) {
+			for (int j = launchedRocks.size() - 1; j >= 0; j--) {
 				if (launchedRocks.get(j).collidesWithMonster(rockMonster.get(i))) {
 					launchedRocks.remove(j);
 					rockMonster.get(i).setHp(-1);
+			        Timer timer = new Timer(100, e -> {
+			            isVisible = !isVisible; // 이미지 가시성 상태를 토글
+			            repaint(); // 화면 갱신
+			        });
+
+			        timer.start();
+
+			        // 1초 후 타이머 중지
+			        new Timer(1000, e -> {
+			            timer.stop(); // 깜빡임 멈춤
+			            isVisible = true; // 이미지를 항상 보이게 설정
+			            repaint(); // 최종 상태로 갱신
+			        }).start();
+			    }
 					if (rockMonster.get(i).getHp() <= 0) {
 
 						rockMonster.remove(i);
@@ -408,15 +429,15 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 				}
 			}
 		}
-	}
+	
 
 	private void checkCollisionsRockAttacked() {
-		for (RocksOfMonsters rock : rocksOfMonsters) {
-			if (rock.collidesWith(bearPlayer) || rock.collidesWith(tigerPlayer)) {
-				if (rock.collidesWith(bearPlayer))
-					hp--;
-				else if (rock.collidesWith(tigerPlayer))
-					hp--;
+		for (int i = rocksOfMonsters.size() - 1; i >= 0; i--) {
+	
+			if (rocksOfMonsters.get(i).collidesWith(bearPlayer) || rocksOfMonsters.get(i).collidesWith(tigerPlayer)) {
+				rocksOfMonsters.remove(i);
+				hp--;
+				
 				restart();
 
 			}
@@ -428,7 +449,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		Random rand = new Random();
 		for (int i = 0; i < 9; i++) {
 			int x = 30 + rand.nextInt(560);
-			int y = 460 + rand.nextInt(290);
+			int y =110 + rand.nextInt(250);
 			rocksOfPlayer.add(new RockForAttack(x, y));
 		}
 	}
@@ -444,10 +465,10 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}
 
 	private void updateLaunchedRock() {
-		for(int i= launchedRocks.size() -1 ;i>=0;i--) {
+		for (int i = launchedRocks.size() - 1; i >= 0; i--) {
 			launchedRocks.get(i).move(launchedRocks.get(i).getDx(), launchedRocks.get(i).getDy());
 			if (launchedRocks.get(i).isOffScreen()) {
-				launchedRocks.remove(i); // Remove the rock if it goes off screen
+				launchedRocks.remove(i);
 			}
 		}
 	}
@@ -467,14 +488,23 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 		for (int i = rocksOfPlayer.size() - 1; i >= 0; i--) {
 			RockForAttack rock = rocksOfPlayer.get(i);
-			if (rock.collidesWith(bearPlayer)) {
-				if (hasRock == true)
+			if (rock.collidesWith(tigerPlayer)) {
+				if (tigerPlayer.getHasRock() == true)
 					continue;
 				else {
-					hasRock = true;
+					tigerPlayer.setHasRock(true);
 					rocksOfPlayer.remove(i);
 				}
 			}
+		}
+
+	}
+
+	private void checkDeliverRock() {
+		if (tigerPlayer.deliverRock(bearPlayer.getX(), bearPlayer.getY())&&bearPlayer.getHasRock()==false&&tigerPlayer.getHasRock()==true) {
+			bearPlayer.setHasRock(true);
+			tigerPlayer.setHasRock(false);
+			
 		}
 	}
 
@@ -507,10 +537,10 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 		if (check == 1 && who == 0) {
 			hp--;
-			// System.exit(0); // End the game
+
 		} else if (check == 1 && who == 1) {
 			hp--;
-			// System.exit(0); // End the game
+
 		}
 		if (check == 1)
 			restart();
@@ -519,9 +549,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE && hasRock) {
-			launchRock();
-		}
+
 		if (e.getKeyCode() == KeyEvent.VK_Q) {
 			killFollowingMonster();
 		}
@@ -530,32 +558,38 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		// 임시로 새로운 위치 계산
 		int newX = bearPlayer.getX();
 		int newY = bearPlayer.getY();
-
+		
+		if (bearPlayer.getHasRock() == true) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE && bearPlayer.getHasRock() == true) {
+				if (bearPlayer.getHasRock() == true)
+					launchRock();
+			}
+		}
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 
-				bearPlayer.setMovingUp(true);
-			
-		} else if (e.getKeyCode() == KeyEvent.VK_DOWN ) {
-		
-				bearPlayer.setMovingDown(true);
-			
+			bearPlayer.setMovingUp(true);
+
+		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+			bearPlayer.setMovingDown(true);
+
 		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-		
-				bearPlayer.setMovingLeft(true);
-			
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT ) {
-			
-				bearPlayer.setMovingRight(true);
-			
+
+			bearPlayer.setMovingLeft(true);
+
+		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+
+			bearPlayer.setMovingRight(true);
+
 		}
 
-		if (e.getKeyCode() == KeyEvent.VK_W ) {
+		if (e.getKeyCode() == KeyEvent.VK_W) {
 			tigerPlayer.setMovingUp(true);
-		} else if (e.getKeyCode() == KeyEvent.VK_S ) {
+		} else if (e.getKeyCode() == KeyEvent.VK_S) {
 			tigerPlayer.setMovingDown(true);
-		} else if (e.getKeyCode() == KeyEvent.VK_A ) {
+		} else if (e.getKeyCode() == KeyEvent.VK_A) {
 			tigerPlayer.setMovingLeft(true);
-		} else if (e.getKeyCode() == KeyEvent.VK_D ) {
+		} else if (e.getKeyCode() == KeyEvent.VK_D) {
 			tigerPlayer.setMovingRight(true);
 		}
 
@@ -577,6 +611,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			bearPlayer.setMovingUp(false);
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -601,16 +636,21 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}
 
 	private void launchRock() {
-		double angle = Math.atan2(bearPlayer.getDirectionY(), bearPlayer.getDirectionX());
-		if(bearPlayer.getDirectionX()==0&&bearPlayer.getDirectionY()==0) {
-			if(bearPlayer.getCheckDirection()==0)angle=135;
-			else angle=0;
-		}
 
-		launchedRocks.add(new RockForAttack(bearPlayer.getX(), bearPlayer.getY()));
-		launchedRocks.get(launchedRocks.size()-1).setDx(Math.cos(angle) * 5) ;
-		launchedRocks.get(launchedRocks.size()-1).setDy( Math.sin(angle) * 5) ;
-		hasRock = false;
+		double angle = Math.atan2(bearPlayer.getDirectionY(), bearPlayer.getDirectionX());
+		if (bearPlayer.getDirectionX() == 0 && bearPlayer.getDirectionY() == 0) {
+			if (bearPlayer.getCheckDirection() == 0)
+				angle = 135;
+			else
+				angle = 0;
+		}
+		
+		if (bearPlayer.getHasRock()== true) {
+			launchedRocks.add(new RockForAttack(bearPlayer.getX(), bearPlayer.getY()));
+			launchedRocks.get(launchedRocks.size() - 1).setDx(Math.cos(angle) * 5);
+			launchedRocks.get(launchedRocks.size() - 1).setDy(Math.sin(angle) * 5);
+			bearPlayer.setHasRock(false);
+		}
 	}
 
 	private double calculateDistance(int x1, int y1, int x2, int y2) {
