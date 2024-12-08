@@ -105,25 +105,16 @@ public class DarkCloudAttackController {
         }, 0, 1000);
     }
 
-
     private void handlePlayerCollision() {
-        boolean isHpReduced = false;
+        boolean isBearInCloud = isInsideDarkCloud(bearPlayer);
+        boolean isTigerInCloud = isInsideDarkCloud(tigerPlayer);
 
-        if (isInsideDarkCloud(bearPlayer)) {
-            if (bearPlayer.getHp() > 0) { // HP가 0보다 클 때만 감소
-                bearPlayer.decreaseHp(3); // Bear 즉사 처리
-                isHpReduced = true;
+        // 플레이어가 먹구름 내부에 있고, 공유 HP가 3 이상이면 감소 처리
+        if ((isBearInCloud || isTigerInCloud) && storage.getSharedHp() > 0) {
+            for (int i = 0; i < 3; i++) {
+                storage.decreaseSharedHp(); // 공유 HP를 3번 감소
             }
-        }
 
-        if (isInsideDarkCloud(tigerPlayer)) {
-            if (tigerPlayer.getHp() > 0) { // HP가 0보다 클 때만 감소
-                tigerPlayer.decreaseHp(3); // Tiger 즉사 처리
-                isHpReduced = true;
-            }
-        }
-
-        if (isHpReduced) {
             stageController.updateHpDisplay(); // HP 이미지 갱신
 
             // 스테이지 종료 조건 확인

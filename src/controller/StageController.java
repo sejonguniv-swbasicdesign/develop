@@ -2,26 +2,35 @@ package controller;
 
 import model.PlayerPosition;
 import model.Storage;
+import model.monsters.Boss;
 import view.container.panel.third.TransparentPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class StageController {
     private JFrame stageFrame;
     private JLayeredPane layeredPane;
-    private JLabel[] hpLabels; // 하트를 표시할 라벨 배열
+    private JLabel[] hpLabels;
     private ImageIcon fullHeartIcon;
     private ImageIcon emptyHeartIcon;
-    private JPanel overlayPanel; // 재시작 패널
+    private JPanel overlayPanel;
     private JLabel countdownLabel;
     private Storage storage;
     private LightningAttackController lightningAttackController;
+    private List<TornadoAttackController> tornadoControllers; // 토네이도 컨트롤러 관리
+    private Boss boss;
+    private JLabel bossLabel;
+    private BossAttackController bossAttackController;
+    private JLabel backgroundLabel;
 
     public StageController(JFrame stageFrame, JLayeredPane layeredPane) {
         this.stageFrame = stageFrame;
         this.layeredPane = layeredPane;
         this.storage = Storage.getInstance();
+        this.tornadoControllers = new ArrayList<>();
 
         initializeHpDisplay();
         initializeCountdownLabel();
@@ -36,22 +45,52 @@ public class StageController {
 
         JPanel hpPanel = new JPanel();
         hpPanel.setLayout(null);
-        hpPanel.setBounds(10, 10, 150, 40); // 화면 상단 왼쪽
-        hpPanel.setOpaque(false); // 배경 투명
+        hpPanel.setBounds(10, 10, 150, 40);
+        hpPanel.setOpaque(false);
 
         hpLabels = new JLabel[3];
         for (int i = 0; i < 3; i++) {
             hpLabels[i] = new JLabel(fullHeartIcon);
-            hpLabels[i].setBounds(i * 40, 0, 30, 30); // 하트 위치 설정
+            hpLabels[i].setBounds(i * 40, 0, 30, 30);
             hpPanel.add(hpLabels[i]);
         }
 
-        layeredPane.add(hpPanel, JLayeredPane.POPUP_LAYER); // 더 높은 레이어에 추가
+        layeredPane.add(hpPanel, JLayeredPane.POPUP_LAYER);
+    }
+
+    public void initializeBoss() {
+        try {
+            // 기존 보스 라벨 및 컨트롤러 제거
+            if (bossLabel != null) {
+                layeredPane.remove(bossLabel);
+            }
+            if (bossAttackController != null) {
+                bossAttackController.stop();
+            }
+
+            // 새 보스 생성
+            boss = new Boss(500, 550, -10);
+            bossLabel = new JLabel(boss.getBossIcon());
+            bossLabel.setBounds(boss.x, boss.y, 150, 150);
+            layeredPane.add(bossLabel, JLayeredPane.PALETTE_LAYER);
+
+            // 새로운 BossAttackController 생성
+            bossAttackController = new BossAttackController(
+                    boss,
+                    bossLabel,
+                    storage.getBear(),
+                    storage.getTiger(),
+                    layeredPane,
+                    this
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // HP가 감소할 때 하트 이미지를 업데이트
     public void updateHpDisplay() {
-        int sharedHp = storage.getSharedHp(); // 공유 HP 가져오기
+        int sharedHp = storage.getSharedHp();
         for (int i = 0; i < 3; i++) {
             if (i < sharedHp) {
                 hpLabels[i].setIcon(fullHeartIcon);
@@ -61,22 +100,42 @@ public class StageController {
         }
 
         if (sharedHp <= 0) {
-            endStage(); // 공유 HP가 0이면 스테이지 종료
+            endStage();
         }
+    }
+
+    public void initializeBackground() {
+        if (backgroundLabel != null) {
+            layeredPane.remove(backgroundLabel);
+        }
+
+        backgroundLabel = new JLabel();
+        ImageIcon backgroundImage = new ImageIcon("src/assets/image/component/cloud_stage.png");
+        Image scaledImage = backgroundImage.getImage().getScaledInstance(1300, 800, Image.SCALE_SMOOTH);
+        backgroundLabel.setIcon(new ImageIcon(scaledImage));
+        backgroundLabel.setBounds(0, 0, 1300, 800);
+        layeredPane.add(backgroundLabel, JLayeredPane.DEFAULT_LAYER);
     }
 
     // 스테이지 종료 처리
     public void endStage() {
         if (overlayPanel != null) return;
 
-        // 번개 공격 중단
+        // 모든 공격 컨트롤러 종료
         if (lightningAttackController != null) {
             lightningAttackController.clearAllLightnings();
         }
+        if (bossAttackController != null) {
+            bossAttackController.stop();
+        }
+        for (TornadoAttackController tornadoController : tornadoControllers) {
+            tornadoController.stop();
+        }
+        tornadoControllers.clear();
 
         overlayPanel = new TransparentPanel(new Color(0, 0, 0));
         overlayPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
-        overlayPanel.setLayout(new GridBagLayout()); // 중앙 정렬
+        overlayPanel.setLayout(new GridBagLayout());
 
         JButton restartButton = new JButton("다시 시작하시겠습니까?");
         restartButton.setFont(new Font("Arial", Font.BOLD, 16));
@@ -87,12 +146,11 @@ public class StageController {
         restartButton.addActionListener(e -> restartStage());
         overlayPanel.add(restartButton);
 
-        layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER); // 최상위 레이어에 추가
+        layeredPane.add(overlayPanel, JLayeredPane.DRAG_LAYER);
         layeredPane.repaint();
     }
 
-    // 스테이지를 재시작
-    private void restartStage() {
+    public void restartStage() {
         storage.resetSharedHp();
 
         // 플레이어 좌표 초기화
@@ -101,10 +159,14 @@ public class StageController {
         storage.getTiger().x = PlayerPosition.TIGER_START.getX();
         storage.getTiger().y = PlayerPosition.TIGER_START.getY();
 
-        // HP 이미지 초기화
+        // HP 초기화
         for (JLabel hpLabel : hpLabels) {
             hpLabel.setIcon(fullHeartIcon);
         }
+
+        // 배경 및 보스 초기화
+        initializeBackground();
+        initializeBoss();
 
         // 오버레이 제거
         layeredPane.remove(overlayPanel);
@@ -112,12 +174,7 @@ public class StageController {
         layeredPane.repaint();
     }
 
-    // 번개 컨트롤러 설정
-    public void setLightningAttackController(LightningAttackController controller) {
-        this.lightningAttackController = controller;
-    }
-
-    private void initializeCountdownLabel() {
+    public void initializeCountdownLabel() {
         countdownLabel = new JLabel();
         countdownLabel.setBounds(layeredPane.getWidth() - 400, 10, 160, 50); // 오른쪽 상단
         countdownLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -134,4 +191,13 @@ public class StageController {
     public JLabel getCountdownLabel() {
         return countdownLabel;
     }
+
+    public void addTornadoController(TornadoAttackController controller) {
+        tornadoControllers.add(controller);
+    }
+
+    public void setLightningAttackController(LightningAttackController controller) {
+        this.lightningAttackController = controller;
+    }
+
 }
