@@ -59,8 +59,8 @@ public class MovingMonster {//---------------------곰부족
     private Image LeftmonsterImage;
     private int checkDirection;
     // 이미지 파일 경로
-	private String RightimagePath = "./src/assets/image/stage1/곰부족_왼쪽.png";
-	private String LeftimagePath = "./src/assets/image/stage1/곰부족.png";
+    private String RightimagePath = "./src/assets/image/stage1/곰부족_왼쪽.png";
+    private String LeftimagePath = "./src/assets/image/stage1/곰부족.png";
 
     public MovingMonster(int x, int y) {
         this.x = x;
@@ -69,12 +69,12 @@ public class MovingMonster {//---------------------곰부족
         // 이미지 로드 및 스케일 조정
         try {
             Image RightImage = ImageIO.read(new File(RightimagePath));
-            RightmonsterImage = RightImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
+            RightmonsterImage = RightImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
             Image LeftImage = ImageIO.read(new File(LeftimagePath));
-            LeftmonsterImage = LeftImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
+            LeftmonsterImage = LeftImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             System.err.println("이미지 로드 실패: " + e.getMessage());
-   
+
         }
     }
 
@@ -101,9 +101,9 @@ public class MovingMonster {//---------------------곰부족
     public void draw(Graphics g) {
         if (checkDirection==1) {
             // 이미지 중심을 기준으로 그리기
-            g.drawImage(RightmonsterImage, x - 20, y - 20, null); 
+            g.drawImage(RightmonsterImage, x - 20, y - 20, null);
         } else {
-            g.drawImage(LeftmonsterImage, x - 20, y - 20, null); 
+            g.drawImage(LeftmonsterImage, x - 20, y - 20, null);
         }
     }
 }

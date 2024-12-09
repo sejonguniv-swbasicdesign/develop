@@ -13,21 +13,24 @@ import javax.imageio.ImageIO;
 public class RockMonster {//-------------------바위산신
 	private int x, y;
 	private int hp;
+	private boolean isVisible;
 	private Random random = new Random();
-    private Image monsterImage;
-    private String monsterimagePath = "./src/assets/image/stage1/산신.png";
+	private Image monsterImage;
+	private String monsterimagePath = "./src/assets/image/stage1/산신2.png";
 	public RockMonster(int x, int y) {
 		this.x = x;
 		this.y = y;
-		hp=2;
-        try {
-            monsterImage = ImageIO.read(new File(monsterimagePath));
-            monsterImage = monsterImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
+		hp=3;
 
-        } catch (IOException e) {
-            System.err.println("이미지 로드 실패: " + e.getMessage());
-   
-        }
+		try {
+			monsterImage = ImageIO.read(new File(monsterimagePath));
+			monsterImage = monsterImage.getScaledInstance(80, 70, Image.SCALE_SMOOTH);
+
+		} catch (IOException e) {
+			System.err.println("이미지 로드 실패: " + e.getMessage());
+
+		}
+		isVisible = true;
 	}
 	public int getX() {
 		return x;
@@ -37,23 +40,32 @@ public class RockMonster {//-------------------바위산신
 	}
 	public void setHp(int x) {
 		hp+=x;
-		
+
 	}
 	public int getHp() {
 		return hp;
-		
+
 	}
-	
+
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
-		if (random.nextInt(50) == 0) { 
-			rocks.add(new RocksOfMonsters(x, y, random.nextInt(360)));
+		if (random.nextInt(50) == 0) {
+			rocks.add(new RocksOfMonsters(x-12, y-10, 45+random.nextInt(90)));
 		}
-		
+
 	}
 
 	public void draw(Graphics g) {
 
-            g.drawImage(monsterImage, x - 20, y - 20, null); 
+		g.drawImage(monsterImage, x - 40, y - 35, null);
+
+
+	}
+	public boolean getIsVisible() {
+		return isVisible;
+
+	}
+	public void setIsVisible(boolean i) {
+		isVisible=i;
 
 	}
 }

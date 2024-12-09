@@ -2,6 +2,7 @@ package view.container.panel;
 
 import view.container.frame.GameFrame;
 import view.container.frame.MainFrame;
+import view.container.frame.Stage1Frame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -110,8 +111,8 @@ public class AnimationPanel extends JPanel {
                     currentImageIndex=0;
                     JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
                     currentFrame.dispose();
-                    GameFrame gameFrame = new GameFrame();
-                    gameFrame.setVisible(true);
+                    Stage1Frame stage1 = new Stage1Frame();
+                    stage1.setStage1Frame();
                 }
                 repaint(); // 화면 다시 그리기
             }
@@ -121,7 +122,8 @@ public class AnimationPanel extends JPanel {
                     currentImageIndex=0;
                     JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
                     currentFrame.dispose();
-
+                    GameFrame gameFrame = new GameFrame();
+                    gameFrame.setVisible(true);
                 }
                 repaint(); // 화면 다시 그리기
             }

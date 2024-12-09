@@ -1,3 +1,4 @@
+
 package rockOfPlayer;
 
 import java.awt.Graphics;
@@ -15,8 +16,8 @@ public class FollowingMonster {//--------------------바위 몬스터
 	private int checkDirection;
 	private Image monsterImageRight;
 	private Image monsterImageLeft;
-    private String RightimagePath = "./src/assets/image/stage1/바위몬스터_오른쪽.png";
-    private String LeftimagePath = "./src/assets/image/stage1/바위몬스터.png";
+	private String RightimagePath = "./src/assets/image/stage1/바위몬스터_오른쪽.png";
+	private String LeftimagePath = "./src/assets/image/stage1/바위몬스터.png";
 
 	public FollowingMonster(int x, int y) {
 		this.x = x;
@@ -43,26 +44,26 @@ public class FollowingMonster {//--------------------바위 몬스터
 		double distance = calculateDistance(playerX, playerY);
 
 		if (distance <= detectionRange) {
-		
+
 			int dx = playerX - x;
 			int dy = playerY - y;
 
-		
+
 			if (dx != 0)
-				x += speed * dx / Math.abs(dx); 
+				x += speed * dx / Math.abs(dx);
 
 			if (dy != 0)
-				y += speed * dy / Math.abs(dy); 
-			
+				y += speed * dy / Math.abs(dy);
+
 			if(dx>0)checkDirection=1;
 			else checkDirection=0;
 		}
 	}
-    public boolean collidesWith(Player player) {
-        int playerX = player.getX();
-        int playerY = player.getY();
-        return Math.abs(x - playerX) < 40 && Math.abs(y - playerY) < 40;
-    }
+	public boolean collidesWith(Player player) {
+		int playerX = player.getX();
+		int playerY = player.getY();
+		return Math.abs(x - playerX) < 40 && Math.abs(y - playerY) < 40;
+	}
 
 
 	public int getX() {
@@ -72,14 +73,19 @@ public class FollowingMonster {//--------------------바위 몬스터
 	public int getY() {
 		return y;
 	}
-
-    public void draw(Graphics g) {
-        if (checkDirection==1) {
-            // 이미지 중심을 기준으로 그리기
-            g.drawImage(monsterImageRight, x - 30, y - 30, null); 
-        } else {
-            g.drawImage(monsterImageLeft, x - 30, y - 30, null); 
-        }
-    }
+	public void setX(int x) {
+		this.x=x;
+	}
+	public void setY(int y) {
+		this.y=y;
+	}
+	public void draw(Graphics g) {
+		if (checkDirection==1) {
+			// 이미지 중심을 기준으로 그리기
+			g.drawImage(monsterImageRight, x - 30, y - 30, null);
+		} else {
+			g.drawImage(monsterImageLeft, x - 30, y - 30, null);
+		}
+	}
 
 }

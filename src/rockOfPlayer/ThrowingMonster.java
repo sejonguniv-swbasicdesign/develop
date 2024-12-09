@@ -9,7 +9,7 @@ import java.io.File;
 class ThrowingMonster {
 	private int x, y;
 	private static final int SPEED = 4;
-	 private Image image;
+	private Image image;
 
 	public ThrowingMonster(int x, int y) {
 		this.x = x;

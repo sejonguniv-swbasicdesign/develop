@@ -10,28 +10,33 @@ import javax.imageio.ImageIO;
 
 public class RockForAttack {//-----------------------곰플레이어가 던지는 돌
 	private double x, y;
+	private double dx,dy;
 	private Image rockImage;
 	private boolean destroyed = false;
 	public RockForAttack(double x, double y) {
 		this.x = x;
 		this.y = y;
-        try {
-            rockImage = ImageIO.read(new File("./src/assets/image/stage1/돌_공격용.png"));
-            rockImage = rockImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH); 
+		dx=0;
+		dy=0;
+		try {
+			rockImage = ImageIO.read(new File("./src/assets/image/stage1/돌_공격용.png"));
+			rockImage = rockImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 
-        } catch (IOException e) {
-            System.err.println("이미지 로드 실패: " + e.getMessage());
-   
-        }
+		} catch (IOException e) {
+			System.err.println("이미지 로드 실패: " + e.getMessage());
+
+		}
 	}
 
 	public void move(double dx, double dy) {
 		x += dx;
 		y += dy;
+		//this.dx=dx;
+		//this.dy=dy;
 	}
 
 	public boolean isOffScreen() {
-		return x < 0 || x > 800 || y < 0 || y > 600;
+		return x < 0 || x > 600 || y < 0 || y > 800;
 	}
 
 	public boolean collidesWith(Player player) {
@@ -47,10 +52,22 @@ public class RockForAttack {//-----------------------곰플레이어가 던지�
 	public boolean collidesWithMonster(RockMonster rockMonster) {
 		int monsterX = rockMonster.getX();
 		int monsterY = rockMonster.getY();
-		
+
 		return Math.hypot(x - monsterX, y - monsterY) < 30;
 	}
 	public void draw(Graphics g) {
-		 g.drawImage(rockImage, (int)(x - 12.5),(int)( y - 12.5), null); 
+		g.drawImage(rockImage, (int)(x - 12.5),(int)( y - 12.5), null);
+	}
+	public double getDx() {
+		return dx;
+	}
+	public double getDy() {
+		return dy;
+	}
+	public void setDx(double dx) {
+		this.dx=dx;
+	}
+	public void setDy(double dy) {
+		this.dy=dy;
 	}
 }
