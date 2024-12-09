@@ -56,6 +56,8 @@ public class AnimationPanel extends JPanel {
         setImage("src/assets/image/animation/4-b-1.png", last);
         setImage("src/assets/image/animation/4-b-2.png", last);
         setImage("src/assets/image/animation/4-b-3.png", last);
+        setImage("src/assets/image/animation/4-b-4.png", last);
+
     }
 
     private void setImage(String string, ArrayList<Image> images) {
@@ -137,9 +139,6 @@ public class AnimationPanel extends JPanel {
                 currentImageIndex++;
                 if (currentImageIndex >= last.size()) {
                     currentImageIndex=0;
-                    JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
-                    currentFrame.dispose();
-
                 }
                 repaint(); // 화면 다시 그리기
             }

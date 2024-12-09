@@ -237,7 +237,7 @@ public class Stage2Panel {
         showStageClear(tigerPlayer,bearPlayer);
 
         //게임 오버 조건 설정
-        stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount);
+        stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount,layeredPane);
 
     }
 
@@ -246,8 +246,7 @@ public class Stage2Panel {
             isStageClear = true;
             JFrame currentFrame = (JFrame) SwingUtilities.getRoot(layeredPane);
             currentFrame.dispose();
-//            StageClearFrame stageClearFrame = new StageClearFrame("stage3",container);
-//            stageClearFrame.setVisible(true);
+
             AnimationFrame frame = new AnimationFrame();
             frame.setStage(3);
         }

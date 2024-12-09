@@ -9,7 +9,9 @@ import model.dto.stage2.BlueButtonDto;
 import model.dto.stage2.RedButtonDto;
 import model.dto.stage2.YellowButtonDto;
 import model.monsters.TigerMonster;
+import view.component.GameOverDialog;
 import view.container.frame.AnimationFrame;
+import view.container.frame.GameFrame;
 import view.container.frame.StageClearFrame;
 
 import javax.swing.*;
@@ -260,9 +262,20 @@ public class Stage2Controller {
         return true; // 모든 요소가 invisible일 경우 true 반환
     }
     //게임 오버 된지 확인(일단 게임 오버 된지 로그로 찍기만 가능)
-    public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, ArrayList<TigerMonster> tigerMonster, int hpCount){
+    public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, ArrayList<TigerMonster> tigerMonster, int hpCount, JLayeredPane layeredPane){
         if(bearPlayer.getY()>1000 || tigerPlayer.getY()>1000 || isCheckTigerMonsterFall(tigerMonster) || hpCount==3){
-            System.out.println("Game Over");
+//            GameOverDialog dig = new GameOverDialog( (JFrame) SwingUtilities.getRoot(bearPlayer),2);
+            int result = JOptionPane.showConfirmDialog(null,"스테이지를 재시도하시겠습니까?","GameOver", JOptionPane.YES_NO_OPTION);
+            if(result==JOptionPane.YES_OPTION){
+                JFrame frame = (JFrame) SwingUtilities.getRoot(layeredPane);
+                frame.remove(layeredPane);
+                frame.dispose();
+                GameFrame gameFrame = new GameFrame();
+                gameFrame.setVisible(true);
+            }
+            else if(result==JOptionPane.NO_OPTION){
+                System.exit(0);
+            }
         }
     }
 
@@ -274,6 +287,7 @@ public class Stage2Controller {
         }
         return false;
     }
+
 
     //라벨들이 겹치는지 확인
     public boolean isLabelOverlapping(JLabel label1, JLabel label2) {
