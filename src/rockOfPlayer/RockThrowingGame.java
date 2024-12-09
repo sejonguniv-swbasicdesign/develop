@@ -48,7 +48,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	// 바위 몬스터--------------------------------------------------------------------
 	private ArrayList<FollowingMonster> followingMonsters;
 	 private boolean isVisible = true;
-	public void gameSuccess(Graphics g) {
+	public void doorOpen(Graphics g) {
 		if (checkSuccess == true) {
 			try {
 				doorToNextStage = ImageIO.read(new File("./src/assets/image/탈출구.png"));
@@ -59,9 +59,17 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 				e.printStackTrace();
 			}
 			if (doorToNextStage != null) {
-				g.drawImage(doorToNextStage, 600 / 2 - 30, 20, null);
+				g.drawImage(doorToNextStage, 600 / 2 - 30, 50-30, null);
 			}
 		}
+	}
+	public void toTheNextStage() {
+		if(checkSuccess==true) {
+			if(270<=bearPlayer.getX()&&bearPlayer.getX()<=330&&20<=bearPlayer.getY()&&bearPlayer.getY()<=80) {
+				System.exit(0); // End the game
+			}
+		}
+		
 	}
 
 	public void restart() {
@@ -75,9 +83,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		followingMonsters.get(0).setY(500);
 		followingMonsters.get(1).setX(400);
 		followingMonsters.get(1).setY(500);
-		if (rockMonster.get(0) != null) {
-			rockMonster.get(0).setHp(2);
-		}
+
 		// 깜빡임 효과 추가
 
 		// Timer timer = new Timer(2000, null);
@@ -224,7 +230,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		// Stage
 		// Status------------------------------------------------------------------------------
 
-		gameSuccess(g);
+		doorOpen(g);
 
 		// 바위몬스터-----------------------------------------------------------------------------
 
@@ -264,6 +270,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		bearPlayer.move();
 		tigerPlayer.move();
 		checkGameover();
+		toTheNextStage();
 		repaint();
 
 	}
