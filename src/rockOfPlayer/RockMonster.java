@@ -16,7 +16,7 @@ public class RockMonster {//-------------------바위산신
 	private boolean isVisible;
 	private Random random = new Random();
 	private Image monsterImage;
-	private String monsterimagePath = "./src/assets/image/stage1/산신2.png";
+	private String monsterimagePath = "./src/assets/image/stage1/산신3.png";
 	public RockMonster(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -24,7 +24,7 @@ public class RockMonster {//-------------------바위산신
 
 		try {
 			monsterImage = ImageIO.read(new File(monsterimagePath));
-			monsterImage = monsterImage.getScaledInstance(80, 70, Image.SCALE_SMOOTH);
+			monsterImage = monsterImage.getScaledInstance(90, 80, Image.SCALE_SMOOTH);
 
 		} catch (IOException e) {
 			System.err.println("이미지 로드 실패: " + e.getMessage());
@@ -56,7 +56,7 @@ public class RockMonster {//-------------------바위산신
 
 	public void draw(Graphics g) {
 
-		g.drawImage(monsterImage, x - 40, y - 35, null);
+		g.drawImage(monsterImage, x - 45, y - 40, null);
 
 
 	}

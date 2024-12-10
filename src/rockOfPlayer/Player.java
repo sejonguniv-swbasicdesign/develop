@@ -39,13 +39,14 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 	private int minY, maxY;
 	private boolean isVisible;
 	private boolean restart;
-
-
+	private boolean showImage;
 
 	private boolean hasRock;
+
 	public Player(int x, int y, int name) {
 		this.x = x;
 		this.y = y;
+		showImage = true;
 		hp = 3;
 		this.name = name;
 		ifOnBridge = false;
@@ -55,7 +56,7 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 		minY = 455;
 		maxY = 753;
 		isVisible = true;
-		hasRock=false;
+		hasRock = false;
 
 		restart = false;
 		if (name == 0) {
@@ -78,19 +79,19 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 
 		}
 		try {
-			LeftTigerWithRockImage=ImageIO.read(new File( tigerWithRockLeftimagePath));
-			LeftTigerWithRockImage= LeftTigerWithRockImage.getScaledInstance(34, 52, Image.SCALE_SMOOTH);
-			RightTigerWithRockImage=ImageIO.read(new File( tigerWithRockRightimagePath));
-			RightTigerWithRockImage= RightTigerWithRockImage.getScaledInstance(34, 52, Image.SCALE_SMOOTH);
+			LeftTigerWithRockImage = ImageIO.read(new File(tigerWithRockLeftimagePath));
+			LeftTigerWithRockImage = LeftTigerWithRockImage.getScaledInstance(46, 68, Image.SCALE_SMOOTH);
+			RightTigerWithRockImage = ImageIO.read(new File(tigerWithRockRightimagePath));
+			RightTigerWithRockImage = RightTigerWithRockImage.getScaledInstance(46, 68, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
 			System.err.println("이미지 로드 실패: " + e.getMessage());
 
 		}
 		try {
-			LeftBearWithRockImage=ImageIO.read(new File( bearWithRockLeftimagePath));
-			LeftBearWithRockImage= LeftBearWithRockImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-			RightBearWithRockImage=ImageIO.read(new File( bearWithRockRightimagePath));
-			RightBearWithRockImage= RightBearWithRockImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+			LeftBearWithRockImage = ImageIO.read(new File(bearWithRockLeftimagePath));
+			LeftBearWithRockImage = LeftBearWithRockImage.getScaledInstance(74, 50, Image.SCALE_SMOOTH);
+			RightBearWithRockImage = ImageIO.read(new File(bearWithRockRightimagePath));
+			RightBearWithRockImage = RightBearWithRockImage.getScaledInstance(74, 50, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
 			System.err.println("이미지 로드 실패: " + e.getMessage());
 
@@ -107,12 +108,12 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 
 	public void setMovingLeft(boolean movingLeft) {
 		this.movingLeft = movingLeft;
-		checkDirection = 0;
+
 	}
 
 	public void setMovingRight(boolean movingRight) {
 		this.movingRight = movingRight;
-		checkDirection = 1;
+
 	}
 
 	public double getDirectionX() {
@@ -135,56 +136,54 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 			x += dirX * 2;
 			y += dirY * 2;
 		} else {
-			if(hasRock==true) {
+			if (hasRock == true) {
 				x += dirX * 2;
 				y += dirY * 2;
-			}else {
+			} else {
 
 				x += dirX * 4;
 				y += dirY * 4;
 			}
 		}
 		/*
-		if (name == 1) {
-			System.out.println(x);
-			System.out.println(y);
-		}*/
-
+		 * if (name == 1) { System.out.println(x); System.out.println(y); }
+		 */
+		int i=20;
 		if (name == 1) {
 			if (ifOnBridge == true) {
-				if (((340 <= x && x <= 346) && (454 <= y && y <= 459))
-						|| ((340 <= x && x <= 346) && (360 <= y && y <= 363))) {
+				if (((340 <= x && x <= 346) && (454-i <= y && y <= 459-i))
+						|| ((340 <= x && x <= 346) && (360-i <= y && y <= 363-i))) {//다리 바운더리
 					minX = 340;
 					maxX = 346;
-					minY = 359;
-					maxY = 458;
-				} else if ((10 < x && x < 340) && (455 < y) || (340 <= x && x <= 346) && (458 < y)
-						|| (346 < x && x < 570) && (455 < y)) {
+					minY = 359-i;
+					maxY = 458-i;
+				} else if ((10 < x && x < 340) && (455-i < y) || (340 <= x && x <= 346) && (458-i < y)
+						|| (346 < x && x < 570) && (455-i < y)) {//아래 부분 바운더리
 					minX = 10;
 					maxX = 575;
-					minY = 455;
+					minY = 455-i;
 					maxY = 753;
-				} else if ((10 < x && x < 340) && (y < 344) || (340 <= x && x <= 346) && (y < 360)
-						|| (346 < x && x < 570) && (y < 344)) {
+				} else if ((10 < x && x < 340) && (y < 344-i) || (340 <= x && x <= 346) && (y < 360-i)
+						|| (346 < x && x < 570) && (y < 344-i)) {//위 부분 바운더리
 					minX = 10;
 					maxX = 575;
 					minY = 10;
-					maxY = 360;
+					maxY = 360-i;
 				}
 			} else {
 
-				if ((10 < x && x < 340) && (455 < y) || (340 <= x && x <= 346) && (458 < y)
-						|| (346 < x && x < 570) && (455 < y)) {
+				if ((10 < x && x < 340) && (455-i < y) || (340 <= x && x <= 346) && (458-i < y)
+						|| (346 < x && x < 570) && (455-i < y)) {//아래 부분 바운더리
 					minX = 10;
 					maxX = 575;
-					minY = 455;
+					minY = 455-i;
 					maxY = 753;
-				} else if ((10 < x && x < 340) && (y < 344) || (340 <= x && x <= 346) && (y < 360)
-						|| (346 < x && x < 570) && (y < 344)) {
+				} else if ((10 < x && x < 340) && (y < 344-i) || (340 <= x && x <= 346) && (y < 360-i)
+						|| (346 < x && x < 570) && (y < 344-i)) {//위 부분 
 					minX = 10;
 					maxX = 575;
 					minY = 10;
-					maxY = 360;
+					maxY = 360-i;
 				}
 			}
 
@@ -196,40 +195,38 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 	}
 
 	public void draw(Graphics g) {
-		//	g.drawImage(LeftTigerWithRockImage, 400,400, null);
-		//g.drawImage(RightTigerImage, 420, 412, null);
-		if (name == 0) {
-			if (checkDirection == 0) {
-				// 이미지 중심을 기준으로 그리기
-				if(hasRock==true) {
-					g.drawImage(LeftBearWithRockImage, x - 20, y - 20, null);
-				}else
-					g.drawImage(RightBearImage, x - 20, y - 20, null);
-			} else {
-				if(hasRock==true) {
-					g.drawImage(RightBearWithRockImage, x - 20, y - 20, null);
-				}else
-					g.drawImage(LeftBearImage, x - 20, y - 20, null);
-			}
 
-		} else {
-			if (checkDirection == 0) {
-				if(hasRock==true) {
-					g.drawImage(LeftTigerWithRockImage, x - 17, y - 26, null);
+		if (showImage) {
+			if (name == 0) {
+				if (checkDirection == 0) {
+					// 이미지 중심을 기준으로 그리기
+					if (hasRock == true) {
+						g.drawImage(LeftBearWithRockImage, x - 37, y - 25, null);
+					} else
+						g.drawImage(RightBearImage, x - 20, y - 20, null);
+				} else {
+					if (hasRock == true) {
+						g.drawImage(RightBearWithRockImage, x - 37, y - 25, null);
+					} else
+						g.drawImage(LeftBearImage, x - 20, y - 20, null);
 				}
-				else g.drawImage(RightTigerImage, x - 20, y - 20, null);
-			} else {
-				if(hasRock==true) {
-					g.drawImage(RightTigerWithRockImage, x - 17, y - 26, null);
-				}
-				else g.drawImage(LeftTigerImage, x - 20, y - 20, null);
-			}
 
+			} else {
+				if (checkDirection == 0) {
+					if (hasRock == true) {
+						g.drawImage(LeftTigerWithRockImage, x - 26, y - 34, null);
+					} else
+						g.drawImage(RightTigerImage, x - 20, y - 20, null);
+				} else {
+					if (hasRock == true) {
+						g.drawImage(RightTigerWithRockImage, x - 26, y - 34, null);
+					} else
+						g.drawImage(LeftTigerImage, x - 20, y - 20, null);
+				}
+
+			}
 		}
-
 	}
-
-
 
 	public int getX() {
 		return x;
@@ -271,26 +268,40 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 		return checkDirection;
 	}
 
+	public void setCheckDirection(int checkDirection) {
+		this.checkDirection = checkDirection;
+	}
+
 	public void setIfOnBridge(boolean i) {
 		ifOnBridge = i;
 	}
+
 	public boolean getHasRock() {
 		return hasRock;
 	}
+
 	public void setHasRock(boolean hasRock) {
-		this.hasRock=hasRock;
+		this.hasRock = hasRock;
 	}
-	public boolean deliverRock(int x, int y ) {
-		if(Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 10)return true;
-		else return false;
+
+	public boolean deliverRock(int x, int y) {
+		if (Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 10)
+			return true;
+		else
+			return false;
 
 	}
+
 	public boolean getIsVisible() {
 		return isVisible;
 
 	}
-	public void setIsVisible(boolean i) {
-		isVisible=i;
 
+	public void setIsVisible(boolean i) {
+		isVisible = i;
+
+	}
+	public void setShowImage(boolean showImage) {
+		this.showImage=showImage;
 	}
 }

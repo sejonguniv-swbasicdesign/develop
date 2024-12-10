@@ -62,7 +62,7 @@ public class FollowingMonster {//--------------------바위 몬스터
 	public boolean collidesWith(Player player) {
 		int playerX = player.getX();
 		int playerY = player.getY();
-		return Math.abs(x - playerX) < 40 && Math.abs(y - playerY) < 40;
+		return Math.abs(x - playerX) < 43&& Math.abs(y - playerY) < 43;
 	}
 
 
