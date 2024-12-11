@@ -285,7 +285,7 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 	}
 
 	public boolean deliverRock(int x, int y) {
-		if (Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 10)
+		if (Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 14)
 			return true;
 		else
 			return false;
