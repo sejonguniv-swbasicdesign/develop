@@ -459,7 +459,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		Random rand = new Random();
 		for (int i = 0; i < 9; i++) {
 			int x = 30 + rand.nextInt(560);
-			int y =110 + rand.nextInt(250);
+			int y =110 + rand.nextInt(230);
 			rocksOfPlayer.add(new RockForAttack(x, y));
 		}
 	}
