@@ -2,8 +2,10 @@ package main;
 
 import view.container.frame.third.InitBossStage;
 
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
-        new InitBossStage();
+        SwingUtilities.invokeLater(InitBossStage::new);
     }
 }

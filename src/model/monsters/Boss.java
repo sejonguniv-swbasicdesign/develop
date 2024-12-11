@@ -1,101 +1,84 @@
 package model.monsters;
 
-import javax.imageio.ImageIO;
+import model.Storage;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-public class Boss extends Monster {
-    private ImageIcon bossIcon;
+public class Boss {
+    private int hp;
+    private int x, y;
+    private boolean isRageMode;
+    private ImageIcon normalIcon, rageIcon;
+    private PropertyChangeSupport support; // 상태 변경 알림 지원
 
-    private String originFilePath = "src/assets/image/characters/천신_기본.png";
-    private String faintedFilePath = "src/assets/image/characters/천신_기절.png";
-    private String angryFilePath = "src/assets/image/characters/2페이즈_천신.png";
+    public Boss(int x, int y) {
+        this.hp = 500;
+        this.x = x;
+        this.y = y;
+        this.isRageMode = false;
+        this.support = new PropertyChangeSupport(this);
 
-    private Boolean isAngryState;
-    private Boolean isFaintedState;
-    private int maxHp;
-
-    public Boss(int hp, int x, int y) throws IOException {
-        super(hp, x, y);
-        maxHp = hp;
-        isAngryState = false;
-        isFaintedState = false;
-        bossIcon = new ImageIcon(ImageIO.read(new File(originFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-    }
-
-    public ImageIcon getBossIcon() {
-        return bossIcon;
-    }
-
-    public void setFainted() {
-        if (isFaintedState) {
-            return;
-        }
-
-        isFaintedState = true;
-        isAngryState = false;
-
-        try {
-            bossIcon = new ImageIcon(ImageIO.read(new File(faintedFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Timer timer = new Timer(10000, e -> {
-            isFaintedState = false;
-            updateStateBasedOnHp();
-        });
-        timer.setRepeats(false);
-        timer.start();
-    }
-
-    public void setHp(int newHp) {
-        super.hp = newHp;
-
-        if (!isFaintedState) {
-            updateStateBasedOnHp();
-        }
+        normalIcon = new ImageIcon("src/assets/image/characters/천신_기본.png");
+        rageIcon = new ImageIcon("src/assets/image/characters/2페이즈_천신.png");
     }
 
     public int getHp() {
-        return super.hp;
+        return hp;
     }
 
-    public int getMaxHp() {
-        return maxHp;
-    }
-
-    public boolean isRageMode() {
-        return isAngryState;
-    }
-
-    public void updateStateBasedOnHp() {
-        if (hp <= maxHp / 2) {
-            if (!isAngryState) {
-                try {
-                    bossIcon = new ImageIcon(ImageIO.read(new File(angryFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-                    isAngryState = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            try {
-                bossIcon = new ImageIcon(ImageIO.read(new File(originFilePath)).getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-                isAngryState = false;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void setHp(int hp) {
+        this.hp = hp;
+        if (hp <= 250 && !isRageMode) {
+            isRageMode = true;
         }
     }
 
-    public void reset() {
-        hp = maxHp;
-        isFaintedState = false;
-        isAngryState = false;
-        updateStateBasedOnHp();
+    public boolean isRageMode() {
+        return isRageMode;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 150, 150);
+    }
+
+    public ImageIcon getCurrentIcon() {
+        return isRageMode ? rageIcon : normalIcon;
+    }
+
+    // 보스 위치 설정 메서드 추가
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void decreaseHp(int damage) {
+        int oldHp = this.hp;
+        this.hp -= damage;
+
+        support.firePropertyChange("hp", oldHp, this.hp);
+
+        if (hp <= 250 && !isRageMode) {
+            activateRageMode();
+        }
+    }
+
+    private void activateRageMode() {
+        boolean oldRageMode = this.isRageMode;
+        this.isRageMode = true;
+
+        // 분노 모드 변경 알림
+        support.firePropertyChange("rageMode", oldRageMode, this.isRageMode);
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
     }
 
 }

@@ -2,7 +2,7 @@ package model;
 
 public enum PlayerPosition {
     BEAR_START(300, 400),
-    TIGER_START(800, 400);
+    TIGER_START(840, 400);
 
     private final int x;
     private final int y;

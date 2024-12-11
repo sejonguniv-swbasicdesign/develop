@@ -8,20 +8,22 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class TigerPlayer extends Character {
+public class TigerPlayer extends Characters {
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
+    private ImageIcon attackIcon; // 공격 중 이미지 아이콘 추가
 
     private String leftFilePath = "src/assets/image/characters/호랑이.png";
     private String rightFilePath = "src/assets/image/characters/호랑이_오른쪽.png";
+    private String attackFilePath = "src/assets/image/characters/호랑이_공격.png"; // 공격 이미지 파일 경로
 
-    public TigerPlayer() {
-    }
+    private JLabel tigerLabel; // 이미지 표시를 위한 JLabel
 
     public TigerPlayer(int x, int y) throws IOException {
         super(x, y);
         this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
         this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        this.attackIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
     }
 
     public ImageIcon getCurrentIcon() {
@@ -29,10 +31,23 @@ public class TigerPlayer extends Character {
     }
 
     public void setOppositeDirection() {
-        if(isFacingRight) {
+        if (isFacingRight) {
             isFacingRight = false;
         } else {
             isFacingRight = true;
+        }
+    }
+
+    public void setImage(String state) {
+        switch (state) {
+            case "normal":
+                tigerLabel.setIcon(getCurrentIcon());
+                break;
+            case "attack":
+                tigerLabel.setIcon(attackIcon);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid state: " + state);
         }
     }
 
@@ -66,10 +81,6 @@ public class TigerPlayer extends Character {
         if (this.y < 0) {
             this.y -= y;
         }
-    }
-
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, 100, 100);
     }
 
 }

@@ -8,19 +8,21 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class BearPlayer extends Character {
+public class BearPlayer extends Characters {
 
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
     private String leftFilePath = "src/assets/image/characters/곰_완쪽.png";
     private String rightFilePath = "src/assets/image/characters/곰.png";
+    private boolean holdingRock;
 
 
     public BearPlayer(int x, int y) throws IOException {
         super(x, y);
         this.leftIcon = new ImageIcon(ImageIO.read(new File(leftFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
         this.rightIcon = new ImageIcon(ImageIO.read(new File(rightFilePath)).getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        this.holdingRock = false;
     }
 
     public void decreaseHp(int damage) {
@@ -59,7 +61,16 @@ public class BearPlayer extends Character {
         }
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, 100, 100);
+    public boolean isHoldingRock() {
+        return holdingRock;
     }
+
+    public void pickUpRock() {
+        this.holdingRock = true;
+    }
+
+    public void throwRock() {
+        this.holdingRock = false;
+    }
+
 }
