@@ -47,7 +47,10 @@ public class RocksOfMonsters {//-------------바위산신이 던지는 돌
 	public boolean collidesWith(Player player) {
 		int playerX = player.getX();
 		int playerY = player.getY();
-		return Math.hypot(x - playerX, y - playerY) < 24;
+		if(player.getHasRock()==true&&player.getPlayerName()==1) {
+			return Math.hypot(x - playerX, y - playerY) < 12;
+		}
+		else return Math.hypot(x - playerX, y - playerY) < 24;
 	}
 
 	public void draw(Graphics g) {

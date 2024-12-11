@@ -133,8 +133,8 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 			dirY /= length;
 		}
 		if (name == 0) {
-			x += dirX * 2;
-			y += dirY * 2;
+			x += dirX * 3;
+			y += dirY * 3;
 		} else {
 			if (hasRock == true) {
 				x += dirX * 2;
@@ -305,5 +305,8 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 	}
 	public void setShowImage(boolean showImage) {
 		this.showImage=showImage;
+	}
+	public int getPlayerName() {
+		return name;
 	}
 }

@@ -48,8 +48,8 @@ public class RockMonster {//-------------------바위산신
 	}
 
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
-		if (random.nextInt(50) == 0) {
-			rocks.add(new RocksOfMonsters(x-12, y-10, 45+random.nextInt(90)));
+		if (random.nextInt(40)== 0) {
+			rocks.add(new RocksOfMonsters(x-12, y-10, 60+random.nextInt(40)));
 		}
 
 	}
