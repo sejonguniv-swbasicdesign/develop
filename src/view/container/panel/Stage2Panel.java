@@ -9,12 +9,15 @@ import model.monsters.TigerMonster;
 import controller.stage2.Stage2Controller;
 import model.Storage;
 import view.container.frame.AnimationFrame;
+import view.container.frame.GameFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -67,6 +70,7 @@ public class Stage2Panel {
     private JLabel wall1, wall2, wall3,wall4;
     private JLabel portal1,portal2;
     private JLabel item1, item2 ,item3, item4;
+    private boolean isRunning = true;
 
 
     public Stage2Panel() {
@@ -167,8 +171,18 @@ public class Stage2Panel {
         container.setFocusable(true);
         container.requestFocusInWindow();
 
-        Timer timer = new Timer(16, e -> updateCharacterPositions());
-        timer.start();
+        Thread updateThread = new Thread(() -> {
+            while (isRunning) {
+                try {
+                    updateCharacterPositions();
+                    Thread.sleep(5); // 16ms마다 실행 (대략 60FPS)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        updateThread.start();
     }
 
     private void updateCharacterPositions() {
@@ -237,8 +251,8 @@ public class Stage2Panel {
         showStageClear(tigerPlayer,bearPlayer);
 
         //게임 오버 조건 설정
-        stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount,layeredPane);
-
+//        stage2Controller.checkGameOver(bearPlayer,tigerPlayer,tigers,hpCount,layeredPane);
+        checkGameOver();
     }
 
     public void showStageClear(JLabel tigerPlayer, JLabel bearPlayer){
@@ -349,6 +363,7 @@ public class Stage2Panel {
 
     //호랑이몬스터, 플레이어들 떨어짐 설정(Controller로 분리 실패)
     private void setFalling() {
+        Random random = new Random();
         // 호랑이 몬스터
         for (int i = 0; i < tigers.size(); i++) {
             if (!isTigerFalling.get(i) &&
@@ -358,11 +373,12 @@ public class Stage2Panel {
 
                 isTigerFalling.set(i, true);
                 stage2Controller.animateElement(tigers.get(i).getLabel(), tigers.get(i).getLabel().getY() + 200);
-
+                int direction = random.nextInt(2) == 0 ? -1 : 1;
+                tigers.get(i).setDirection(direction);
                 int finalI = i;
                 new Thread(() -> {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(700);
                         checkIfLanded(tigers.get(finalI).getLabel(), finalI);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -382,7 +398,7 @@ public class Stage2Panel {
 
             new Thread(() -> {
                 try {
-                    Thread.sleep(1000); // 1.5초 대기
+                    Thread.sleep(700);
                     checkIfBearPlayerLanded();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -405,7 +421,7 @@ public class Stage2Panel {
 
             new Thread(() -> {
                 try {
-                    Thread.sleep(1000); // 1.5초 대기
+                    Thread.sleep(700);
                     checkIfTigerPlayerLanded();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -473,6 +489,73 @@ public class Stage2Panel {
             }
         }
     }
+
+    public void checkGameOver(){
+        if (bearPlayer.getY() > 1000 || tigerPlayer.getY() > 1000 || stage2Controller.isCheckTigerMonsterFall(tigers) || hpCount == 3) {
+            int result = JOptionPane.showConfirmDialog(null, "스테이지를 재시도하시겠습니까?", "GameOver", JOptionPane.YES_NO_OPTION);
+
+            if (result == JOptionPane.YES_OPTION) {
+
+                stopMonsterSpawn();
+
+
+                Iterator<TigerMonster> it = tigers.iterator();
+                for(TigerMonster t : tigers){
+                    panel.remove(t.getLabel());
+                }
+                for(;it.hasNext();){
+                    it.next();
+                    it.remove();
+                }
+                Iterator<Boolean> it2 = isTigerFalling.iterator();
+                for(;it2.hasNext();){
+                    it2.next();
+                    it2.remove();
+                }
+                for(JLabel h : hps){
+                    h.setVisible(true);
+                }
+                for(JLabel h : hps){
+                    h.setVisible(true);
+                }
+                tigers.clear();
+                isTigerFalling.clear();
+
+                System.gc();
+
+
+                bearPlayer.setBounds(1050,880, 64, 64);
+                tigerPlayer.setBounds(1150,880, 64, 64);
+                storage.getTiger().setPosition(1150,880);
+                storage.getBear().setPosition(1050,880);
+                hpCount = 0;
+                itemCount = 0;
+                item1.setVisible(true);
+                item2.setVisible(true);
+                item3.setVisible(true);
+                item4.setVisible(true);
+
+                step1.setBounds(340, 530,110, 40);
+                step2.setBounds(440, 730,110, 40);
+
+                rock1.setBounds(580,680,60,60);
+                rock2.setBounds(200,480,60,60);
+                bigRock.setBounds(1300,240,100,100);
+                wall4.setBounds(800,0,50,120);
+
+                setMonster();
+                panel.revalidate();
+                panel.repaint();
+                container.repaint();
+            }
+            else if (result == JOptionPane.NO_OPTION) {
+                System.exit(0); // 프로그램 종료
+            }
+        }
+
+    }
+
+
 
     //스테이지 구성 요소들 라벨 생성하여 각 위치에 배치
     private void setElements(){

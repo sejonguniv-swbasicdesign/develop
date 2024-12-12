@@ -130,6 +130,10 @@ public class TigerMonster extends Monster {
         return direction;
     }
 
+    public void setDirection(int direction){
+        changeDirection(direction);
+    }
+
     public JLabel getLabel() {
         return monsterLabel;
     }

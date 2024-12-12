@@ -206,7 +206,7 @@ public class Stage2Controller {
 
         if(!isRockFalling && isLabelOverlapping(bigRock,wall4)){
             stage2BearKeyListener.stopRockMovement();
-            animateElement(bigRock,240);
+            bigRockFalling(bigRock);
             isRockFalling = true;
         }
     }
@@ -262,16 +262,18 @@ public class Stage2Controller {
         return true; // 모든 요소가 invisible일 경우 true 반환
     }
     //게임 오버 된지 확인(일단 게임 오버 된지 로그로 찍기만 가능)
-    public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, ArrayList<TigerMonster> tigerMonster, int hpCount, JLayeredPane layeredPane){
+    public void checkGameOver(JLabel bearPlayer, JLabel tigerPlayer, ArrayList<TigerMonster> tigerMonster, int hpCount,JLayeredPane layeredPane){
         if(bearPlayer.getY()>1000 || tigerPlayer.getY()>1000 || isCheckTigerMonsterFall(tigerMonster) || hpCount==3){
-//            GameOverDialog dig = new GameOverDialog( (JFrame) SwingUtilities.getRoot(bearPlayer),2);
             int result = JOptionPane.showConfirmDialog(null,"스테이지를 재시도하시겠습니까?","GameOver", JOptionPane.YES_NO_OPTION);
             if(result==JOptionPane.YES_OPTION){
-                JFrame frame = (JFrame) SwingUtilities.getRoot(layeredPane);
-                frame.remove(layeredPane);
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(layeredPane);
                 frame.dispose();
-                GameFrame gameFrame = new GameFrame();
-                gameFrame.setVisible(true);
+                frame.setVisible(false);
+                System.gc();
+                SwingUtilities.invokeLater(() -> {
+                    GameFrame gameFrame = new GameFrame();
+                    gameFrame.setVisible(true);
+                });
             }
             else if(result==JOptionPane.NO_OPTION){
                 System.exit(0);
@@ -279,7 +281,7 @@ public class Stage2Controller {
         }
     }
 
-    private boolean isCheckTigerMonsterFall(ArrayList<TigerMonster> tigerMonsters){
+    public boolean isCheckTigerMonsterFall(ArrayList<TigerMonster> tigerMonsters){
         for(TigerMonster tigerMonster : tigerMonsters){
             if(tigerMonster.getLabel().getY() > 1000 && tigerMonster.getLabel().isVisible()){
                 return true;
@@ -317,6 +319,34 @@ public class Stage2Controller {
         return -1;
     }
 
+    private void bigRockFalling(JLabel bigRock){
+        int targetX = 1000;
+        int targetY = 240;
+        int speed = 5;
+        Thread thread = new Thread(() -> {
+            try {
+                int currentX = bigRock.getX();
+                int currentY = bigRock.getY();
+
+                while (currentX != targetX || currentY != targetY) {
+                    if (currentX < targetX) currentX += Math.min(speed, targetX - currentX);
+                    if (currentY < targetY) currentY += Math.min(speed, targetY - currentY);
+                    if (currentX > targetX) currentX -= Math.min(speed, currentX - targetX);
+                    if (currentY > targetY) currentY -= Math.min(speed, currentY - targetY);
+
+                    bigRock.setLocation(currentX, currentY);
+
+                    Thread.sleep(10);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                isRockFalling = false;
+            }
+        });
+
+        thread.start();
+    }
 
     public void animateElement(JLabel element, int targetY) {
         new Thread(() -> {

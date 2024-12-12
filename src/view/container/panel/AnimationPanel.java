@@ -3,6 +3,7 @@ package view.container.panel;
 import view.container.frame.GameFrame;
 import view.container.frame.MainFrame;
 import view.container.frame.Stage1Frame;
+import view.container.frame.third.InitBossStage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -133,7 +134,7 @@ public class AnimationPanel extends JPanel {
                     currentImageIndex=0;
                     JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
                     currentFrame.dispose();
-
+                    new InitBossStage();
                 }
                 repaint(); // 화면 다시 그리기
             }
