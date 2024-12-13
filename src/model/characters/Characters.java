@@ -1,6 +1,10 @@
 package model.characters;
 
-public abstract class Character {
+import utils.constants.PlayerState;
+
+import java.awt.*;
+
+public abstract class Characters {
 
     public int hp;
     public int x, y;
@@ -8,20 +12,27 @@ public abstract class Character {
     private boolean isMoving; // 현재 움직임 여부 저장
     private Thread currentActionThread;
 
-    public Character() {
-        hp = 3;
-        x = 0;
-        y = 0;
-        isFacingRight = true;
-        isMoving = false;
-    }
+    private PlayerState state;
 
-    public Character(int x, int y) {
+    public Characters(int x, int y) {
         this.hp = 3;
         this.x = x;
         this.y = y;
         this.isFacingRight = true;
         this.isMoving = false;
+        this.state = PlayerState.NORMAL;
+    }
+
+    public PlayerState getState() {
+        return state;
+    }
+
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
+
+    public boolean isFainted() {
+        return state == PlayerState.FAINTED;
     }
 
     public int getHp() {
@@ -128,4 +139,9 @@ public abstract class Character {
             }
         }).start();
     }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
+    }
+
 }

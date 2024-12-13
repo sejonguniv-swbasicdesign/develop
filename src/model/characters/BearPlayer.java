@@ -8,13 +8,14 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class BearPlayer extends Character {
+public class BearPlayer extends Characters {
 
     private ImageIcon leftIcon;
     private ImageIcon rightIcon;
 
     private String leftFilePath = "src/assets/image/characters/곰_완쪽.png";
     private String rightFilePath = "src/assets/image/characters/곰.png";
+    private boolean holdingRock;
 
 
     public BearPlayer(int x, int y) throws IOException {
@@ -39,22 +40,6 @@ public class BearPlayer extends Character {
         resetHp();
     }
 
-    public void setLeftHurtIcon(){
-        try {
-            this.leftIcon = new ImageIcon(ImageIO.read(new File("src/assets/image/characters/맞은곰_왼쪽.png")).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void setRightHurtIcon(){
-        try {
-            this.rightIcon = new ImageIcon(ImageIO.read(new File("src/assets/image/characters/맞은곰_오른쪽.png")).getScaledInstance(64, 64, Image.SCALE_SMOOTH));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public void move(int x, int y) {
         this.x += x;
@@ -75,7 +60,16 @@ public class BearPlayer extends Character {
         }
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, 100, 100);
+    public boolean isHoldingRock() {
+        return holdingRock;
     }
+
+    public void pickUpRock() {
+        this.holdingRock = true;
+    }
+
+    public void throwRock() {
+        this.holdingRock = false;
+    }
+
 }

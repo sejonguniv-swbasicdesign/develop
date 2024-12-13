@@ -2,10 +2,12 @@ package view.component.third;
 
 import javax.swing.*;
 import controller.MoveInteraction;
+import controller.RockController;
 import model.PlayerPosition;
 import model.Storage;
 import actionlistener.BearKeyListener;
 import actionlistener.TigerKeyListener;
+import model.monsters.Boss;
 
 public class PlayerInitializerPanel extends JPanel {
 
@@ -13,17 +15,36 @@ public class PlayerInitializerPanel extends JPanel {
     private JLabel tigerLabel;
     private Storage storage;
     private MoveInteraction moveInteraction;
+    private BearKeyListener bearKeyListener;
+    private TigerKeyListener tigerKeyListener;
+    private JLayeredPane layeredPane;
 
-    public PlayerInitializerPanel() {
+    private RockController rockController;
+    private JLabel bossLabel;
+    private Boss boss;
+
+    public JLabel getTigerLabel() {
+        return tigerLabel;
+    }
+
+    public JLabel getBearLabel() {
+        return bearLabel;
+    }
+
+    public PlayerInitializerPanel(JLayeredPane panel, JLabel bossLabel, JLabel cloudLabel) {
         moveInteraction = new MoveInteraction();
+        this.bossLabel = bossLabel;
+        this.layeredPane = panel;
+        this.storage = Storage.getInstance();
+        this.boss = storage.getBoss();
+        this.rockController = new RockController(panel, cloudLabel);
         storage = Storage.getInstance();
+        rockController.generateRocks(); // 초기 돌 생성
+
         setLayout(null);
         setOpaque(false);
 
         setLabel();
-
-        setFocusable(true);
-        requestFocusInWindow();
 
         // 주기적으로 캐릭터 위치 업데이트
         Timer timer = new Timer(16, e -> {
@@ -32,13 +53,14 @@ public class PlayerInitializerPanel extends JPanel {
         });
 
         timer.start();
+
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     private void setLabel() {
         bearLabel = new JLabel();
         tigerLabel = new JLabel();
-
-        storage.getTiger().setOppositeDirection();
 
         bearLabel.setIcon(new ImageIcon(storage.getBear().getCurrentIcon().getImage()));
         tigerLabel.setIcon(new ImageIcon(storage.getTiger().getCurrentIcon().getImage()));
@@ -54,7 +76,33 @@ public class PlayerInitializerPanel extends JPanel {
         add(tigerLabel);
 
         // 키 리스너 추가
-        addKeyListener(new BearKeyListener(storage.getBear()));
-        addKeyListener(new TigerKeyListener(storage.getTiger()));
+        bearKeyListener = new BearKeyListener(storage.getBear(), bearLabel, rockController, bossLabel, layeredPane);
+        tigerKeyListener = new TigerKeyListener(storage.getTiger(), tigerLabel, bossLabel, boss);
+        addKeyListener(bearKeyListener);
+        addKeyListener(tigerKeyListener);
     }
+
+    public void disableBearKeyListener() {
+        removeKeyListener(bearKeyListener);
+    }
+
+    public void enableBearKeyListener() {
+        addKeyListener(bearKeyListener);
+        requestFocusInWindow();
+    }
+
+    public void disableTigerKeyListener() {
+        removeKeyListener(tigerKeyListener);
+    }
+
+    public void enableTigerKeyListener() {
+        addKeyListener(tigerKeyListener);
+        requestFocusInWindow();
+    }
+
+    public void setFocusToPanel() {
+        setFocusable(true);
+        requestFocusInWindow();
+    }
+
 }
