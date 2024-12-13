@@ -134,7 +134,7 @@ public class AnimationPanel extends JPanel {
                     currentImageIndex=0;
                     JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
                     currentFrame.dispose();
-                    new InitBossStage();
+                    SwingUtilities.invokeLater(InitBossStage::new);
                 }
                 repaint(); // 화면 다시 그리기
             }

@@ -5,7 +5,7 @@ import controller.PlayerAttackController;
 import controller.ReviveController;
 import model.Storage;
 import model.monsters.Boss;
-import view.component.third.BossHpBar;
+import view.container.frame.third.BossHpBar;
 import view.component.third.PlayerInitializerPanel;
 
 import javax.swing.*;

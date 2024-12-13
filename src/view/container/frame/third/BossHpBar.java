@@ -1,4 +1,4 @@
-package view.component.third;
+package view.container.frame.third;
 
 import model.monsters.Boss;
 
