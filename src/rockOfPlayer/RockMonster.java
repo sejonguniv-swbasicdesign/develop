@@ -25,11 +25,11 @@ public class RockMonster {// -------------------바위산신
 	public RockMonster(int x, int y) {
 		this.x = x;
 		this.y = y;
-		hp = 3;
+		hp = 2;
 
 		try {
 			monsterImage = ImageIO.read(new File(monsterimagePath));
-			monsterImage = monsterImage.getScaledInstance(90, 80, Image.SCALE_SMOOTH);
+			monsterImage = monsterImage.getScaledInstance(100, 90, Image.SCALE_SMOOTH);
 
 		} catch (IOException e) {
 			System.err.println("이미지 로드 실패: " + e.getMessage());
@@ -38,15 +38,15 @@ public class RockMonster {// -------------------바위산신
 
 		try {
 			monsterImage2 = ImageIO.read(new File(monsterimagePath2));
-			monsterImage2 = monsterImage2.getScaledInstance(90, 80, Image.SCALE_SMOOTH);
+			monsterImage2 = monsterImage2.getScaledInstance(100, 90, Image.SCALE_SMOOTH);
 
 		} catch (IOException e) {
 			System.err.println("이미지 로드 실패: " + e.getMessage());
 
 		}
 		isVisible = true;
-		SPEED=2;
-		
+		SPEED = 2;
+
 	}
 
 	public int getX() {
@@ -68,32 +68,35 @@ public class RockMonster {// -------------------바위산신
 	}
 
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
-		if (random.nextInt(35) == 0) {
-			if(SPEED<0)
-			rocks.add(new RocksOfMonsters(x - 24, y-18, 80 + random.nextInt(20)));
-			else rocks.add(new RocksOfMonsters(x + 24, y-18, 80 + random.nextInt(20)));
+		if (random.nextInt(50) == 0) {
+			if (SPEED < 0)
+				rocks.add(new RocksOfMonsters(x - 34, y - 28, 80 + random.nextInt(20)));
+			else
+				rocks.add(new RocksOfMonsters(x + 34, y - 28, 80 + random.nextInt(20)));
 		}
 
 	}
 
-	public void moveLeft( ) {
-		
+	public void moveLeft() {
+
 		x += SPEED;
 		checkDirection = 0;
 	}
 
 	public void moveRight() {
-	
+
 		x += SPEED;
 		checkDirection = 1;
 	}
+
 	public int getSPEED() {
 		return SPEED;
 	}
+
 	public void setSPEED(int SPEED) {
-		this.SPEED=SPEED;
+		this.SPEED = SPEED;
 	}
-	
+
 	public void draw(Graphics g) {
 		if (checkDirection == 0) {
 			g.drawImage(monsterImage, x - 45, y - 40, null);

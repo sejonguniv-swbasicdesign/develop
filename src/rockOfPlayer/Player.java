@@ -137,8 +137,8 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 			y += dirY * 3;
 		} else {
 			if (hasRock == true) {
-				x += dirX * 2;
-				y += dirY * 2;
+				x += dirX * 3;
+				y += dirY * 3;
 			} else {
 
 				x += dirX * 4;
@@ -148,42 +148,42 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 		/*
 		 * if (name == 1) { System.out.println(x); System.out.println(y); }
 		 */
-		int i=20;
+		int i = 20;
 		if (name == 1) {
 			if (ifOnBridge == true) {
-				if (((340 <= x && x <= 346) && (454-i <= y && y <= 459-i))
-						|| ((340 <= x && x <= 346) && (360-i <= y && y <= 363-i))) {//다리 바운더리
+				if (((340 <= x && x <= 346) && (454 - i <= y && y <= 459 - i))
+						|| ((340 <= x && x <= 346) && (360 - i <= y && y <= 363 - i))) {// 다리 바운더리
 					minX = 340;
 					maxX = 346;
-					minY = 359-i;
-					maxY = 458-i;
-				} else if ((10 < x && x < 340) && (455-i < y) || (340 <= x && x <= 346) && (458-i < y)
-						|| (346 < x && x < 570) && (455-i < y)) {//아래 부분 바운더리
+					minY = 359 - i;
+					maxY = 458 - i;
+				} else if ((10 < x && x < 340) && (455 - i < y) || (340 <= x && x <= 346) && (458 - i < y)
+						|| (346 < x && x < 570) && (455 - i < y)) {// 아래 부분 바운더리
 					minX = 10;
 					maxX = 575;
-					minY = 456-i;
+					minY = 456 - i;
 					maxY = 753;
-				} else if ((10 < x && x < 340) && (y < 344-i) || (340 <= x && x <= 346) && (y < 360-i)
-						|| (346 < x && x < 570) && (y < 344-i)) {//위 부분 바운더리
+				} else if ((10 < x && x < 340) && (y < 344 - i) || (340 <= x && x <= 346) && (y < 360 - i)
+						|| (346 < x && x < 570) && (y < 344 - i)) {// 위 부분 바운더리
 					minX = 10;
 					maxX = 575;
 					minY = 10;
-					maxY = 360-i;
+					maxY = 360 - i;
 				}
 			} else {
 
-				if ((10 < x && x < 340) && (455-i < y) || (340 <= x && x <= 346) && (458-i < y)
-						|| (346 < x && x < 570) && (455-i < y)) {//아래 부분 바운더리
+				if ((10 < x && x < 340) && (455 - i < y) || (340 <= x && x <= 346) && (458 - i < y)
+						|| (346 < x && x < 570) && (455 - i < y)) {// 아래 부분 바운더리
 					minX = 10;
 					maxX = 575;
-					minY = 456-i;
+					minY = 456 - i;
 					maxY = 753;
-				} else if ((10 < x && x < 340) && (y < 344-i) || (340 <= x && x <= 346) && (y < 360-i)
-						|| (346 < x && x < 570) && (y < 344-i)) {//위 부분 
+				} else if ((10 < x && x < 340) && (y < 344 - i) || (340 <= x && x <= 346) && (y < 360 - i)
+						|| (346 < x && x < 570) && (y < 344 - i)) {// 위 부분
 					minX = 10;
 					maxX = 575;
 					minY = 10;
-					maxY = 360-i;
+					maxY = 360 - i;
 				}
 			}
 
@@ -285,9 +285,9 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 	}
 
 	public boolean deliverRock(int x, int y) {
-		
-		//Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 14
-		if (Math.abs(this.x - x) < 15 && Math.abs(this.y - y) < 15)
+
+		// Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)) < 14
+		if (Math.abs(this.x - x) < 20 && Math.abs(this.y - y) < 20)
 			return true;
 		else
 			return false;
@@ -303,9 +303,11 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 		isVisible = i;
 
 	}
+
 	public void setShowImage(boolean showImage) {
-		this.showImage=showImage;
+		this.showImage = showImage;
 	}
+
 	public int getPlayerName() {
 		return name;
 	}
