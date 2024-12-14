@@ -4,6 +4,7 @@ import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
 import model.monsters.Boss;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Storage {
@@ -12,6 +13,8 @@ public class Storage {
     private TigerPlayer tigerPlayer;
     private Boss boss;
     private int sharedHp; // 공유 HP
+    private JPanel tigerPanel;
+    private JPanel bearPanel;
 
     // private 생성자를 통해 외부에서 객체 생성 방지
     private Storage() {
@@ -20,6 +23,8 @@ public class Storage {
             this.tigerPlayer = new TigerPlayer(0, 0);
             this.boss = new Boss(500, 300); // 보스 객체 초기화
             this.sharedHp = 3;
+            tigerPanel = new JPanel();
+            bearPanel = new JPanel();
         } catch (IOException e) {
             System.out.println("파일을 읽어들이는 데에 실패했습니다. 프로그램을 다시 실행해 주세요.");
         }
@@ -30,6 +35,14 @@ public class Storage {
             instance = new Storage();
         }
         return instance;
+    }
+
+    public JPanel getBearPanel() {
+        return bearPanel;
+    }
+
+    public JPanel getTigerPanel() {
+        return tigerPanel;
     }
 
     public BearPlayer getBear() {

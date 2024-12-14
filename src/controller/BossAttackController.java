@@ -1,5 +1,7 @@
 package controller;
 
+import controller.ReviveController;
+import controller.TornadoAttackController;
 import model.Storage;
 import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
@@ -20,7 +22,6 @@ public class BossAttackController {
     private JLabel bearLabel;
     private JLabel tigerLabel;
     private ReviveController reviveController;
-    private boolean isAttackInProgress;
     private PlayerInitializerPanel playerPanel;
 
     public BossAttackController(Boss boss, JLayeredPane layeredPane, JLabel bearLabel, JLabel tigerLabel, PlayerInitializerPanel playerPanel) {
@@ -31,93 +32,83 @@ public class BossAttackController {
         this.tigerLabel = tigerLabel;
         this.random = new Random();
         this.reviveController = new ReviveController();
-        this.isAttackInProgress = false;
-        this.playerPanel = playerPanel; // PlayerInitializerPanel 저장
+        this.playerPanel = playerPanel;
     }
 
     public void startAttacks() {
-        nextAttack(); // 첫 공격 시작
+        // 공격 타이머 설정 (2초 간격으로 실행)
+        Timer attackTimer = new Timer(2000, e -> executeRandomAttack());
+        attackTimer.start(); // 타이머 시작
     }
 
-    private void nextAttack() {
-        if (isAttackInProgress) return;
-
-        isAttackInProgress = true;
-
+    private void executeRandomAttack() {
         int attackType = random.nextInt(3); // 0: 번개, 1: 토네이도, 2: 먹구름
+        ssk(attackType);
+    }
+
+    private void ssk(int attackType) {
         switch (attackType) {
-            case 0 -> lightningAttack(() -> {
-                isAttackInProgress = false;
-                nextAttack(); // 다음 공격 실행
-            });
-            case 1 -> tornadoAttack(() -> {
-                isAttackInProgress = false;
-                nextAttack(); // 다음 공격 실행
-            });
+            case 0 -> lightningAttack(); // 번개 공격
+            case 1 -> tornadoAttack();   // 토네이도 공격
             case 2 -> {
-                if (boss.isRageMode()) {
-                    shadowCloudAttack(() -> {
-                        isAttackInProgress = false;
-                        nextAttack(); // 다음 공격 실행
-                    });
+                if (boss.isRageMode()) { // 분노 모드에서만 실행
+                    shadowCloudAttack();
                 } else {
-                    isAttackInProgress = false;
-                    nextAttack(); // 분노 모드가 아닐 경우, 다음 공격 바로 실행
+                    ssk(random.nextInt(2));
                 }
             }
         }
     }
 
-    private void tornadoAttack(Runnable onComplete) {
-        // 토네이도 시작 위치 (스테이지 좌측 상단에서 시작)
-        int startX = 50; // 스테이지 좌측 상단 X 좌표
-        int startY = 100; // 스테이지 좌측 상단 Y 좌표
+    private void tornadoAttack() {
+        int startX = 50; // 토네이도 시작 X 좌표
+        int startY = 100; // 토네이도 시작 Y 좌표
 
-        // 토네이도 생성 및 초기화
+        // 토네이도 생성
         new TornadoAttackController(
                 startX,
                 startY,
                 bearLabel,
                 tigerLabel,
                 layeredPane,
-                100, // 토네이도 속도 감소를 위해 딜레이 증가
-                onComplete, // 토네이도 종료 후 다음 공격 실행
+                15, // 토네이도 이동 속도
                 reviveController,
                 playerPanel
         );
     }
 
-    private void lightningAttack(Runnable onComplete) {
-        int lightningCount = 5; // 번개의 개수
-        int radius = 100;
-        int centerX = boss.getBounds().x + boss.getBounds().width / 2;
-        int centerY = boss.getBounds().y + boss.getBounds().height;
+    private void lightningAttack() {
+        int lightningCount = 10; // 번개의 개수
+        int minX = 280; // 번개 시작 X 좌표 최소값
+        int maxX = 1000; // 번개 시작 X 좌표 최대값
+        int startY = 0; // 번개 시작 Y 좌표
 
         JLabel[] lightningLabels = new JLabel[lightningCount];
-        Timer lightningTimer = new Timer(50, null);
+        Timer lightningTimer = new Timer(40, null);
 
+        // 번개 생성
         for (int i = 0; i < lightningCount; i++) {
-            double angle = Math.PI * i / (lightningCount - 1);
-            int lightningX = (int) (centerX + radius * Math.cos(angle));
-            int lightningY = centerY;
+            int lightningX = minX + random.nextInt(maxX - minX + 1);
 
             JLabel lightning = new JLabel(new ImageIcon(
                     new ImageIcon("src/assets/image/icon/lightning.png")
                             .getImage()
                             .getScaledInstance(30, 100, Image.SCALE_SMOOTH)
             ));
-            lightning.setBounds(lightningX - 15, lightningY, 30, 100);
+            lightning.setBounds(lightningX - 15, startY, 30, 100);
             layeredPane.add(lightning, JLayeredPane.MODAL_LAYER);
             lightningLabels[i] = lightning;
         }
 
+        // 번개 이동 및 충돌 체크
         lightningTimer.addActionListener(e -> {
-            boolean allRemoved = true;
+            boolean allRemoved = true; // 모든 번개가 제거되었는지 확인
             for (int i = 0; i < lightningLabels.length; i++) {
                 JLabel lightning = lightningLabels[i];
                 if (lightning != null) {
-                    lightning.setLocation(lightning.getX(), lightning.getY() + 10);
+                    lightning.setLocation(lightning.getX(), lightning.getY() + 10); // 번개를 아래로 이동
 
+                    // 충돌 체크
                     if (checkCollision(lightning, bearLabel)) {
                         handlePlayerFaint(storage.getBear(), bearLabel, tigerLabel);
                         layeredPane.remove(lightning);
@@ -128,6 +119,7 @@ public class BossAttackController {
                         lightningLabels[i] = null;
                     }
 
+                    // 번개가 화면을 벗어나면 제거
                     if (lightning.getY() > layeredPane.getHeight()) {
                         layeredPane.remove(lightning);
                         lightningLabels[i] = null;
@@ -139,25 +131,22 @@ public class BossAttackController {
                 }
             }
 
+            // 모든 번개가 제거되었으면 타이머 중지
             if (allRemoved) {
                 lightningTimer.stop();
-                onComplete.run(); // 다음 공격 실행
             }
-            layeredPane.repaint();
+
+            layeredPane.repaint(); // 화면 갱신
         });
+
         lightningTimer.start();
     }
 
-    private void shadowCloudAttack(Runnable onComplete) {
-        if (!boss.isRageMode()) {
-            onComplete.run(); // 분노 모드가 아니면 다음 공격 실행
-            return;
-        }
-
+    private void shadowCloudAttack() {
         JLabel shadowCloud = new JLabel();
         shadowCloud.setBounds(boss.getBounds().x - 50, boss.getBounds().y, 200, 200);
         shadowCloud.setOpaque(true);
-        shadowCloud.setBackground(new Color(0, 0, 0, 100)); // 반투명 검정색 배경
+        shadowCloud.setBackground(new Color(0, 0, 0, 100)); // 반투명 검정색
         layeredPane.add(shadowCloud, JLayeredPane.DRAG_LAYER);
 
         // 카운트다운 라벨 추가
@@ -183,42 +172,26 @@ public class BossAttackController {
                     layeredPane.remove(countdownLabel);
                     layeredPane.repaint();
                     ((Timer) e.getSource()).stop();
-                    onComplete.run(); // 다음 공격 실행
                 }
             }
         });
 
-        Timer attackTimer = new Timer(5000, e -> {
-            if (checkCollision(shadowCloud, bearLabel)) {
-                handlePlayerFaint(storage.getBear(), bearLabel, tigerLabel);
-            }
-            if (checkCollision(shadowCloud, tigerLabel)) {
-                handlePlayerFaint(storage.getTiger(), tigerLabel, bearLabel);
-            }
-        });
-
-        attackTimer.setInitialDelay(0);
-        attackTimer.setRepeats(false);
-        attackTimer.start();
         countdownTimer.start();
     }
 
-
-
     private void handlePlayerFaint(BearPlayer player, JLabel playerLabel, JLabel assistingPlayerLabel) {
         playerLabel.setEnabled(false);
-        playerLabel.setFocusable(false); // 포커스 제거
-        reviveController.handleFaint(bearLabel, tigerLabel, layeredPane, playerPanel);
+        playerLabel.setFocusable(false);
+        reviveController.handleFaint(player, bearLabel, tigerLabel, layeredPane, playerPanel, true);
     }
 
     private void handlePlayerFaint(TigerPlayer player, JLabel playerLabel, JLabel assistingPlayerLabel) {
         playerLabel.setEnabled(false);
-        playerLabel.setFocusable(false); // 포커스 제거
-        reviveController.handleFaint(tigerLabel, bearLabel, layeredPane, playerPanel);
+        playerLabel.setFocusable(false);
+        reviveController.handleFaint(player, tigerLabel, bearLabel, layeredPane, playerPanel, false);
     }
 
     private boolean checkCollision(JLabel attack, JLabel player) {
         return attack.getBounds().intersects(player.getBounds());
     }
-
 }
