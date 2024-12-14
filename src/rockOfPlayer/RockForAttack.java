@@ -13,6 +13,7 @@ public class RockForAttack {//-----------------------곰플레이어가 던지�
 	private double dx,dy;
 	private Image rockImage;
 	private boolean destroyed = false;
+	private static final int SPEED=2;
 	public RockForAttack(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -29,8 +30,8 @@ public class RockForAttack {//-----------------------곰플레이어가 던지�
 	}
 
 	public void move(double dx, double dy) {
-		x += dx;
-		y += dy;
+		x += dx*SPEED;
+		y += dy*SPEED;
 		//this.dx=dx;
 		//this.dy=dy;
 	}

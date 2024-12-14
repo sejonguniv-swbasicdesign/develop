@@ -54,7 +54,7 @@ import java.io.IOException;
 
 public class MovingMonster {//---------------------곰부족
     private int x, y;
-    private static final int SPEED = 4;
+    private static final int SPEED = 2;
     private Image RightmonsterImage;
     private Image LeftmonsterImage;
     private int checkDirection;

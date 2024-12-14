@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class FollowingMonster {//--------------------바위 몬스터
-	   private double x; // 내부적으로 실수형으로 좌표 관리
+	   private double x; 
 	    private double y;
 	    private double speed;
 	    private int detectionRange;
@@ -24,7 +24,7 @@ public class FollowingMonster {//--------------------바위 몬스터
 	        this.y = y;
 	        this.speed = 0.3;
 	        checkDirection = 0;
-	        this.detectionRange = 90;
+	        this.detectionRange = 280;
 	        try {
 	            Image RightImage = ImageIO.read(new File(RightimagePath));
 	            monsterImageRight = RightImage.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
@@ -41,7 +41,7 @@ public class FollowingMonster {//--------------------바위 몬스터
 
 	    public void followPlayer(int playerX, int playerY) {
 	        double distance = calculateDistance(playerX, playerY);
-
+	        if(playerY>435) {
 	        if (distance <= detectionRange) {
 	            double dx = playerX - x;
 	            double dy = playerY - y;
@@ -52,8 +52,9 @@ public class FollowingMonster {//--------------------바위 몬스터
 	            if (dy != 0)
 	                y += speed * dy / Math.abs(dy);
 
-	            if (dx > 0) checkDirection = 1;
+	            if ((int)dx > 0) checkDirection = 1;
 	            else checkDirection = 0;
+	        }
 	        }
 	    }
 

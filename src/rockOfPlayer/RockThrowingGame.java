@@ -48,6 +48,24 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	// 바위 몬스터--------------------------------------------------------------------
 	private ArrayList<FollowingMonster> followingMonsters;
 	private boolean isVisible = true;
+	
+	public void toTheNextStage() {
+		if(checkSuccess==true) {
+			if(290<=tigerPlayer.getX()&&tigerPlayer.getX()<=310&&10<=tigerPlayer.getY()&&tigerPlayer.getY()<=50) {
+				tigerPlayer.setShowImage(false);
+			}
+			if(540<=bearPlayer.getX()&&bearPlayer.getX()<=560&&590<=bearPlayer.getY()&&bearPlayer.getY()<=610) {
+				bearPlayer.setShowImage(false);
+			}
+			
+			
+			if(290<=tigerPlayer.getX()&&tigerPlayer.getX()<=310&&10<=tigerPlayer.getY()&&tigerPlayer.getY()<=50
+					&&540<=bearPlayer.getX()&&bearPlayer.getX()<=560&&590<=bearPlayer.getY()&&bearPlayer.getY()<=610) {
+				System.exit(0);																	 //게임 클리어 시 다음 스테이지로 넘어감 ...----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			}
+		}
+		
+	}
 	public void doorOpen(Graphics g) {
 		if (checkSuccess == true) {
 			try {
@@ -60,20 +78,12 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 			}
 			if (doorToNextStage != null) {
 				g.drawImage(doorToNextStage, 600 / 2 - 30, 50-30, null);
+				g.drawImage(doorToNextStage, 550-30, 600-30, null);
 			}
+			
 		}
 	}
-	public void toTheNextStage() {
-		if(checkSuccess==true) {
-			if(290<=tigerPlayer.getX()&&tigerPlayer.getX()<=310&&10<=tigerPlayer.getY()&&tigerPlayer.getY()<=50) {
-				tigerPlayer.setShowImage(false);
-				
-				
-				System.exit(0); // End the game
-			}
-		}
 
-	}
 
 	public void restart() {
 		bearPlayer.setHasRock(false);
@@ -311,8 +321,8 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	private void checkFallFromBridge() {
 		if (isBridgeBroken) {
-			if (340 < tigerPlayer.getX() && tigerPlayer.getX() < 346 && 363 < tigerPlayer.getY()
-					&& tigerPlayer.getY() < 455) {
+			if (340 < tigerPlayer.getX() && tigerPlayer.getX() < 346 && 339 < tigerPlayer.getY()
+					&& tigerPlayer.getY() < 434) {
 				hp--;
 				restart();
 			}
@@ -330,7 +340,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	//MovingMonster------------------------------------------------------------
 	private void spawnMonstersOnRightSide() {
 		spawnCounterR++;
-		if (spawnCounterR >= 50) {
+		if (spawnCounterR >= 80) {
 			movingMonstersOnRight.add(new MovingMonster(800, 150));
 			spawnCounterR = 0;
 		}
@@ -338,7 +348,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 	private void spawnMonstersOnLeftSide() {
 		spawnCounterL++;
-		if (spawnCounterL >= 50) {
+		if (spawnCounterL >= 80) {
 			movingMonstersOnLeft1.add(new MovingMonster(0, 250));
 			spawnCounterL = 0;
 		}
@@ -412,6 +422,21 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	}
 
 	private void updateRockMonster() {
+
+			if (rockMonster.get(0).getSPEED()>0) {
+					rockMonster.get(0).moveRight();
+					if(rockMonster.get(0).getX()==380) {
+						rockMonster.get(0).setSPEED(-2);
+					}
+			}
+			else if (rockMonster.get(0).getSPEED()<0) {
+					rockMonster.get(0).moveLeft();
+					if(rockMonster.get(0).getX()==220) {
+						rockMonster.get(0).setSPEED(2);
+					}
+			}
+		
+
 		for (int i = rockMonster.size() - 1; i >= 0; i--) {
 			for (int j = launchedRocks.size() - 1; j >= 0; j--) {
 				if (launchedRocks.get(j).collidesWithMonster(rockMonster.get(i))) {
@@ -461,7 +486,7 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		Random rand = new Random();
 		for (int i = 0; i < 9; i++) {
 			int x = 30 + rand.nextInt(560);
-			int y =110 + rand.nextInt(230);
+			int y =110 + rand.nextInt(140);
 			rocksOfPlayer.add(new RockForAttack(x, y));
 		}
 	}
