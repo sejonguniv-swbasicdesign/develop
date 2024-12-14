@@ -28,6 +28,10 @@ public class TigerKeyListener implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (tigerPlayer.isFainted()) {
+            return;
+        }
+
         int key = e.getKeyCode();
 
         switch (key) {

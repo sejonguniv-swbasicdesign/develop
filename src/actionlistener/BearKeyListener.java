@@ -28,10 +28,15 @@ public class BearKeyListener implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (bearPlayer.isFainted()) {
+            return;
+        }
+
         int key = e.getKeyCode();
 
         switch (key) {
@@ -138,7 +143,8 @@ public class BearKeyListener implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) { }
+    public void keyReleased(KeyEvent e) {
+    }
 
     private void moveWithBoundaryCheck(int deltaX, int deltaY) {
         // BearPlayer의 현재 위치와 이동 후 위치를 계산

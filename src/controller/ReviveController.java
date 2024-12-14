@@ -1,6 +1,7 @@
 package controller;
 
 import model.characters.Characters;
+import utils.constants.PlayerState;
 import view.component.third.PlayerInitializerPanel;
 
 import javax.swing.*;
@@ -11,18 +12,12 @@ import java.awt.event.ActionListener;
 public class ReviveController {
 
     public void handleFaint(Characters characters, JLabel playerLabel, JLabel assistingPlayerLabel, JLayeredPane layeredPane, PlayerInitializerPanel panel, boolean isBear) {
-        // 기절 상태 설정
+        // 이미 기절 상태면
         if (characters.isFainted()) {
             return;
         }
 
-        if (isBear) {
-            panel.setBearFainted(true); // 곰 기절 처리
-            panel.disableBearKeyListener();
-        } else {
-            panel.setTigerFainted(true); // 호랑이 기절 처리
-            panel.disableTigerKeyListener();
-        }
+        characters.setState(PlayerState.FAINTED);
 
         setupFaintState(playerLabel, layeredPane);
 
@@ -43,41 +38,12 @@ public class ReviveController {
             }
         });
 
-        Timer reviveTimer = new Timer(3000, e -> {
-            if (isBear) {
-                panel.setBearFainted(false); // 곰 복구 처리
-                panel.enableBearKeyListener();
-            } else {
-                panel.setTigerFainted(false); // 호랑이 복구 처리
-                panel.enableTigerKeyListener();
-            }
-            ((Timer) e.getSource()).stop();
-        });
-
-        reviveTimer.start();
-
         // 상호작용 설정
         setupInteraction(assistingPlayerLabel, playerLabel, countdownLabel, assistTimer);
     }
 
     private void setupFaintState(JLabel playerLabel, JLayeredPane layeredPane) {
         playerLabel.setEnabled(false); // 플레이어 비활성화
-
-        Point labelLocation = playerLabel.getLocation();
-/*
-        faintedCircle = new JLabel();
-        faintedCircle.setOpaque(false);
-        faintedCircle.setBounds(
-                labelLocation.x - 20,
-                labelLocation.y - 20,
-                playerLabel.getWidth() + 40,
-                playerLabel.getHeight() + 40
-        );
-
-        faintedCircle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3)); // 검은 테두리
-        layeredPane.add(faintedCircle, JLayeredPane.POPUP_LAYER);
-        System.out.println("Circle Added to LayeredPane");
- */
         layeredPane.repaint();
     }
 

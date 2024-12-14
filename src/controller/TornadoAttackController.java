@@ -1,6 +1,5 @@
 package controller;
 
-import controller.ReviveController;
 import model.Storage;
 import model.characters.Characters;
 import utils.constants.PlayerState;
@@ -78,12 +77,6 @@ public class TornadoAttackController {
     }
 
     private void handleCollision(JLabel playerLabel, Characters playerObject, boolean isBear) {
-        // 이미 기절한 상태인지 확인
-        if (playerObject.isFainted()) {
-            return; // 이미 기절한 상태라면 처리 중단
-        }
-
-        playerObject.setState(PlayerState.FAINTED); // 기절 상태로 설정
         reviveController.handleFaint(playerObject, playerLabel, getOppositePlayerLabel(playerLabel),
                 panel, playerInitializerPanel, isBear); // 기절 처리
     }
