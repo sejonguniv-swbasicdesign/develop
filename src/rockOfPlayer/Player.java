@@ -196,7 +196,7 @@ public class Player {// ------------------------- name=0->곰 플레이어, name
 
 	public void draw(Graphics g) {
 
-		if (showImage) {
+		if (isVisible) {
 			if (name == 0) {
 				if (checkDirection == 0) {
 					// 이미지 중심을 기준으로 그리기

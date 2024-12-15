@@ -1,6 +1,6 @@
 package rockOfPlayer;
 
-import java.awt.Color;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -68,11 +68,11 @@ public class RockMonster {// -------------------바위산신
 	}
 
 	public void throwRocks(ArrayList<RocksOfMonsters> rocks) {
-		if (random.nextInt(50) == 0) {
+		if (random.nextInt(40) == 0) {
 			if (SPEED < 0)
-				rocks.add(new RocksOfMonsters(x - 34, y - 28, 80 + random.nextInt(20)));
+				rocks.add(new RocksOfMonsters(x - 34, y - 28, 70 + random.nextInt(40)));
 			else
-				rocks.add(new RocksOfMonsters(x + 34, y - 28, 80 + random.nextInt(20)));
+				rocks.add(new RocksOfMonsters(x + 34, y - 28, 70 + random.nextInt(40)));
 		}
 
 	}

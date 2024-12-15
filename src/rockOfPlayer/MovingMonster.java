@@ -94,7 +94,11 @@ public class MovingMonster {// ---------------------곰부족
 	public boolean collidesWith(Player player) {
 		int playerX = player.getX();
 		int playerY = player.getY();
-		return Math.abs(x - playerX) < 30 && Math.abs(y - playerY) < 30;
+		if (player.getHasRock() == false)
+			return Math.abs(x - playerX) < 30 && Math.abs(y - playerY) < 30;
+		else {
+			return Math.abs(x - playerX) < 30 && Math.abs(y - playerY) < 35;
+		}
 	}
 
 	public void draw(Graphics g) {

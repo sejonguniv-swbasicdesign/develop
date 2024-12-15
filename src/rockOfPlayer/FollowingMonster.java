@@ -22,9 +22,9 @@ public class FollowingMonster {// --------------------바위 몬스터
 	public FollowingMonster(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.speed = 0.2;
+		this.speed = 0.3;
 		checkDirection = 0;
-		this.detectionRange = 900;
+		this.detectionRange = 1500;
 		try {
 			Image RightImage = ImageIO.read(new File(RightimagePath));
 			monsterImageRight = RightImage.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
@@ -39,9 +39,10 @@ public class FollowingMonster {// --------------------바위 몬스터
 		return Math.sqrt(Math.pow(playerX - x, 2) + Math.pow(playerY - y, 2));
 	}
 
-	public void followPlayer(int playerX, int playerY) {
+	public void followPlayer(int playerX, int playerY,int i) {
+		
 		double distance = calculateDistance(playerX, playerY);
-		if (playerY > 435) {
+		if (playerY > 435||i==1) {
 			if (distance <= detectionRange) {
 				double dx = playerX - x;
 				double dy = playerY - y;
@@ -63,7 +64,7 @@ public class FollowingMonster {// --------------------바위 몬스터
 	public boolean collidesWith(Player player) {
 		int playerX = player.getX();
 		int playerY = player.getY();
-		return Math.abs(x - playerX) < 41 && Math.abs(y - playerY) < 41;
+		return Math.abs(x - playerX) < 40 && Math.abs(y - playerY) < 40;
 	}
 
 	public int getX() {
