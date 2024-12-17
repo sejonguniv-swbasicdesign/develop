@@ -4,6 +4,7 @@ import model.characters.BearPlayer;
 import model.characters.TigerPlayer;
 import model.monsters.Boss;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Storage {

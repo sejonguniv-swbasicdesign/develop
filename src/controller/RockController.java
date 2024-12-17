@@ -1,5 +1,7 @@
 package controller;
 
+import utils.constants.StageCoordination;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -12,72 +14,55 @@ import java.util.List;
 public class RockController {
     private final JLayeredPane panel;
     private final List<JLabel> rocks;
-    private final Rectangle cloudVisibleBounds;
-    private final String cloudImagePath;
 
-    public RockController(JLayeredPane panel, JLabel cloudLabel) {
+    public RockController(JLayeredPane panel) {
         this.panel = panel;
         this.rocks = new ArrayList<>();
         startRockRespawnChecker();
-        cloudImagePath = "src/assets/image/component/cloud_stage.png";
-        this.cloudVisibleBounds = calculateCloudBounds(cloudLabel, cloudImagePath); // 구름의 실제 표시 범위 계산
     }
 
     public void generateRocks() {
-        while (rocks.size() < 5) {
-            JLabel rock = createRockWithinCloud();
-            rocks.add(rock);
-            panel.add(rock, JLayeredPane.DRAG_LAYER);
+        while (rocks.size() < 2) {
+            JLabel rock = createRockWithPolygon();
+            if (rock != null) {
+                rocks.add(rock);
+                panel.add(rock, JLayeredPane.DRAG_LAYER);
+            }
         }
         panel.repaint();
     }
 
-    private JLabel createRockWithinCloud() {
+    private JLabel createRockWithPolygon() {
         int rockWidth = 40;
         int rockHeight = 40;
 
-        int x = (int) (cloudVisibleBounds.getX() + Math.random() * (cloudVisibleBounds.getWidth() - rockWidth));
-        int y = (int) (cloudVisibleBounds.getY() + Math.random() * (cloudVisibleBounds.getHeight() - rockHeight));
+        Polygon stagePolygon = createStagePolygon();
+        Rectangle bounds = stagePolygon.getBounds();
 
-        JLabel rock = new JLabel(new ImageIcon(
-                new ImageIcon("src/assets/image/icon/돌.png")
-                        .getImage()
-                        .getScaledInstance(rockWidth, rockHeight, Image.SCALE_SMOOTH)
-        ));
-        rock.setBounds(x, y, rockWidth, rockHeight);
-        return rock;
+        for (int attempt = 0; attempt < 100; attempt++) {
+            int x = bounds.x + (int) (Math.random() * bounds.width);
+            int y = bounds.y + (int) (Math.random() * bounds.height);
+
+            if (stagePolygon.contains(x, y)) {
+                JLabel rock = new JLabel(new ImageIcon(
+                        new ImageIcon("src/assets/image/icon/돌.png")
+                                .getImage()
+                                .getScaledInstance(rockWidth, rockHeight, Image.SCALE_SMOOTH)
+                ));
+                rock.setBounds(x, y, rockWidth, rockHeight);
+                return rock;
+            }
+        }
+
+        return null;
     }
 
-    private Rectangle calculateCloudBounds(JLabel cloudLabel, String cloudImagePath) {
-        try {
-            BufferedImage cloudImage = ImageIO.read(new File(cloudImagePath));
-            int minX = cloudImage.getWidth(), minY = cloudImage.getHeight();
-            int maxX = 0, maxY = 0;
-
-            for (int y = 0; y < cloudImage.getHeight(); y++) {
-                for (int x = 0; x < cloudImage.getWidth(); x++) {
-                    int alpha = (cloudImage.getRGB(x, y) >> 24) & 0xff; // 알파 값 추출
-                    if (alpha > 0) { // 불투명한 픽셀만 고려
-                        if (x < minX) minX = x;
-                        if (y < minY) minY = y;
-                        if (x > maxX) maxX = x;
-                        if (y > maxY) maxY = y;
-                    }
-                }
-            }
-
-            // 구름 이미지의 표시 영역을 기반으로 JLabel의 상대 좌표 계산
-            Rectangle labelBounds = cloudLabel.getBounds();
-            return new Rectangle(
-                    labelBounds.x + minX,
-                    labelBounds.y + minY,
-                    maxX - minX,
-                    maxY - minY
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            return cloudLabel.getBounds(); // 이미지 로드 실패 시 기본 범위 사용
+    private Polygon createStagePolygon() {
+        Polygon polygon = new Polygon();
+        for (StageCoordination coord : StageCoordination.values()) {
+            polygon.addPoint(coord.getX(), coord.getY());
         }
+        return polygon;
     }
 
     public JLabel findClosestRock(JLabel bearLabel) {

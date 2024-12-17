@@ -1,5 +1,7 @@
 package controller;
 
+import model.characters.Characters;
+import utils.constants.PlayerState;
 import view.component.third.PlayerInitializerPanel;
 
 import javax.swing.*;
@@ -8,10 +10,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ReviveController {
-    private JLabel faintedCircle;
 
-    public void handleFaint(JLabel playerLabel, JLabel assistingPlayerLabel, JLayeredPane layeredPane, PlayerInitializerPanel panel) {
-        // 기절 상태 설정
+    public void handleFaint(Characters characters, JLabel playerLabel, JLabel assistingPlayerLabel, JLayeredPane layeredPane, PlayerInitializerPanel panel, boolean isBear) {
+        // 이미 기절 상태면
+        if (characters.isFainted()) {
+            return;
+        }
+
+        characters.setState(PlayerState.FAINTED);
+
         setupFaintState(playerLabel, layeredPane);
 
         // 카운트다운 라벨 생성
@@ -25,51 +32,19 @@ public class ReviveController {
                 countdown--;
                 countdownLabel.setText(String.valueOf(countdown));
                 if (countdown == 0) {
-                    revivePlayer(playerLabel, faintedCircle, countdownLabel, layeredPane);
+                    revivePlayer(playerLabel, countdownLabel, layeredPane);
                     ((Timer) e.getSource()).stop();
                 }
             }
         });
 
         // 상호작용 설정
-        setupInteraction(assistingPlayerLabel, faintedCircle, countdownLabel, assistTimer);
+        setupInteraction(assistingPlayerLabel, playerLabel, countdownLabel, assistTimer);
     }
 
     private void setupFaintState(JLabel playerLabel, JLayeredPane layeredPane) {
-        System.out.println("setupFaintState called");
-
         playerLabel.setEnabled(false); // 플레이어 비활성화
-
-        Point labelLocation = playerLabel.getLocation();
-        System.out.println("Player Label Location: " + labelLocation);
-
-        faintedCircle = new JLabel();
-        faintedCircle.setOpaque(false);
-        faintedCircle.setBounds(
-                labelLocation.x - 20,
-                labelLocation.y - 20,
-                playerLabel.getWidth() + 40,
-                playerLabel.getHeight() + 40
-        );
-        System.out.println("Circle Bounds (Before Adding): " + faintedCircle.getBounds());
-
-        faintedCircle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3)); // 검은 테두리
-        layeredPane.add(faintedCircle, JLayeredPane.POPUP_LAYER);
-        System.out.println("Circle Added to LayeredPane");
         layeredPane.repaint();
-    }
-
-    public JLabel createFaintCircle(JLabel playerLabel) {
-        JLabel circle = new JLabel();
-        circle.setOpaque(false); // 투명 배경
-        circle.setBounds(
-                playerLabel.getX() - 20,
-                playerLabel.getY() - 20,
-                playerLabel.getWidth() + 40,
-                playerLabel.getHeight() + 40
-        );
-        circle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-        return circle;
     }
 
     public JLabel createCountdownLabel(JLabel playerLabel, JLayeredPane layeredPane) {
@@ -86,33 +61,35 @@ public class ReviveController {
         return countdownLabel;
     }
 
-    public void revivePlayer(JLabel playerLabel, JLabel faintedCircle, JLabel countdownLabel, JLayeredPane layeredPane) {
+    public void revivePlayer(JLabel playerLabel, JLabel countdownLabel, JLayeredPane layeredPane) {
         playerLabel.setEnabled(true); // 플레이어 활성화
 
-        layeredPane.remove(faintedCircle);
-        layeredPane.remove(countdownLabel);
-        layeredPane.repaint();
+        // 카운트다운 라벨 제거
+        if (countdownLabel != null) {
+            layeredPane.remove(countdownLabel);
+        }
+
+        layeredPane.repaint(); // 화면 갱신
     }
 
-    private void setupInteraction(JLabel assistingPlayerLabel, JLabel faintedCircle, JLabel countdownLabel, Timer assistTimer) {
+
+    private void setupInteraction(JLabel assistingPlayerLabel, JLabel playerLabel, JLabel countdownLabel, Timer assistTimer) {
         Timer interactionCheck = new Timer(100, new ActionListener() {
             private boolean isInside = false; // 플레이어가 영역 안에 있는지 여부
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean intersects = assistingPlayerLabel.getBounds().intersects(faintedCircle.getBounds());
+                boolean intersects = assistingPlayerLabel.getBounds().intersects(playerLabel.getBounds());
                 if (intersects) {
                     if (!isInside) {
                         isInside = true;
                         assistTimer.start(); // 카운트다운 시작
                         countdownLabel.setForeground(Color.GREEN); // 도움받는 상태
-                        System.out.println("Player assisting: Countdown started.");
                     }
                 } else if (isInside) {
                     isInside = false;
                     assistTimer.stop(); // 카운트다운 중지
                     countdownLabel.setForeground(Color.RED); // 도움 중단
-                    System.out.println("Player left the circle: Countdown stopped.");
                 }
             }
         });

@@ -14,6 +14,9 @@ public abstract class Characters {
 
     private PlayerState state;
 
+    private final int width;
+    private final int height;
+
     public Characters(int x, int y) {
         this.hp = 3;
         this.x = x;
@@ -21,6 +24,17 @@ public abstract class Characters {
         this.isFacingRight = true;
         this.isMoving = false;
         this.state = PlayerState.NORMAL;
+
+        this.width = 100; // 기본 너비
+        this.height = 100; // 기본 높이
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public PlayerState getState() {

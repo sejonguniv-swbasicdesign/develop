@@ -3,6 +3,7 @@ package actionlistener;
 import model.Storage;
 import model.characters.BearPlayer;
 import controller.RockController;
+import utils.constants.StageCoordination;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -27,27 +28,32 @@ public class BearKeyListener implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (bearPlayer.isFainted()) {
+            return;
+        }
+
         int key = e.getKeyCode();
 
         switch (key) {
             case KeyEvent.VK_UP:
-                bearPlayer.move(0, -10);
+                moveWithBoundaryCheck(0, -10);
                 updateRockPosition(); // 돌 위치 업데이트
                 break;
             case KeyEvent.VK_DOWN:
-                bearPlayer.move(0, 10);
+                moveWithBoundaryCheck(0, 10);
                 updateRockPosition(); // 돌 위치 업데이트
                 break;
             case KeyEvent.VK_LEFT:
-                bearPlayer.move(-10, 0);
+                moveWithBoundaryCheck(-10, 0);
                 updateRockPosition(); // 돌 위치 업데이트
                 break;
             case KeyEvent.VK_RIGHT:
-                bearPlayer.move(10, 0);
+                moveWithBoundaryCheck(10, 0);
                 updateRockPosition(); // 돌 위치 업데이트
                 break;
             case KeyEvent.VK_SLASH: // '/' 키
@@ -150,5 +156,33 @@ public class BearKeyListener implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) { }
+    public void keyReleased(KeyEvent e) {
+    }
+
+    private void moveWithBoundaryCheck(int deltaX, int deltaY) {
+        // BearPlayer의 현재 위치와 이동 후 위치를 계산
+        int newX = bearPlayer.x + deltaX;
+        int newY = bearPlayer.y + deltaY;
+
+        // StageCoordination의 경계 내에 있는지 확인
+        boolean withinBoundary = isWithinBoundary(newX, newY);
+
+        if (withinBoundary) {
+            bearPlayer.move(deltaX, deltaY); // 이동
+            updateRockPosition(); // 돌 위치 업데이트
+        } else {
+            System.out.println("곰이 이동할 수 없습니다. 경계를 벗어남!");
+        }
+    }
+
+    private boolean isWithinBoundary(int x, int y) {
+        // StageCoordination 좌표를 기반으로 경계 확인
+        int minX = StageCoordination.CLOUD_FIRST_VERTEX.getX();
+        int maxX = StageCoordination.CLOUD_SECOND_VERTEX.getX();
+        int minY = StageCoordination.CLOUD_FIRST_VERTEX.getY();
+        int maxY = StageCoordination.CLOUD_THIRD_VERTEX.getY();
+
+        return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    }
+
 }

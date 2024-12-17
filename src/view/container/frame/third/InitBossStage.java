@@ -5,6 +5,7 @@ import controller.PlayerAttackController;
 import controller.ReviveController;
 import model.Storage;
 import model.monsters.Boss;
+import utils.constants.StageCoordination;
 import view.container.frame.third.BossHpBar;
 import view.component.third.PlayerInitializerPanel;
 
@@ -34,7 +35,7 @@ public class InitBossStage extends JFrame {
 
         Storage storage = Storage.getInstance(); // Storage 인스턴스 가져오기
         Boss boss = storage.getBoss(); // Boss 객체 가져오기
-        boss.setPosition(600, 150); // 보스 위치를 중앙 상단에서 약간 하단으로 이동
+        boss.setPosition(600, 10); // 보스 위치를 중앙 상단에서 약간 하단으로 이동
 
         // 배경 이미지 설정
         JLabel backgroundLabel = new JLabel(new ImageIcon(
@@ -49,9 +50,9 @@ public class InitBossStage extends JFrame {
         JLabel cloudLabel = new JLabel(new ImageIcon(
                 new ImageIcon("src/assets/image/component/cloud_stage.png")
                         .getImage()
-                        .getScaledInstance((int) (frameSize.width * 1.2), (int) (frameSize.height * 1.0), Image.SCALE_SMOOTH)
+                        .getScaledInstance((int) (frameSize.width * 1.3), (int) (frameSize.height * 1.0), Image.SCALE_SMOOTH)
         ));
-        cloudLabel.setBounds(-50, 250, 1400, 500); // 구름 위치와 크기 조정
+        cloudLabel.setBounds(-50, -300, 1400, 1400); // 구름 위치와 크기 조정
         layeredPane.add(cloudLabel, JLayeredPane.PALETTE_LAYER);
 
         // 보스 HP 바
@@ -65,7 +66,8 @@ public class InitBossStage extends JFrame {
         layeredPane.add(bossLabel, JLayeredPane.MODAL_LAYER);
 
         // 플레이어 초기화 패널
-        playerPanel = new PlayerInitializerPanel(layeredPane, bossLabel, cloudLabel);
+        playerPanel = new PlayerInitializerPanel(layeredPane, bossLabel);
+        playerPanel.setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
         playerPanel.setBounds(0, 0, frameSize.width, frameSize.height);
         layeredPane.add(playerPanel, JLayeredPane.MODAL_LAYER);
 
@@ -99,7 +101,6 @@ public class InitBossStage extends JFrame {
                 }
                 case "rageMode" -> {
                     updateBossLabel(boss, bossLabel); // 분노 모드로 변경 시 이미지 업데이트
-                    System.out.println("보스가 분노 모드로 전환되었습니다!");
                 }
             }
             layeredPane.repaint(); // 화면 갱신
