@@ -143,7 +143,9 @@ public class AnimationPanel extends JPanel {
                 if (currentImageIndex >= last.size()) {
                     currentImageIndex=0;
                 }
-                repaint(); // 화면 다시 그리기
+                showFadeOutEffect(() -> {
+                    repaint(); // 암전 이후 이미지 다시 그리기
+                });
             }
         });
         timer.start();
@@ -157,4 +159,29 @@ public class AnimationPanel extends JPanel {
             timer.stop();
         }
     }
+
+    private void showFadeOutEffect(Runnable onComplete) {
+        JFrame fadeFrame = new JFrame();
+        fadeFrame.setUndecorated(true); // 타이틀 바 제거
+        fadeFrame.setBackground(new Color(0, 0, 0, 0)); // 초기 투명 설정
+        fadeFrame.setSize(800, 630);
+        fadeFrame.setLocationRelativeTo(null);
+        fadeFrame.setOpacity(1.0f); // 완전 불투명 상태에서 시작
+        fadeFrame.setVisible(true);
+
+        Timer fadeOutTimer = new Timer(50, null); // 50ms마다 실행
+        fadeOutTimer.addActionListener(e -> {
+            float opacity = fadeFrame.getOpacity() - 0.05f; // 투명도 감소
+            if (opacity <= 0.0f) {
+                fadeFrame.dispose(); // 완전히 투명해지면 창 닫기
+                fadeOutTimer.stop();
+                onComplete.run(); // 암전 후 동작 실행
+            } else {
+                fadeFrame.setOpacity(opacity);
+            }
+        });
+
+        fadeOutTimer.start(); // 타이머 시작
+    }
+
 }

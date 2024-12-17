@@ -4,6 +4,8 @@ import model.Storage;
 import model.characters.BearPlayer;
 import controller.RockController;
 import utils.constants.StageCoordination;
+import view.container.frame.AnimationFrame;
+import view.container.panel.third.FadePanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -104,6 +106,7 @@ public class BearKeyListener implements KeyListener {
                 if (heldRockLabel.getBounds().intersects(bossLabel.getBounds())) {
 //                    System.out.println("돌이 보스에게 명중했습니다!");
                     Storage.getInstance().getBoss().decreaseHp(10); // 보스 HP 감소
+                    checkBossDefeated();
                     new Thread(() -> {
                         try {
                             for (int i = 0; i < 2; i++) {
@@ -183,6 +186,29 @@ public class BearKeyListener implements KeyListener {
         int maxY = StageCoordination.CLOUD_THIRD_VERTEX.getY();
 
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    }
+
+    private void checkBossDefeated() {
+        if (Storage.getInstance().getBoss().getHp() <= 0) {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(panel);
+            if (currentFrame != null) {
+                FadePanel fadePanel = new FadePanel();
+                fadePanel.setBounds(0, 0, currentFrame.getWidth(), currentFrame.getHeight());
+                currentFrame.getLayeredPane().add(fadePanel, JLayeredPane.DRAG_LAYER);
+
+                Timer fadeTimer = new Timer(100, e -> {
+                    fadePanel.increaseAlpha();
+                    if (fadePanel.isFullyOpaque()) {
+                        ((Timer) e.getSource()).stop();
+                        currentFrame.dispose(); // 현재 프레임 닫기
+                        AnimationFrame frame = new AnimationFrame();
+                        frame.setStage(4);
+                    }
+                });
+
+                fadeTimer.start();
+            }
+        }
     }
 
 }

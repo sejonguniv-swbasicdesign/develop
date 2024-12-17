@@ -1,10 +1,14 @@
 package actionlistener;
 
+import model.Storage;
 import model.characters.TigerPlayer;
 import model.monsters.Boss;
 import utils.constants.StageCoordination;
+import view.container.frame.AnimationFrame;
+import view.container.panel.third.FadePanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -14,13 +18,15 @@ public class TigerKeyListener implements KeyListener {
     private final JLabel bossLabel;
     private final Boss boss;
     private boolean isMoving = false;
+    private JLayeredPane panel;
 
 
-    public TigerKeyListener(TigerPlayer tigerPlayer, JLabel tigerLabel, JLabel bossLabel, Boss boss) {
+    public TigerKeyListener(TigerPlayer tigerPlayer, JLabel tigerLabel, JLabel bossLabel, Boss boss, JLayeredPane layeredPane) {
         this.tigerPlayer = tigerPlayer;
         this.tigerLabel = tigerLabel;
         this.bossLabel = bossLabel;
         this.boss = boss;
+        this.panel = layeredPane;
     }
 
     @Override
@@ -64,9 +70,9 @@ public class TigerKeyListener implements KeyListener {
 
             new Thread(() -> {
                 if (isMoving) return; // 이미 이동 중이면 중복 실행 방지
-                System.out.println("호랑이가 보스를 공격했습니다!");
                 isMoving = true;
                 boss.decreaseHp(5); // 호랑이의 공격 데미지
+                checkBossDefeated(); // 보스 상태 확인
                 new Thread(() -> {
                     try {
                         for (int i = 0; i < 2; i++) {
@@ -83,33 +89,31 @@ public class TigerKeyListener implements KeyListener {
                     int originalX = tigerLabel.getX();
                     int originalY = tigerLabel.getY();
 
-                    if(tigerPlayer.isFacingRight){
+                    if (tigerPlayer.isFacingRight) {
                         for (int i = 0; i < 10; i++) {
-                            tigerPlayer.setPosition(originalX +i, originalY);
+                            tigerPlayer.setPosition(originalX + i, originalY);
                             tigerLabel.setLocation(originalX + i, originalY);
                             Thread.sleep(20);
                         }
 
                         for (int i = 10; i > 0; i--) {
-                            tigerPlayer.setPosition(originalX +i, originalY);
+                            tigerPlayer.setPosition(originalX + i, originalY);
                             tigerLabel.setLocation(originalX + i, originalY);
                             Thread.sleep(20);
                         }
-                    }
-                    else{
+                    } else {
                         for (int i = 0; i < 10; i++) {
-                            tigerPlayer.setPosition(originalX -i, originalY);
+                            tigerPlayer.setPosition(originalX - i, originalY);
                             tigerLabel.setLocation(originalX - i, originalY);
                             Thread.sleep(20);
                         }
 
                         for (int i = 10; i > 0; i--) {
-                            tigerPlayer.setPosition(originalX -i, originalY);
+                            tigerPlayer.setPosition(originalX - i, originalY);
                             tigerLabel.setLocation(originalX - i, originalY);
                             Thread.sleep(20);
                         }
                     }
-
 
 
                 } catch (InterruptedException ex) {
@@ -150,6 +154,29 @@ public class TigerKeyListener implements KeyListener {
         int maxY = StageCoordination.CLOUD_THIRD_VERTEX.getY();
 
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    }
+
+    private void checkBossDefeated() {
+        if (Storage.getInstance().getBoss().getHp() <= 0) {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(panel);
+            if (currentFrame != null) {
+                FadePanel fadePanel = new FadePanel();
+                fadePanel.setBounds(0, 0, currentFrame.getWidth(), currentFrame.getHeight());
+                currentFrame.getLayeredPane().add(fadePanel, JLayeredPane.DRAG_LAYER);
+
+                Timer fadeTimer = new Timer(100, e -> {
+                    fadePanel.increaseAlpha();
+                    if (fadePanel.isFullyOpaque()) {
+                        ((Timer) e.getSource()).stop();
+                        currentFrame.dispose(); // 현재 프레임 닫기
+                        AnimationFrame frame = new AnimationFrame();
+                        frame.setStage(4);
+                    }
+                });
+
+                fadeTimer.start();
+            }
+        }
     }
 
 }

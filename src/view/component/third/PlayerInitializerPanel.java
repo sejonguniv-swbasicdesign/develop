@@ -86,7 +86,7 @@ public class PlayerInitializerPanel extends JPanel {
         add(tigerLabel);
 
         bearKeyListener = new BearKeyListener(storage.getBear(), bearLabel, rockController, bossLabel, layeredPane);
-        tigerKeyListener = new TigerKeyListener(storage.getTiger(), tigerLabel, bossLabel, boss);
+        tigerKeyListener = new TigerKeyListener(storage.getTiger(), tigerLabel, bossLabel, boss, layeredPane);
         addKeyListener(bearKeyListener);
         addKeyListener(tigerKeyListener);
     }

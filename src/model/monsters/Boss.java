@@ -15,7 +15,7 @@ public class Boss {
     private PropertyChangeSupport support; // 상태 변경 알림 지원
 
     public Boss(int x, int y) {
-        this.hp = 500;
+        this.hp = 5;
         this.x = x;
         this.y = y;
         this.isRageMode = false;

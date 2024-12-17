@@ -25,6 +25,7 @@ public class InitBossStage extends JFrame {
     public InitBossStage() {
         frameSize = new Dimension(1300, 800);
         setLayout(null);
+        setUndecorated(true);
         initializeComponents();
         setupStage();
     }
