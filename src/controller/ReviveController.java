@@ -33,6 +33,7 @@ public class ReviveController {
                 countdownLabel.setText(String.valueOf(countdown));
                 if (countdown == 0) {
                     revivePlayer(playerLabel, countdownLabel, layeredPane);
+                    characters.setState(PlayerState.NORMAL);
                     ((Timer) e.getSource()).stop();
                 }
             }

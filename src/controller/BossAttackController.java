@@ -71,14 +71,14 @@ public class BossAttackController {
                 bearLabel,
                 tigerLabel,
                 layeredPane,
-                15, // 토네이도 이동 속도
+                20, // 토네이도 이동 속도
                 reviveController,
                 playerPanel
         );
     }
 
     private void lightningAttack() {
-        int lightningCount = 7; // 번개의 개수
+        int lightningCount = 5; // 번개의 개수
         int minX = 280; // 번개 시작 X 좌표 최소값
         int maxX = 1000; // 번개 시작 X 좌표 최대값
         int startY = 0; // 번개 시작 Y 좌표
