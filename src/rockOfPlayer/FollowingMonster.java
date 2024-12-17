@@ -19,12 +19,12 @@ public class FollowingMonster {// --------------------바위 몬스터
 	private String RightimagePath = "./src/assets/image/stage1/바위몬스터_오른쪽.png";
 	private String LeftimagePath = "./src/assets/image/stage1/바위몬스터.png";
 
-	public FollowingMonster(int x, int y) {
+	public FollowingMonster(int x, int y,double speed) {
 		this.x = x;
 		this.y = y;
-		this.speed = 0.3;
+		this.speed = speed;
 		checkDirection = 0;
-		this.detectionRange = 1500;
+		this.detectionRange = 5000;
 		try {
 			Image RightImage = ImageIO.read(new File(RightimagePath));
 			monsterImageRight = RightImage.getScaledInstance(60, 60, Image.SCALE_SMOOTH);

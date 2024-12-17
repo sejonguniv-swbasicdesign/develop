@@ -95,9 +95,9 @@ public class MovingMonster {// ---------------------곰부족
 		int playerX = player.getX();
 		int playerY = player.getY();
 		if (player.getHasRock() == false)
-			return Math.abs(x - playerX) < 30 && Math.abs(y - playerY) < 30;
+			return Math.abs(x - playerX) < 32 && Math.abs(y - playerY) < 32;
 		else {
-			return Math.abs(x - playerX) < 30 && Math.abs(y - playerY) < 35;
+			return Math.abs(x - playerX) < 37 && Math.abs(y - playerY) < 33;
 		}
 	}
 

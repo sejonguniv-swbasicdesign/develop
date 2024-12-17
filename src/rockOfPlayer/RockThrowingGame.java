@@ -92,7 +92,13 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		followingMonsters.get(1).setY(550);
 		followingMonsters.get(2).setX(500);
 		followingMonsters.get(2).setY(550);
-
+		for (int i = launchedRocks.size() - 1; i >= 0; i--) {
+			launchedRocks.get(i).move(launchedRocks.get(i).getDx(), launchedRocks.get(i).getDy());
+			
+				launchedRocks.remove(i);
+			
+		}
+		
 	}
 
 	public void checkGameover() {
@@ -179,9 +185,9 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 
 		// 바위산신 ----------
 		followingMonsters = new ArrayList<>();
-		followingMonsters.add(new FollowingMonster(100, 550));
-		followingMonsters.add(new FollowingMonster(300, 550));
-		followingMonsters.add(new FollowingMonster(500, 550));
+		followingMonsters.add(new FollowingMonster(100, 550,0.17));
+		followingMonsters.add(new FollowingMonster(300, 550,0.24));
+		followingMonsters.add(new FollowingMonster(500, 550,0.3));
 	}
 
 	@Override
@@ -284,11 +290,11 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 	private void drawBridgeElements(Graphics g) {
 
 		if (isBridgeBroken) {
-			tigerPlayer.setIfOnBridge(false);
+			
 			g.drawImage(brokenBridgeImage, 300, 366, null);
 
 		} else {
-			tigerPlayer.setIfOnBridge(true);
+		
 			g.drawImage(bridgeImage, 279, 364, null);
 
 		}
@@ -303,9 +309,10 @@ public class RockThrowingGame extends JPanel implements ActionListener, KeyListe
 		if (bearPlayer.getX() > 335 && bearPlayer.getX() < 375 && bearPlayer.getY() > 800 / 2 + 56
 				&& bearPlayer.getY() < 800 / 2 + 75) {
 			isBridgeBroken = false;
+			tigerPlayer.setIfOnBridge(true);
 
 		} else {
-
+			tigerPlayer.setIfOnBridge(false);
 			isBridgeBroken = true;
 		}
 	}
