@@ -1,11 +1,13 @@
 package main;
 
-import view.container.frame.third.InitBossStage;
+import view.container.frame.AnimationFrame;
 
-import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(InitBossStage::new);
+
+        AnimationFrame frame = new AnimationFrame();
+        frame.setStage(3);
+
     }
 }

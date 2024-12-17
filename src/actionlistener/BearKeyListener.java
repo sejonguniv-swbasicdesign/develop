@@ -71,7 +71,7 @@ public class BearKeyListener implements KeyListener {
         if (bearPlayer.isHoldingRock() && heldRockLabel != null) {
             heldRockLabel.setBounds(
                     bearLabel.getX() + bearLabel.getWidth() / 2 - 25, // 곰 중심에 돌 배치
-                    bearLabel.getY() - 30, // 곰의 위쪽에 배치
+                    bearLabel.getY(), // 곰의 위쪽에 배치
                     50, 50 // 돌 크기 유지
             );
         }
@@ -79,11 +79,11 @@ public class BearKeyListener implements KeyListener {
 
     private void throwRock() {
         if (heldRockLabel == null) {
-            System.out.println("던질 돌이 없습니다!");
+//            System.out.println("던질 돌이 없습니다!");
             return;
         }
 
-        System.out.println("곰이 돌을 던졌습니다!");
+//        System.out.println("곰이 돌을 던졌습니다!");
 
         Timer throwTimer = new Timer(30, new ActionListener() {
             private final int targetX = bossLabel.getX() + bossLabel.getWidth() / 2;
@@ -102,8 +102,21 @@ public class BearKeyListener implements KeyListener {
 
                 // 보스와 충돌 감지
                 if (heldRockLabel.getBounds().intersects(bossLabel.getBounds())) {
-                    System.out.println("돌이 보스에게 명중했습니다!");
+//                    System.out.println("돌이 보스에게 명중했습니다!");
                     Storage.getInstance().getBoss().decreaseHp(10); // 보스 HP 감소
+                    new Thread(() -> {
+                        try {
+                            for (int i = 0; i < 2; i++) {
+                                bossLabel.setVisible(false);
+                                Thread.sleep(200);
+                                bossLabel.setVisible(true);
+                                Thread.sleep(200);
+                            }
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }).start();
+                    rockController.hideRock(heldRockLabel); // 스테이지에서 돌 숨기기
                     panel.remove(heldRockLabel);
                     panel.repaint();
                     heldRockLabel = null; // 돌 제거
@@ -127,18 +140,18 @@ public class BearKeyListener implements KeyListener {
     }
 
     private void pickUpRock() {
-        System.out.println("곰이 돌을 주우려 합니다...");
+//        System.out.println("곰이 돌을 주우려 합니다...");
         JLabel closestRock = rockController.findClosestRock(bearLabel);
 
         if (closestRock != null && bearLabel.getBounds().intersects(closestRock.getBounds())) {
-            System.out.println("곰이 돌을 주웠습니다!");
+//            System.out.println("곰이 돌을 주웠습니다!");
             bearPlayer.pickUpRock();
             heldRockLabel = closestRock; // 돌 라벨 설정
-            rockController.hideRock(closestRock); // 스테이지에서 돌 숨기기
+//            rockController.hideRock(closestRock); // 스테이지에서 돌 숨기기
             updateRockPosition(); // 초기 위치 업데이트
             panel.add(heldRockLabel, JLayeredPane.DRAG_LAYER); // 돌을 곰과 함께 이동
         } else {
-            System.out.println("주울 돌이 없습니다!");
+//            System.out.println("주울 돌이 없습니다!");
         }
     }
 
